@@ -1,25 +1,25 @@
-import { Router } from 'express'
 import {
-  forgotPassword,
-  getUser,
-  loginUser,
-  logoutUser,
-  registerAccount,
-  resendOtp,
-  resetPassword,
-  verifyEmail,
-} from '../controllers/auth.controller.js'
+    forgotPasswordSchema,
+    loginSchema,
+    registerSchema,
+    resendOtpSchema,
+    resetPasswordSchema,
+    verifyEmailSchema,
+} from '@tsa/shared';
+import { Router } from 'express';
 import {
-  forgotPasswordSchema,
-  loginSchema,
-  registerSchema,
-  resendOtpSchema,
-  resetPasswordSchema,
-  verifyEmailSchema,
-} from '../libs/schemaValidation.js'
-import { verifySession } from '../middlewares/auth.middleware.js'
-import { strictLimiter } from '../middlewares/rateLimit.middleware.js'
-import { validateFormData } from '../middlewares/schema.middleware.js'
+    forgotPassword,
+    getUser,
+    loginUser,
+    logoutUser,
+    registerAccount,
+    resendOtp,
+    resetPassword,
+    verifyEmail,
+} from '../controllers/auth.controller.js';
+import { verifySession } from '../middlewares/auth.middleware.js';
+import { strictLimiter } from '../middlewares/rateLimit.middleware.js';
+import { validateFormData } from '../middlewares/schema.middleware.js';
 
 const router = Router()
 

@@ -6,7 +6,7 @@ Full-stack portfolio platform for Techstudio Academy.
 - **Server** — Express 5 API, MongoDB (Mongoose), session auth, Brevo email, Memcachier cache
 - **Deployment** — Single Vercel project serving both client and API same-origin (`/api/v1/*`)
 
-> The repo is an npm workspace monorepo: `client/` and `server/` are separate workspaces with one lockfile at the root.
+> The repo is an npm workspace monorepo: `client/`, `server/` and `shared/` are separate workspaces with one lockfile at the root.
 
 ---
 
@@ -30,7 +30,10 @@ tsa-portfolio/
 │       ├── routes/       # route definitions
 │       ├── services/     # email, etc.
 │       ├── jobs/         # cron jobs (email queue)
-│       └── libs/         # utils, options, templates, schemaValidation
+│       └── libs/         # utils, options, templates
+├── shared/               # Shared schemas + types (workspace: @tsa/shared)
+│   ├── src/schemas/      # auth + media validation consumed by client & server
+│   └── src/types/        # API response types (ApiSuccessResponse, auth responses, UserProfile)
 ├── vercel.json           # build/output/cron/rewrite config
 ├── .env.example          # reference for all environment variables
 └── package.json          # workspace root (scripts, engines, allowScripts)
@@ -40,6 +43,7 @@ tsa-portfolio/
 
 - Folder and file names are lowercase.
 - Every page defines its own SEO (react-helmet-async) and route modules are **lazy-imported** (see `client/src/routes/index.tsx`).
+- Zod request schemas and API response types live in `shared/` (`@tsa/shared`) — `shared/src/schemas/` for validation, `shared/src/types/` for `ApiSuccessResponse`/`ApiErrorResponse`, auth responses, and `UserProfile` — so client and server share one source of truth.
 - Collaborators work on their own branch → open a PR into `test` → only `test` merges into `main`. Never push to `main` directly.
 
 ---
@@ -68,11 +72,11 @@ npm run dev:server   # API only (nodemon + tsx, port 3800)
 
 Useful scripts (run from root):
 
-| Command              | Description                                    |
-| -------------------- | ---------------------------------------------- |
-| `npm run build`      | Type-check + build the client → `client/dist`  |
-| `npm run typecheck`  | Type-check the server (`tsc --noEmit`)         |
-| `npm run lint`       | ESLint the client                              |
+| Command             | Description                                   |
+| ------------------- | --------------------------------------------- |
+| `npm run build`     | Type-check + build the client → `client/dist` |
+| `npm run typecheck` | Type-check the server (`tsc --noEmit`)        |
+| `npm run lint`      | ESLint the client                             |
 
 **CORS:** the server allow-lists `CLIENT_URL` from env plus local `localhost:5178` / `127.0.0.1:5178` (and a `5199` fallback) and Vercel preview origins (`*.vercel.app`) automatically.
 

@@ -1,21 +1,22 @@
-import bcrypt from 'bcrypt'
-import { Request, Response } from 'express'
-import { env } from '../config/keys.js'
-import logger from '../config/logger.js'
-import { sendTsRestError, sendTsRestSuccess } from '../libs/responseHandler.js'
-import tryCatchWrapper from '../libs/tryCatchWrapper.js'
-import { generateOTP, generateResetToken, getOtpExpiry, getTokenExpiry, hashToken } from '../libs/utils.js'
-import User from '../models/user.js'
-import { EmailService } from '../services/emailService.js'
 import type {
-  AuthResponse,
-  ForgotPasswordResponse,
-  GetUserResponse,
-  LogoutResponse,
-  ResendOtpResponse,
-  ResetPasswordResponse,
-  VerifyEmailResponse,
-} from '../types.js'
+    AuthResponse,
+    ForgotPasswordResponse,
+    GetUserResponse,
+    LogoutResponse,
+    ResendOtpResponse,
+    ResetPasswordResponse,
+    UserProfile,
+    VerifyEmailResponse,
+} from '@tsa/shared';
+import bcrypt from 'bcrypt';
+import { Request, Response } from 'express';
+import { env } from '../config/keys.js';
+import logger from '../config/logger.js';
+import { sendTsRestError, sendTsRestSuccess } from '../libs/responseHandler.js';
+import tryCatchWrapper from '../libs/tryCatchWrapper.js';
+import { generateOTP, generateResetToken, getOtpExpiry, getTokenExpiry, hashToken } from '../libs/utils.js';
+import User from '../models/user.js';
+import { EmailService } from '../services/emailService.js';
 
 export const registerAccount = tryCatchWrapper(async (req: Request, res: Response) => {
   const { email, password } = req.body
@@ -270,7 +271,8 @@ export const getUser = tryCatchWrapper(async (req: Request, res: Response) => {
   return sendTsRestSuccess<GetUserResponse['body']>(res, 200, {
     success: true,
     message: 'User found',
-    body: user,
+    // Mongoose lean doc: convert ObjectId/Date fields to the serialized JSON shape.
+    body: user as unknown as UserProfile,
   })
 })
 

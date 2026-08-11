@@ -243,7 +243,7 @@ All errors follow: `{ success: false, message: string, details?: any }`
 
 Success responses follow: `{ success: true, message: string, body?: any }`
 
-Response types are defined in `src/types.d.ts` (e.g., `AuthResponse`, `ForgotPasswordResponse`) using `ApiSuccessResponse<T>` from `src/libs/responseHandler.ts`.
+Response types live in the shared package — `ApiSuccessResponse<T>` in `shared/src/types/response.ts`, auth responses (`AuthResponse`, `ForgotPasswordResponse`, …) in `shared/src/types/auth.ts`, and `UserProfile` in `shared/src/types/user.ts`. Controllers import them from `@tsa/shared`.
 
 ---
 

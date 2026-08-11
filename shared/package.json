@@ -1,0 +1,20 @@
+{
+  "name": "@tsa/shared",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared Zod schemas and types for the TSA portfolio client and server.",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  }
+}

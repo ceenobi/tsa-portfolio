@@ -1,15 +1,6 @@
+import type { ApiSuccessResponse } from "@tsa/shared";
 import type { Response } from "express";
 import logger from "../config/logger.js";
-
-export type ApiSuccessResponse<TBody = undefined> = {
-  success: true
-  message: string
-} & (TBody extends undefined ? {} : { body: TBody })
-
-export type ApiErrorResponse<TDetails = undefined> = {
-  success: false
-  message: string
-} & (TDetails extends undefined ? {} : { details: TDetails })
 
 const sendTsRestResponse = (res: Response, status: number, body: unknown): void => {
   res.status(status).json(body);
@@ -29,7 +20,7 @@ const sendTsRestError = <T>(res: Response, status: number, error: string, detail
 };
 
 export {
-  sendTsRestResponse,
-  sendTsRestSuccess,
-  sendTsRestError,
+    sendTsRestError,
+    sendTsRestResponse,
+    sendTsRestSuccess
 };

@@ -1,4 +1,5 @@
-import axios from 'axios'
+import type { ApiSuccessResponse } from '@tsa/shared';
+import axios from 'axios';
 
 const BASE_URL = import.meta.env.VITE_API_URL || '/api/v1'
 
@@ -8,11 +9,11 @@ export const axiosClient = axios.create({
   headers: { 'Content-Type': 'application/json' },
 })
 
-async function request(
+async function request<TBody = undefined>(
   method: string,
   path: string,
   body?: unknown
-): Promise<{ success: boolean; message: string; body?: unknown }> {
+): Promise<ApiSuccessResponse<TBody>> {
   try {
     const response = await axiosClient.request({
       method,
@@ -30,8 +31,8 @@ async function request(
 }
 
 export const api = {
-  get: (path: string) => request('GET', path),
-  post: (path: string, body: unknown) => request('POST', path, body),
-  patch: (path: string, body: unknown) => request('PATCH', path, body),
-  delete: (path: string) => request('DELETE', path),
+  get: <TBody = undefined>(path: string) => request<TBody>('GET', path),
+  post: <TBody = undefined>(path: string, body: unknown) => request<TBody>('POST', path, body),
+  patch: <TBody = undefined>(path: string, body: unknown) => request<TBody>('PATCH', path, body),
+  delete: <TBody = undefined>(path: string) => request<TBody>('DELETE', path),
 }

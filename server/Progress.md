@@ -66,7 +66,7 @@ Security features implemented: bcrypt hashing (salt 10), OTP expiry (15 min) + m
 #### Cross-cutting
 
 - ✅ Standard response shapes via `src/libs/responseHandler.ts`: success `{ success: true, message, body? }`, error `{ success: false, message, details? }`
-- ✅ Typed responses in `src/types.d.ts` (`AuthResponse`, `ForgotPasswordResponse`, etc. built on `ApiSuccessResponse<T>`)
+- ✅ Typed responses in `@tsa/shared` (`shared/src/types/`): `ApiSuccessResponse`/`ApiErrorResponse`, auth responses (`AuthResponse`, `ForgotPasswordResponse`, …), `UserProfile`; controllers and the client `lib/api.ts` consume them from `@tsa/shared`
 - ✅ Security hardening in `src/index.ts` & `src/libs/options.ts`: helmet (CSP, HSTS, frame deny, COOP/CORP), CORS allowlist, compression (level 9), `x-powered-by` disabled, 25mb body limit, `/health` endpoint, graceful shutdown
 
 ---

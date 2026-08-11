@@ -6,7 +6,8 @@
   "description": "Techstudio Academy Portfolio — React Router 7 client + Express API, deployed to Vercel as a single full-stack project.",
   "workspaces": [
     "client",
-    "server"
+    "server",
+    "shared"
   ],
   "scripts": {
     "dev": "npm run dev --workspace client",
