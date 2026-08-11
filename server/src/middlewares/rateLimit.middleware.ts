@@ -1,16 +1,11 @@
-import { fromNodeHeaders } from 'better-auth/node'
+import { rateLimit, ipKeyGenerator } from 'express-rate-limit'
 import type { Request } from 'express'
-import { ipKeyGenerator, rateLimit } from 'express-rate-limit'
-import { auth } from '../services/better-auth.js'
 
 const FIFTEEN_MINUTES = 15 * 60 * 1000
 
-const keyGenerator = async (req: Request): Promise<string> => {
-  const session = await auth.api.getSession({
-    headers: fromNodeHeaders(req.headers),
-  })
-  if (session?.user.id) {
-    return `session:${session.user.id}`
+const keyGenerator = (req: Request): string => {
+  if (req.session?.userId) {
+    return `session:${req.session.userId}`
   }
   return `ip:${ipKeyGenerator(req.ip ?? 'unknown')}`
 }

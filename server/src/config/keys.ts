@@ -24,11 +24,12 @@ const ENV_VARS: EnvSpec[] = [
   { key: 'MEMCACHIER_USERNAME', required: true },
   { key: 'MEMCACHIER_PASSWORD', required: true },
   { key: 'CLIENT_URL', required: true },
+  { key: 'SESSION_SECRET', required: true },
+  // Optional: public URL of this API (used for helmet CSP connect-src). Falls back to localhost in dev.
+  { key: 'SERVER_URL' },
   { key: 'CLOUDINARY_CLOUD_NAME', required: true },
   { key: 'CLOUDINARY_API_KEY', required: true },
   { key: 'CLOUDINARY_SECRET_KEY', required: true },
-  { key: "BETTER_AUTH_URL", required: true },
-  { key: "BETTER_AUTH_SECRET", required: true },
 ]
 
 interface Env {

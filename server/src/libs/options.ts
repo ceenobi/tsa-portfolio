@@ -44,12 +44,7 @@ export const helmetOptions = {
       scriptSrc: ["'self'"], // Removed 'unsafe-inline' and 'unsafe-eval' for security
       styleSrc: ["'self'", "'unsafe-inline'"],
       imgSrc: ["'self'", 'data:', 'https:', 'https://res.cloudinary.com'], // Specific to Cloudinary
-      connectSrc: [
-        "'self'",
-        'https:',
-        env.serverUrl || 'http://localhost:3900',
-        'https://res.cloudinary.com',
-      ],
+      connectSrc: ["'self'", 'https:', env.SERVER_URL || 'http://localhost:3800', 'https://res.cloudinary.com'],
       fontSrc: ["'self'", 'https:', 'data:'],
       objectSrc: ["'none'"],
       upgradeInsecureRequests: env.NODE_ENV === 'production' ? [] : null,
@@ -77,4 +72,3 @@ export const helmetOptions = {
   hidePoweredBy: true,
   ieNoOpen: true,
 }
-

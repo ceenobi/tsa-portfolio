@@ -43,15 +43,15 @@ export const connectToDB = async (): Promise<void> => {
   }
 
   const connectionOptions: ConnectOptions = {
-    dbName: env.databaseName,
+    dbName: env.DATABASE_NAME,
     serverSelectionTimeoutMS: 45000,
     socketTimeoutMS: 15000,
     retryWrites: true,
     retryReads: true,
     maxPoolSize: 50,
     minPoolSize: 1,
-    autoIndex: env.nodeEnv !== "production",
-    monitorCommands: env.nodeEnv === "development",
+    autoIndex: env.NODE_ENV !== "production",
+    monitorCommands: env.NODE_ENV === "development",
   };
   try {
     const conn = await mongoose.connect(env.MONGO_URI!, connectionOptions);
