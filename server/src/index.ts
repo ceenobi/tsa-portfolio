@@ -1,19 +1,21 @@
-import cors from 'cors'
-import express, { NextFunction, Request, Response } from 'express'
-import helmet from 'helmet'
-import { connectToDB, gracefulShutdown } from './config/database.js'
-import { env } from './config/keys.js'
-import logger, { logError } from './config/logger.js'
-import { helmetOptions } from './libs/options.js'
+import cors from 'cors';
+import express, { NextFunction, Request, Response } from 'express';
+import helmet from 'helmet';
+import { connectToDB, gracefulShutdown } from './config/database.js';
+import { env } from './config/keys.js';
+import logger, { logError } from './config/logger.js';
+import { createSessionMiddleware } from './config/session.js';
+import { helmetOptions } from './libs/options.js';
 import {
-  appErrorHandler,
-  createExpressLogger,
-  notFoundRoutes,
-  setupGlobalErrorHandlers,
-} from './middlewares/error.middleware.js'
-import { toNodeHandler } from 'better-auth/node';
-import { auth } from './services/better-auth.js'
-import { globalLimiter, strictLimiter } from './middlewares/rateLimit.middleware.js'
+    appErrorHandler,
+    createExpressLogger,
+    notFoundRoutes,
+    setupGlobalErrorHandlers,
+} from './middlewares/error.middleware.js';
+import { globalLimiter } from './middlewares/rateLimit.middleware.js';
+//routes
+import authRoutes from './routes/auth.routes.js';
+import emailRoutes from './routes/email.routes.js';
 
 declare global {
   namespace Express {
@@ -24,18 +26,33 @@ declare global {
   }
 }
 
+// Extend express-session SessionData interface
+declare module 'express-session' {
+  interface SessionData {
+    userId?: string
+    role?: 'admin' | 'super_admin'
+  }
+}
+
 const app = express()
 
 app.set('trust-proxy', 1)
 //global error handler
 setupGlobalErrorHandlers()
 
-// app.use('/api', emailRoutes)
+app.use('/api', emailRoutes)
 
 // CORS configuration
-const allowedOrigins = [env.CLIENT_URL]
-if (env.NODE_ENV === 'production' && env.CLIENT_URL) {
-  allowedOrigins.push(env.CLIENT_URL)
+const allowedOrigins: string[] = [env.CLIENT_URL].filter(Boolean) as string[]
+
+// Local development — Vite dev server
+allowedOrigins.push('http://localhost:5178', 'http://127.0.0.1:5178')
+// Local development — fallback port
+allowedOrigins.push('http://localhost:5199', 'http://127.0.0.1:5199')
+
+// Vercel preview deployments — each preview gets its own *.vercel.app origin
+if (process.env.VERCEL_URL) {
+  allowedOrigins.push(`https://${process.env.VERCEL_URL}`)
 }
 
 const corsOptions: cors.CorsOptions = {
@@ -56,11 +73,11 @@ const corsOptions: cors.CorsOptions = {
 app.use(createExpressLogger()) //Pino HTTP middleware for request logging
 app.use(cors(corsOptions))
 app.use(globalLimiter)
+app.use(createSessionMiddleware())
 app.use(helmet(helmetOptions))
 app.use(express.json({ limit: '25mb' }))
 app.use(express.urlencoded({ extended: true, limit: '25mb' }))
 app.disable('x-powered-by')
-app.all('/api/auth/*splat', strictLimiter, toNodeHandler(auth))
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   req.requestTime = new Date().toISOString()
@@ -76,6 +93,9 @@ app.use('/health', (req: Request, res: Response, next: NextFunction) => {
     uptime: process.uptime(),
   })
 })
+
+//api routes
+app.use('/api/v1/auth', authRoutes)
 
 // Handle 404
 app.use(notFoundRoutes)

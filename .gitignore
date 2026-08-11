@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+
+# Vercel
+.vercel/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Build output
+dist/
+dist-ssr/
+
+# TypeScript build cache
+*.tsbuildinfo
+
+# Vite template leftovers
+*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

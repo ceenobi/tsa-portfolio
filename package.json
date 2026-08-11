@@ -1,0 +1,31 @@
+{
+  "name": "tsa-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Techstudio Academy Portfolio — React Router 7 client + Express API, deployed to Vercel as a single full-stack project.",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace client",
+    "dev:client": "npm run dev --workspace client",
+    "dev:server": "npm run dev --workspace server",
+    "build": "npm run build --workspace client",
+    "lint": "npm run lint --workspace client",
+    "typecheck": "npm run typecheck --workspace server"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "allowScripts": {
+    "fsevents@2.3.3": true,
+    "connect-mongo@6.0.0": true,
+    "express-session@1.19.0": true,
+    "memjs@1.3.2": true,
+    "@types/express@5.0.6": true,
+    "@types/express-session@1.19.0": true,
+    "@types/connect-mongo@3.1.2": true
+  }
+}
