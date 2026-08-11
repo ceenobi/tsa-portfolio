@@ -3,6 +3,7 @@ import SuspenseUi from '@/components/ui/suspense-ui'
 import { createBrowserRouter, type RouteObject } from 'react-router'
 import MainLayout from './main/layout'
 import Root from './root/layout'
+import AuthLayout from './auth/layout'
 
 const routes = [
   {
@@ -36,6 +37,40 @@ const routes = [
           {
             path:'about'
           }
+        ],
+      },
+      {
+        path: '/auth',
+        Component: AuthLayout,
+        ErrorBoundary,
+        hydrateFallbackElement: <SuspenseUi />,
+        children: [
+          {
+            path: 'login',
+            handle: {
+              seo: {
+                title: 'Login - Techstudio Academy Portfolio',
+                description: 'Login to your account.',
+              },
+            },
+            lazy: async () => {
+              const { default: Component } = await import('@/routes/auth/login')
+              return { Component }
+            },
+          },
+          {
+            path: 'register',
+            handle: {
+              seo: {
+                title: 'Register - Techstudio Academy Portfolio',
+                description: 'Register for an admin account.',
+              },
+            },
+            lazy: async () => {
+              const { default: Component } = await import('@/routes/auth/register')
+              return { Component }
+            },
+          },
         ],
       },
     ],

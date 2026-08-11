@@ -16,7 +16,7 @@ interface SeoProps {
   url?: string
 }
 
-const SITE_NAME = 'EventPulse'
+const SITE_NAME = 'Techstudio Academy Portfolio'
 
 export function Seo({ title, description, image, url }: SeoProps) {
   const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME
