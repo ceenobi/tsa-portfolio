@@ -1,10 +1,11 @@
+import Logo from "@/components/ui/logo";
 import { Outlet } from "react-router";
-
 
 export default function AuthLayout() {
   return (
     <div className="bg-[url('/bgBlue.png')] bg-cover bg-no-repeat min-h-screen flex justify-center items-center">
-      <section className="m-4 md:m-8">
+      <section className="w-full max-w-[90%] md:max-w-120 mx-auto bg-white space-y-8 py-10 px-8 rounded-lg">
+         <Logo />
         <Outlet/>
       </section>
     </div>

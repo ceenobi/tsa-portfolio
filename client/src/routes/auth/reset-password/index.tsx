@@ -3,14 +3,14 @@ import { FormBox } from "@/components/ui/form-box";
 import { api } from "@/lib/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { registerSchema, type AuthResponse } from "@tsa/shared";
+import { resetPasswordSchema, type ResetPasswordResponse } from "@tsa/shared";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
-const RegisterSchema = registerSchema.extend({
+const ResetPasswordSchema = resetPasswordSchema.extend({
   confirmPassword: z.string({ message: 'Complete this field to continue' }).min(8, {
     message: 'Password must be at least 8 characters long',
   }),
@@ -19,27 +19,29 @@ const RegisterSchema = registerSchema.extend({
   path: ['confirmPassword'],
 });
 
-export default function Register() {
-  const [isVisible, setIsVisible] = useState<boolean>(false);
-  const [isConfirm, setIsConfirm] = useState<boolean>(false);
+
+export default function ResetPassword() {
+  const [isVisible, setIsVisible] = useState<boolean>(false)
+  const [isConfirm, setIsConfirm] = useState<boolean>(false)
+  const [searchParams] = useSearchParams()
+  const token = searchParams.get('token') || ''
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<z.infer<typeof RegisterSchema>>({
-    resolver: zodResolver(RegisterSchema),
-    mode: "onChange",
-  });
-  const navigate = useNavigate();
-
-  const mutation = useMutation({
-    mutationFn: (data: z.infer<typeof RegisterSchema>) => {
-      return api.post<AuthResponse['body']>('/auth/register', data)
+  } = useForm<z.infer<typeof ResetPasswordSchema>>({
+    resolver: zodResolver(ResetPasswordSchema),
+    mode: 'onChange',
+  })
+const navigate = useNavigate()
+const mutation = useMutation({
+    mutationFn: (data: z.infer<typeof ResetPasswordSchema>) => {
+      return api.post<ResetPasswordResponse['body']>(`/auth/reset-password?token=${token}`, data)
     },
     onSuccess: res => {
       if (res.success) {
-        toast.success(res?.message ?? 'Account created successfully')
-        navigate(`/auth/verify-account?email=${res?.body?.user?.email}`)
+        toast.success(res.message || 'Password reset successful')
+        navigate(`/auth/login`)
       }
     },
     onError: err => {
@@ -48,28 +50,19 @@ export default function Register() {
     },
   })
 
-  const onSubmit = (data: z.infer<typeof RegisterSchema>) => {
+  const onSubmit = (data: z.infer<typeof ResetPasswordSchema>) => {
     mutation.mutate(data)
   };
 
   return (
     <div className="space-y-8">
       <div className="mt-4 space-y-1">
-        <h1 className="text-xl sm:text-2xl md:text-[28px] font=semibold">Create an Admin Account</h1>
-        <p className="text-sm md:text-base text-mainGray">Register to manage the Academy Portfolio Archive</p>
+        <h1 className="text-xl sm:text-2xl md:text-[28px] font=semibold">Reset Password</h1>
+        <p className="text-sm md:text-base text-mainGray"> Choose a strong password you haven't used before. Make it at least 8 characters.</p>
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <FormBox
-          label="Email"
-          type="email"
-          placeholder="email@example.com"
-          id="email"
-          register={register}
-          errors={errors?.email}
-          name="email"
-        />
-        <FormBox
-          label="Password"
+          label="New Password"
           type="password"
           placeholder="********"
           id="password"
@@ -97,17 +90,6 @@ export default function Register() {
           classname="w-full h-12 text-base bg-mainBlue hover:bg-mainBlue/90"
         />
       </form>
-      <div className="flex items-center justify-center gap-2 mt-10">
-        <p className="text-[13px] text-muted-foreground">
-          Already have an account?{" "}
-          <Link
-            to="/auth/login"
-            className="font-semibold text-mainBlue hover:underline"
-          >
-            Login
-          </Link>
-        </p>
-      </div>
     </div>
   );
 }

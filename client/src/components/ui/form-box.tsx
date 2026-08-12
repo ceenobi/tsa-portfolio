@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Eye, EyeOff } from "lucide-react";
 import {
+    Controller,
     type Control,
     type FieldError as FieldErrorType,
     type FieldValues,
@@ -10,6 +11,7 @@ import {
 } from "react-hook-form";
 import { Field, FieldError, FieldLabel, FieldLegend, FieldSet } from "./field";
 import { Input } from "./input";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "./input-otp";
 
 export type SelectOption = {
   name: string;
@@ -30,7 +32,7 @@ type FormFieldProps<T extends FieldValues> = {
   classname?: string;
   disabled?: boolean;
   defaultValue?: string | Date | number | boolean;
-  inputType?: "input" | "textarea" | "select" | "switch" | "radio";
+  inputType?: "input" | "textarea" | "select" | "switch" | "radio" | "otp";
   registerOptions?: RegisterOptions<T>;
   control?: Control<T>;
   options?: SelectOption[];
@@ -52,7 +54,7 @@ export function FormBox<T extends FieldValues>({
   defaultValue,
   inputType,
   registerOptions,
-  // control,
+  control,
   // options,
   // styles,
 }: FormFieldProps<T>) {
@@ -69,6 +71,31 @@ export function FormBox<T extends FieldValues>({
             disabled={disabled}
           />
         );
+        case 'otp':
+          return (
+            <Controller
+              name={name}
+              control={control}
+              render={({ field }) => (
+                <InputOTP
+                  maxLength={6}
+                  value={field.value ?? ''}
+                  onChange={field.onChange}
+                  containerClassName="w-full"
+                  className={cn(errors ? 'aria-invalid:border-destructive' : '')}
+                >
+                  <InputOTPGroup className="w-full flex gap-2">
+                    <InputOTPSlot className="flex-1 h-14 rounded-md border text-lg" index={0} />
+                    <InputOTPSlot className="flex-1 h-14 rounded-md border text-lg" index={1} />
+                    <InputOTPSlot className="flex-1 h-14 rounded-md border text-lg" index={2} />
+                    <InputOTPSlot className="flex-1 h-14 rounded-md border text-lg" index={3} />
+                    <InputOTPSlot className="flex-1 h-14 rounded-md border text-lg" index={4} />
+                    <InputOTPSlot className="flex-1 h-14 rounded-md border text-lg" index={5} />
+                  </InputOTPGroup>
+                </InputOTP>
+              )}
+            />
+          )
       default:
         return (
           <div className="relative">
@@ -76,7 +103,7 @@ export function FormBox<T extends FieldValues>({
               type={isVisible ? "text" : type}
               placeholder={placeholder}
               className={cn(
-                "focus:outline-blue-500 focus:ring-blue-500 py-5.5",
+                " focus:outline-blue-500 focus:ring-blue-500 py-5.5",
                 errors ? "border-red-600" : "",
               )}
               id={id}

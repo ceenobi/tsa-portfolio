@@ -39,7 +39,7 @@ export const registerAccount = tryCatchWrapper(async (req: Request, res: Respons
     otpLastSentAt: new Date(),
   })
 
-  const verificationLink = `${env.CLIENT_URL}/auth/verify-email?email=${encodeURIComponent(user.email)}`
+  const verificationLink = `${env.CLIENT_URL}/auth/verify-account?email=${encodeURIComponent(user.email)}`
   await EmailService.sendVerifyAccountEmail({ user, otp, link: verificationLink })
 
   logger.info({ userId: user._id }, 'New account registered')
@@ -251,7 +251,7 @@ export const resendOtp = tryCatchWrapper(async (req: Request, res: Response) => 
   user.otpLastSentAt = new Date()
   await user.save()
 
-  const verificationLink = `${env.CLIENT_URL}/auth/verify-email?email=${encodeURIComponent(user.email)}`
+  const verificationLink = `${env.CLIENT_URL}/auth/verify-account?email=${encodeURIComponent(user.email)}`
   await EmailService.sendVerifyAccountEmail({ user, otp, link: verificationLink })
 
   logger.info({ userId: user._id }, 'New OTP sent')
