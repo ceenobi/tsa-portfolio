@@ -1,0 +1,161 @@
+import { useState } from "react";
+import { Calendar, Users } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const CATEGORIES = [
+  "All",
+  "Product Design",
+  "Full Stack Web Development",
+  "Data Analysis",
+  "Cyber Security",
+] as const;
+
+type Category = (typeof CATEGORIES)[number];
+
+interface Project {
+  title: string;
+  category: Exclude<Category, "All">;
+  cohort: string;
+  members: number;
+  photoId: string;
+}
+
+// Placeholder sample data — swap for real cohort projects once the backend
+// endpoint is wired up. `photoId` is an Unsplash photo id used as a stand-in
+// cover image until each project has a real screenshot.
+const PROJECTS: Project[] = [
+  {
+    title: "1918 Deluxe Auto Insurance",
+    category: "Cyber Security",
+    cohort: "June 2026 Cohort",
+    members: 12,
+    photoId: "1573164713988-8665fc963095",
+  },
+  {
+    title: "Streamline Work Flow With AI Powered Solution",
+    category: "Product Design",
+    cohort: "June 2026 Cohort",
+    members: 7,
+    photoId: "1519389950473-47ba0277781c",
+  },
+  {
+    title: "Accelerate Your Business Profit 10X",
+    category: "Full Stack Web Development",
+    cohort: "June 2026 Cohort",
+    members: 9,
+    photoId: "1550751827-4bd374c3f58b",
+  },
+  {
+    title: "AI Generated Resources",
+    category: "Data Analysis",
+    cohort: "June 2026 Cohort",
+    members: 16,
+    photoId: "1522252234503-e356532cafd5",
+  },
+  {
+    title: "Empowering Change for a Sustainable Future",
+    category: "Product Design",
+    cohort: "May 2026 Cohort",
+    members: 3,
+    photoId: "1531297484001-80022131f5a1",
+  },
+  {
+    title: "SecureWave Threat Monitor",
+    category: "Cyber Security",
+    cohort: "May 2026 Cohort",
+    members: 8,
+    photoId: "1526374965328-7f61d4dc18c5",
+  },
+  {
+    title: "Experience Seamless and Automated Event Ticketing",
+    category: "Full Stack Web Development",
+    cohort: "May 2026 Cohort",
+    members: 13,
+    photoId: "1518770660439-4636190af475",
+  },
+  {
+    title: "Read Stories, Speak Stories",
+    category: "Data Analysis",
+    cohort: "May 2026 Cohort",
+    members: 6,
+    photoId: "1563986768609-322da13575f3",
+  },
+  {
+    title: "Network Intrusion Detection Suite",
+    category: "Cyber Security",
+    cohort: "May 2026 Cohort",
+    members: 5,
+    photoId: "1573164713988-8665fc963095",
+  },
+];
+
+export default function ProjectShowcase() {
+  const [category, setCategory] = useState<Category>("All");
+
+  const projects =
+    category === "All"
+      ? PROJECTS
+      : PROJECTS.filter((project) => project.category === category);
+
+  return (
+    <section className="bg-[#D0D0D0]/10">
+      <div className="mx-auto max-w-7xl pt-[100px] mb-[16px] sm:px-6 lg:px-[100px]">
+        <h2 className="text-3xl font-bold  tracking-[-5%] uppercase sm:text-4xl">
+          Project Showcase
+        </h2>
+
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <span className="text-[14px] font-medium text-muted-foreground">
+            Courses:
+          </span>
+          {CATEGORIES.map((item) => (
+            <button
+              key={item}
+              type="button"
+              onClick={() => setCategory(item)}
+              className={cn(
+                "rounded-full border px-3 py-1 text-sm transition-colors",
+                category === item
+                  ? "border-blue-600 bg-blue-600 text-white"
+                  : "border-border text-muted-foreground hover:bg-muted",
+              )}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-8 grid gap-[20px] sm:grid-cols-2 lg:grid-cols-3">
+          {projects.map((project) => (
+            <article key={project.title}>
+              <img
+                src={`https://images.unsplash.com/photo-${project.photoId}?w=400&h=250&fit=crop&auto=format`}
+                alt={project.title}
+                className="mx-auto h-[250px] w-[400px] max-w-full rounded-[30px] object-cover"
+              />
+
+              <div className="p-4">
+                <h3 className=" text-[20px] font-normal">{project.category}</h3>
+                <p className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <img src="/images/Calendar.svg" className="size-4" alt="" />
+                    {project.cohort}
+                  </span>
+                  <span aria-hidden>·</span>
+                  <span className="flex items-center gap-1">
+                    <img src="/images/User.svg" className="size-4" alt="" />
+                    {project.members} members
+                  </span>
+                </p>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <p className="mt-8 text-center text-sm text-muted-foreground">
+          9 Entries per page
+        </p>
+      </div>
+    </section>
+  );
+}
