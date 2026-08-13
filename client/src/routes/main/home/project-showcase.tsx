@@ -1,5 +1,13 @@
 import { useState } from "react";
 import { Calendar, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
 const CATEGORIES = [
@@ -11,6 +19,10 @@ const CATEGORIES = [
 ] as const;
 
 type Category = (typeof CATEGORIES)[number];
+
+const SORT_OPTIONS = ["Most Recent", "Oldest"] as const;
+
+type SortOrder = (typeof SORT_OPTIONS)[number];
 
 interface Project {
   title: string;
@@ -91,11 +103,16 @@ const PROJECTS: Project[] = [
 
 export default function ProjectShowcase() {
   const [category, setCategory] = useState<Category>("All");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("Most Recent");
 
-  const projects =
+  const filtered =
     category === "All"
       ? PROJECTS
       : PROJECTS.filter((project) => project.category === category);
+
+  // PROJECTS is authored most-recent-cohort-first, so "Oldest" is just the
+  // reverse — swap for a real date sort once cohorts carry actual dates.
+  const projects = sortOrder === "Most Recent" ? filtered : [...filtered].reverse();
 
   return (
     <section className="bg-[#D0D0D0]/10">
@@ -104,25 +121,48 @@ export default function ProjectShowcase() {
           Project Showcase
         </h2>
 
-        <div className="mt-4 flex flex-wrap items-center gap-2">
-          <span className="text-[14px] font-medium text-muted-foreground">
-            Courses:
-          </span>
-          {CATEGORIES.map((item) => (
-            <button
-              key={item}
-              type="button"
-              onClick={() => setCategory(item)}
-              className={cn(
-                "rounded-full border px-3 py-1 text-sm transition-colors",
-                category === item
-                  ? "border-blue-600 bg-blue-600 text-white"
-                  : "border-border text-muted-foreground hover:bg-muted",
-              )}
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[14px] font-medium text-muted-foreground">
+              Courses:
+            </span>
+            {CATEGORIES.map((item) => (
+              <Button
+                key={item}
+                type="button"
+                variant={category === item ? "default" : "outline"}
+                onClick={() => setCategory(item)}
+                className={cn(
+                  "h-auto rounded-full px-3 py-1 text-sm",
+                  category === item
+                    ? "border-blue-600 bg-blue-600 text-white hover:bg-blue-600/90"
+                    : "text-muted-foreground",
+                )}
+              >
+                {item}
+              </Button>
+            ))}
+          </div>
+
+          <Select
+            value={sortOrder}
+            onValueChange={(value) => setSortOrder(value as SortOrder)}
+          >
+            <SelectTrigger className="h-auto rounded-full bg-white px-3 py-1.5 text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent
+              align="start"
+              alignItemWithTrigger={false}
+              className="w-40"
             >
-              {item}
-            </button>
-          ))}
+              {SORT_OPTIONS.map((option) => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="mt-8 grid gap-[20px] sm:grid-cols-2 lg:grid-cols-3">
