@@ -115,6 +115,28 @@ const routes = [
           },
         ],
       },
+      {
+        path: 'dashboard',
+        handle: {
+          seo: {
+            title: 'Dashboard - Techstudio Academy Portfolio',
+            description: 'Admin dashboard, manage cohorts portfolios here.',
+          },
+        },
+        lazy: async () => {
+          const { default: Component } = await import('@/routes/dashboard/layout')
+          return { Component }
+        },
+        children: [
+          {
+            index: true,
+            lazy: async () => {
+              const { default: Component } = await import('@/routes/dashboard')
+              return { Component }
+            },
+          },
+        ],
+      },
     ],
   },
 ] satisfies RouteObject[]
