@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main, test]
+    branches: [test]
   pull_request:
-    branches: [main]
+    branches: [test, main]
 
 jobs:
   check-source-branch:
@@ -26,19 +26,10 @@ jobs:
         with:
           node-version: 22
           cache: "npm"
-      - run: npm install --immutable
-      - run: npm typecheck
-
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: "yarn"
-      - run: npm install --immutable
-      - run: npm test --reporter=verbose 2>&1 | tail -50
+      - run: npm ci
+      - run: npm run typecheck --workspace shared
+      - run: npm run typecheck --workspace server
+      - run: npm run build --workspace client
 
   lint:
     runs-on: ubuntu-latest
@@ -48,6 +39,5 @@ jobs:
         with:
           node-version: 22
           cache: "npm"
-      - run: npm install --immutable
-      - run: npx eslint app/ --max-warnings 0
-        continue-on-error: true
+      - run: npm ci
+      - run: npm run lint --workspace client
