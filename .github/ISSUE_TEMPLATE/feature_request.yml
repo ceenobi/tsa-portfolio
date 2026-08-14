@@ -1,0 +1,42 @@
+name: Feature request
+description: Suggest a new feature or improvement
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature. Please describe it clearly so we can evaluate it.
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: What problem are you trying to solve? Why is this feature useful?
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected behavior
+      description: What should the feature do? Describe the desired outcome.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Any alternative solutions or workarounds you've thought about.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      multiple: true
+      options:
+        - Client (frontend)
+        - Server (API)
+        - Auth
+        - Email
+        - Dashboard
+        - Other
+    validations:
+      required: true

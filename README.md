@@ -1,5 +1,9 @@
 # Techstudio Academy (TSA) Portfolio
 
+![CI](https://github.com/ceenobi/tsa-portfolio/actions/workflows/ci.yml/badge.svg?branch=test)
+![Node](https://img.shields.io/badge/node-%3E%3D%2020.19-339933?logo=node.js&logoColor=white)
+![License: Proprietary](https://img.shields.io/badge/license-Proprietary-red)
+
 Full-stack portfolio platform for Techstudio Academy.
 
 - **Client** — React Router 7 (framework mode) SPA, Vite, Tailwind CSS v4, shadcn/ui
