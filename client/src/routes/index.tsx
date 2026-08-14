@@ -1,4 +1,4 @@
-import ErrorBoundary from '@/components/error-boundary';
+import ErrorBoundary from '@/components/provider/error-boundary';
 import SuspenseUi from '@/components/ui/suspense-ui';
 import { guestMiddleware, sessionMiddleware } from '@/middleware/auth';
 import { createBrowserRouter, type RouteObject } from 'react-router';

@@ -1,5 +1,5 @@
-import Logo from '@/components/logo';
 import { Button } from '@/components/ui/button';
+import Logo from '@/components/ui/logo';
 import { cn } from '@/lib/utils';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { useState } from 'react';
@@ -23,8 +23,8 @@ export default function Nav() {
   const [coursesOpen, setCoursesOpen] = useState(false)
 
   return (
-  <div className='fixed top-0 w-full'>
-    <header className="relative z-20 bg-deepBlue text-[14px]">
+  <div className='fixed top-0 w-full z-100 bg-deepBlue'>
+    <header className="relative text-[14px]">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-25">
         <a href="https://www.techstudioacademy.com" rel='noopener noreferrer'>
           <Logo />
@@ -65,14 +65,6 @@ export default function Nav() {
               </div>
             )}
           </div>
-
-          <button
-            type="button"
-            onClick={comingSoon}
-            className="hover:text-blue-300"
-          >
-            Employers
-          </button>
           <a href="https://www.techstudioacademy.com/faq"
             rel='noopener noreferrer'
             className="hover:text-blue-300"
@@ -160,12 +152,14 @@ export default function Nav() {
           >
             Portfolio
           </button>
-          <Button
-            onClick={comingSoon}
-            className="mt-2 h-9 w-full rounded-md bg-blue-600 text-sm text-white hover:bg-blue-500"
-          >
-            Register
-          </Button>
+          <a href="https://www.techstudioacademy.com/register" rel="noopener noreferrer">
+            <Button
+              onClick={comingSoon}
+              className="mt-2 h-9 w-full rounded-md bg-blue-600 text-sm text-white hover:bg-blue-500"
+            >
+              Register
+            </Button>
+          </a>
         </div>
       </div>
       </header>

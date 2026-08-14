@@ -1,7 +1,3 @@
-import { toast } from "react-toastify";
-import { Button } from "@/components/ui/button";
-
-// const GRADUATE_PHOTOS = [
 //   {
 //     src: "/images/Component19.svg",
 //     alt: "Techstudio Academy graduate holding certificate",
@@ -37,12 +33,13 @@ export default function Hero() {
           practical tech education.
         </p>
 
-        <Button
-          onClick={() => toast.info("Coming soon!")}
-          className="mt-6 h-10 rounded-md bg-[#FCFDFF] px-6 text-sm text-mainBlue text-[16px] hover:bg-white/90"
+        <a href="https://www.techstudioacademy.com/register" rel="noopener noreferrer">
+          <button
+          className="mt-6 h-10 rounded-md bg-[#FCFDFF] font-medium px-6 text-sm text-mainBlue text-[16px] hover:bg-white/90"
         >
           Join Us Now
-        </Button>
+        </button>
+        </a>
 
         {/* <div className="mt-10 grid grid-cols-2 gap-3 sm:flex sm:gap-3">
           {GRADUATE_PHOTOS.map((photo) => (

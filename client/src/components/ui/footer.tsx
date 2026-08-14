@@ -1,8 +1,9 @@
-import { useState } from 'react'
-import { ArrowRight } from 'lucide-react'
-import { toast } from 'react-toastify'
-import Logo from '@/components/logo'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
+import { useState } from 'react';
+import { Link } from 'react-router';
+import { toast } from 'react-toastify';
+import Logo from './logo';
 
 const COURSES = [
   'Front End Development',
@@ -44,7 +45,7 @@ const SOCIALS = [
 export default function Footer() {
   const [email, setEmail] = useState('')
 
-  function handleSubscribe(e: React.FormEvent) {
+  function handleSubscribe(e: React.SubmitEvent) {
     e.preventDefault()
     toast.info('Coming soon!')
     setEmail('')
@@ -52,8 +53,8 @@ export default function Footer() {
 
   return (
     <footer className="bg-blue-950 text-white">
-      <div className="mx-auto max-w-7xl px-4 py-12 lg:py-[60px] sm:px-6 lg:px-[100px]">
-        <div className="grid gap-[30px] sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-auto max-w-7xl px-4 py-12 lg:py-15 sm:px-6 lg:px-25">
+        <div className="grid gap-7.5 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <Logo />
             <p className="mt-4 max-w-xs text-sm text-white/70">
@@ -109,10 +110,13 @@ export default function Footer() {
                 <ArrowRight className="size-4" />
               </Button>
             </form>
+            <p className='mt-4'>        
+            <Link to="/auth/login" className="text-sm text-white/70 hover:text-white">Admin Portal</Link>
+            </p>
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col w-full justify-end  items-center  gap-[42px] border-t border-t-[1.4px] border-white pt-6 sm:flex-row">
+        <div className="mt-10 flex flex-col w-full justify-end  items-center gap-10.5 border-t-[1.4px] border-white pt-6 sm:flex-row">
           <button
             type="button"
             onClick={comingSoon}
@@ -121,7 +125,7 @@ export default function Footer() {
             Terms and Policy
           </button>
 
-          <div className="flex items-center gap-[33px]">
+          <div className="flex items-center gap-8.25">
             {SOCIALS.map((social) => (
               <button
                 key={social.label}

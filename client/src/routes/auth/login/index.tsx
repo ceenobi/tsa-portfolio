@@ -46,7 +46,7 @@ export default function Login() {
   return (
     <div className="space-y-8 w-full max-w-[85vw]">
       <div className="mt-4 space-y-1">
-        <h1 className="text-xl sm:text-2xl md:text-[28px] font=semibold">Welcome Back</h1>
+        <h1 className="text-xl sm:text-2xl md:text-[28px] font-semibold">Welcome Back</h1>
         <p className="text-sm md:text-base text-mainGray">Sign in to access the Admin Dashboard</p>
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 w-full">

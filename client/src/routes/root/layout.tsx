@@ -1,5 +1,5 @@
 import { Outlet, useMatches, useNavigation } from 'react-router'
-import { Seo, type SeoHandle } from '@/components/seo'
+import { Seo, type SeoHandle } from '@/components/provider/seo'
 
 const DEFAULT_SEO = {
   title: 'Techstudio Portfolio',
