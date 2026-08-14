@@ -1,33 +1,33 @@
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 
-const GRADUATE_PHOTOS = [
-  {
-    src: "/images/Component19.svg",
-    alt: "Techstudio Academy graduate holding certificate",
-  },
-  {
-    src: "/images/Component20.svg",
-    alt: "Techstudio Academy graduates holding certificates",
-  },
-  {
-    src: "/images/Component21.svg",
-    alt: "Techstudio Academy graduates holding certificates",
-  },
-  {
-    src: "/images/Component22.svg",
-    alt: "Techstudio Academy graduates holding certificates",
-  },
-  {
-    src: "/images/Component23.svg",
-    alt: "Techstudio Academy graduate holding certificate",
-  },
-];
+// const GRADUATE_PHOTOS = [
+//   {
+//     src: "/images/Component19.svg",
+//     alt: "Techstudio Academy graduate holding certificate",
+//   },
+//   {
+//     src: "/images/Component20.svg",
+//     alt: "Techstudio Academy graduates holding certificates",
+//   },
+//   {
+//     src: "/images/Component21.svg",
+//     alt: "Techstudio Academy graduates holding certificates",
+//   },
+//   {
+//     src: "/images/Component22.svg",
+//     alt: "Techstudio Academy graduates holding certificates",
+//   },
+//   {
+//     src: "/images/Component23.svg",
+//     alt: "Techstudio Academy graduate holding certificate",
+//   },
+// ];
 
 export default function Hero() {
   return (
-    <section className="bg-[#1F2666] text-white">
-      <div className="mx-auto max-w-7xl px-4 pt-[69px] pb-[4px] sm:px-6 lg:px-[100px]">
+    <section className="py-20 bg-deepBlue text-white">
+      <div className="mx-auto max-w-7xl px-4 pt-17.25 pb-1 sm:px-6 lg:px-25">
         <h1 className="max-w-3xl text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl uppercase">
           500+ Student Projects Built, Countless Careers Launched
         </h1>
@@ -39,7 +39,7 @@ export default function Hero() {
 
         <Button
           onClick={() => toast.info("Coming soon!")}
-          className="mt-6 h-10 rounded-md bg-[#FCFDFF] px-6 text-sm text-[#0266F4] text-[16px] hover:bg-white/90"
+          className="mt-6 h-10 rounded-md bg-[#FCFDFF] px-6 text-sm text-mainBlue text-[16px] hover:bg-white/90"
         >
           Join Us Now
         </Button>
@@ -65,7 +65,7 @@ export default function Hero() {
 
       <img
         src="/images/students.svg"
-        className="block w-full py-[50px]"
+        className="block w-full py-12.5"
         alt=""
       />
     </section>

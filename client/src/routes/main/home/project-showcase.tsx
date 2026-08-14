@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Calendar, ChevronLeft, ChevronRight, Users } from "lucide-react";
+import { ChevronLeft, ChevronRight, } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Pagination,
@@ -152,12 +152,14 @@ export default function ProjectShowcase() {
   // Changing the filter/sort can make the current page out of range —
   // snap back to page 1 instead of showing an empty grid.
   useEffect(() => {
-    setPage(1);
+    const handlePageChange = () => setPage(1);
+    window.addEventListener("scroll", handlePageChange);
+    return () => window.removeEventListener("scroll", handlePageChange);
   }, [category, sortOrder]);
 
   return (
     <section className="bg-[#D0D0D0]/10">
-      <div className="mx-auto max-w-7xl px-4 pt-[100px] sm:px-6 lg:px-[100px]">
+      <div className="mx-auto max-w-7xl px-4 pt-25 sm:px-6 lg:px-25">
         <h2 className="text-3xl font-bold  tracking-[-5%] uppercase sm:text-4xl">
           Project Showcase
         </h2>
@@ -206,13 +208,13 @@ export default function ProjectShowcase() {
           </Select>
         </div>
 
-        <div className="mt-8 grid gap-[20px] sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((project) => (
             <article key={project.title}>
               <img
                 src={`https://images.unsplash.com/photo-${project.photoId}?w=400&h=250&fit=crop&auto=format`}
                 alt={project.title}
-                className="mx-auto h-[250px] w-[400px] max-w-full rounded-[30px] object-cover"
+                className="mx-auto h-62.5 w-100 max-w-full rounded-[30px] object-cover"
               />
 
               <div className="p-4">
@@ -239,7 +241,7 @@ export default function ProjectShowcase() {
           </p>
 
           <Pagination className="mx-0 w-auto justify-end">
-            <PaginationContent className="gap-[7px]">
+            <PaginationContent className="gap-1.75">
               <PaginationItem>
                 <PaginationLink
                   href="#"

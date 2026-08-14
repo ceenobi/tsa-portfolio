@@ -1,10 +1,10 @@
-import { useState } from 'react'
-import { ChevronDown, Menu, X } from 'lucide-react'
-import { toast } from 'react-toastify'
-import { Link } from 'react-router'
-import Logo from '@/components/logo'
-import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import Logo from '@/components/logo';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { ChevronDown, Menu, X } from 'lucide-react';
+import { useState } from 'react';
+import { Link } from 'react-router';
+import { toast } from 'react-toastify';
 
 const COURSES = [
   'Front End Development',
@@ -23,16 +23,17 @@ export default function Nav() {
   const [coursesOpen, setCoursesOpen] = useState(false)
 
   return (
-    <header className="relative z-20 bg-[#1F2666] text-[14px]">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-[100px]">
-        <Link to="/">
+  <div className='fixed top-0 w-full'>
+    <header className="relative z-20 bg-deepBlue text-[14px]">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-25">
+        <a href="https://www.techstudioacademy.com" rel='noopener noreferrer'>
           <Logo />
-        </Link>
+        </a>
 
         <nav className="hidden items-center gap-7 text-sm font-medium text-white lg:flex">
-          <Link to="/about" className="hover:text-blue-300">
+          <a href="https://www.techstudioacademy.com/about" rel='noopener noreferrer' className="hover:text-blue-300">
             About Us
-          </Link>
+          </a>
 
           <div
             className="group relative"
@@ -72,33 +73,30 @@ export default function Nav() {
           >
             Employers
           </button>
-          <button
-            type="button"
-            onClick={comingSoon}
+          <a href="https://www.techstudioacademy.com/faq"
+            rel='noopener noreferrer'
             className="hover:text-blue-300"
           >
             FAQ
-          </button>
-          <button
-            type="button"
-            onClick={comingSoon}
+          </a>
+          <a href="https://www.techstudioacademy.com/contact"
+            rel='noopener noreferrer'
             className="hover:text-blue-300"
           >
             Contact Us
-          </button>
-          <button
-            type="button"
-            onClick={comingSoon}
+          </a>
+          <a href="https://www.techstudioacademy.com/portfolio"
+            rel='noopener noreferrer'
             className="hover:text-blue-300"
           >
             Portfolio
-          </button>
+          </a>
         </nav>
 
         <div className="hidden lg:block">
           <Button
             onClick={comingSoon}
-            className="h-9 rounded-md bg-[#0266F4] py-[12px] px-[26px] text-sm text-white hover:bg-blue-500"
+            className="h-9 rounded-md bg-mainBlue py-3 px-6.5 text-sm text-white hover:bg-blue-500"
           >
             Register
           </Button>
@@ -170,6 +168,7 @@ export default function Nav() {
           </Button>
         </div>
       </div>
-    </header>
+      </header>
+    </div>
   );
 }

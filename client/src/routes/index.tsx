@@ -21,7 +21,7 @@ const routes = [
     children: [
       {
         Component: MainLayout,
-         middleware: [sessionMiddleware],
+        middleware: [sessionMiddleware],
         children: [
           {
             index: true,
