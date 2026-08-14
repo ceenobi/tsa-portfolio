@@ -43,26 +43,31 @@ export default function Hero() {
         >
           Join Us Now
         </Button>
+
+        {/* <div className="mt-10 grid grid-cols-2 gap-3 sm:flex sm:gap-3">
+          {GRADUATE_PHOTOS.map((photo) => (
+            <img
+              key={photo.src}
+              src={photo.src}
+              alt={photo.alt}
+              className="aspect-4/3 w-full rounded-lg object-cover sm:h-44 sm:w-auto"
+            />
+          ))}
+        </div> */}
+
+        {/* <div className="bg-[url('/images/Rectangle.svg')] w-full">
+          <div>
+            <img src="/images/Component18.svg" alt="student" />
+          </div>
+          <div></div>
+        </div> */}
       </div>
 
-      {/* <div className="mt-10 grid grid-cols-2 gap-3 sm:flex sm:gap-3">
-        {GRADUATE_PHOTOS.map((photo) => (
-          <img
-            key={photo.src}
-            src={photo.src}
-            alt={photo.alt}
-            className="aspect-4/3 w-full rounded-lg object-cover sm:h-44 sm:w-auto"
-          />
-        ))}
-      </div> */}
-
-      {/* <div className="bg-[url('/images/Rectangle.svg')] w-full">
-        <div>
-          <img src="/images/Component18.svg" alt="student" />
-        </div>
-        <div></div>
-      </div> */}
-      <img src="/images/students.svg" className="py-[50px]" alt="" />
+      <img
+        src="/images/students.svg"
+        className="block w-full py-[50px]"
+        alt=""
+      />
     </section>
   );
 }

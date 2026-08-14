@@ -1,6 +1,13 @@
-import { useState } from "react";
-import { Calendar, Users } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Calendar, ChevronLeft, ChevronRight, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+} from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -9,6 +16,30 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+
+// Small enough placeholder dataset that pagination is still exercised —
+// bump this up once real project counts are wired up to the backend.
+const PAGE_SIZE = 6;
+
+const range = (start: number, end: number) =>
+  end < start ? [] : Array.from({ length: end - start + 1 }, (_, i) => start + i);
+
+// Page-number list with an ellipsis for gaps, e.g. [1, 'ellipsis', 4, 5, 6, 'ellipsis', 20].
+function getPageNumbers(current: number, total: number): (number | "ellipsis")[] {
+  if (total <= 7) return range(1, total);
+
+  const pages: (number | "ellipsis")[] = [1];
+  if (current > 3) pages.push("ellipsis");
+
+  const start = Math.max(2, current - 1);
+  const end = Math.min(total - 1, current + 2);
+  pages.push(...range(start, end));
+
+  if (current < total - 2) pages.push("ellipsis");
+  pages.push(total);
+
+  return pages;
+}
 
 const CATEGORIES = [
   "All",
@@ -104,6 +135,7 @@ const PROJECTS: Project[] = [
 export default function ProjectShowcase() {
   const [category, setCategory] = useState<Category>("All");
   const [sortOrder, setSortOrder] = useState<SortOrder>("Most Recent");
+  const [page, setPage] = useState(1);
 
   const filtered =
     category === "All"
@@ -112,11 +144,20 @@ export default function ProjectShowcase() {
 
   // PROJECTS is authored most-recent-cohort-first, so "Oldest" is just the
   // reverse — swap for a real date sort once cohorts carry actual dates.
-  const projects = sortOrder === "Most Recent" ? filtered : [...filtered].reverse();
+  const sorted = sortOrder === "Most Recent" ? filtered : [...filtered].reverse();
+
+  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  const projects = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  // Changing the filter/sort can make the current page out of range —
+  // snap back to page 1 instead of showing an empty grid.
+  useEffect(() => {
+    setPage(1);
+  }, [category, sortOrder]);
 
   return (
     <section className="bg-[#D0D0D0]/10">
-      <div className="mx-auto max-w-7xl pt-[100px] mb-[16px] sm:px-6 lg:px-[100px]">
+      <div className="mx-auto max-w-7xl px-4 pt-[100px] sm:px-6 lg:px-[100px]">
         <h2 className="text-3xl font-bold  tracking-[-5%] uppercase sm:text-4xl">
           Project Showcase
         </h2>
@@ -192,9 +233,82 @@ export default function ProjectShowcase() {
           ))}
         </div>
 
-        <p className="mt-8 text-center text-sm text-muted-foreground">
-          9 Entries per page
-        </p>
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
+          <p className="text-sm text-muted-foreground">
+            {PAGE_SIZE} Entries per page
+          </p>
+
+          <Pagination className="mx-0 w-auto justify-end">
+            <PaginationContent className="gap-[7px]">
+              <PaginationItem>
+                <PaginationLink
+                  href="#"
+                  aria-label="Go to previous page"
+                  aria-disabled={page === 1}
+                  size="icon"
+                  className={cn(
+                    "size-7 rounded-md border-transparent",
+                    page === 1
+                      ? "pointer-events-none bg-muted text-muted-foreground opacity-60"
+                      : "bg-[#1988FE] text-white hover:bg-[#1988FE]/90",
+                  )}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setPage((p) => Math.max(1, p - 1));
+                  }}
+                >
+                  <ChevronLeft />
+                </PaginationLink>
+              </PaginationItem>
+
+              {getPageNumbers(page, totalPages).map((item, index) =>
+                item === "ellipsis" ? (
+                  <PaginationItem key={`ellipsis-${index}`}>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                ) : (
+                  <PaginationItem key={item}>
+                    <PaginationLink
+                      href="#"
+                      isActive={item === page}
+                      className={cn(
+                        "size-7 border-transparent bg-transparent text-sm font-medium text-[#878789] hover:bg-transparent hover:underline",
+                        item === page && "font-semibold text-[#E00017]",
+                      )}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setPage(item);
+                      }}
+                    >
+                      {item}
+                    </PaginationLink>
+                  </PaginationItem>
+                ),
+              )}
+
+              <PaginationItem>
+                <PaginationLink
+                  href="#"
+                  aria-label="Go to next page"
+                  aria-disabled={page === totalPages}
+                  size="icon"
+                  className={cn(
+                    "size-7 rounded-md border-transparent",
+                    page === totalPages
+                      ? "pointer-events-none bg-muted text-muted-foreground opacity-60"
+                      : "bg-[#1988FE] text-white hover:bg-[#1988FE]/90",
+                  )}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setPage((p) => Math.min(totalPages, p + 1));
+                  }}
+                >
+                  <ChevronRight />
+                </PaginationLink>
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
       </div>
     </section>
   );

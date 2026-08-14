@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { ArrowRight } from 'lucide-react'
 import { toast } from 'react-toastify'
 import Logo from '@/components/logo'
 import { Button } from '@/components/ui/button'
@@ -19,7 +20,7 @@ function comingSoon() {
 
 function SocialIcon({ path }: { path: string }) {
   return (
-    <svg viewBox="0 0 24 24" className="size-4 fill-current">
+    <svg viewBox="0 0 24 24" className="size-5 fill-current">
       <path d={path} />
     </svg>
   )
@@ -52,7 +53,7 @@ export default function Footer() {
   return (
     <footer className="bg-blue-950 text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 lg:py-[60px] sm:px-6 lg:px-[100px]">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-[30px] sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <Logo />
             <p className="mt-4 max-w-xs text-sm text-white/70">
@@ -78,7 +79,7 @@ export default function Footer() {
             <ul className="mt-4 space-y-3 text-sm text-white/70">
               {ABOUT_LINKS.map((link) => (
                 <li key={link}>
-                  <button type="button" onClick={comingSoon} className="hover:text-white">
+                  <button type="button" onClick={comingSoon} className="text-white">
                     {link}
                   </button>
                 </li>
@@ -88,24 +89,35 @@ export default function Footer() {
 
           <div>
             <h3 className="text-sm font-bold">Subscribe to our newsletter</h3>
-            <form onSubmit={handleSubscribe} className="mt-4 flex overflow-hidden rounded-md bg-white">
+            <form
+              onSubmit={handleSubscribe}
+              className="mt-4 flex items-center gap-2 rounded-lg bg-white p-1.5  "
+            >
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email Address"
-                className="w-full min-w-0 px-3 py-2 text-sm text-foreground outline-none"
+                className="w-full min-w-0 bg-transparent px-2 text-sm text-muted-foreground outline-none placeholder:text-muted-foreground"
               />
-              <Button type="submit" className="h-auto rounded-none bg-blue-600 px-4 text-sm text-white hover:bg-blue-500">
-                Subscribe →
+              <Button
+                type="submit"
+                className="h-auto shrink-0 gap-1.5 rounded-md bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-500"
+              >
+                Subscribe
+                <ArrowRight className="size-4" />
               </Button>
             </form>
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col w-full justify-end  items-center  gap-4 border-t border-t-[1.4px] border-white pt-6 sm:flex-row">
-          <button type="button" onClick={comingSoon} className="text-[16px] text-white hover:text-white">
+        <div className="mt-10 flex flex-col w-full justify-end  items-center  gap-[42px] border-t border-t-[1.4px] border-white pt-6 sm:flex-row">
+          <button
+            type="button"
+            onClick={comingSoon}
+            className="align-middle font-sans text-[16px] font-normal tracking-[0.2px] text-white leading-[28.8px] hover:text-white [leading-trim:none]"
+          >
             Terms and Policy
           </button>
 
