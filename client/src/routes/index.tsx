@@ -1,4 +1,4 @@
-import ErrorBoundary from '@/components/error-boundary';
+import ErrorBoundary from '@/components/provider/error-boundary';
 import SuspenseUi from '@/components/ui/suspense-ui';
 import { guestMiddleware, sessionMiddleware } from '@/middleware/auth';
 import { createBrowserRouter, type RouteObject } from 'react-router';
@@ -21,7 +21,7 @@ const routes = [
     children: [
       {
         Component: MainLayout,
-         middleware: [sessionMiddleware],
+        middleware: [sessionMiddleware],
         children: [
           {
             index: true,
@@ -110,6 +110,28 @@ const routes = [
             },
             lazy: async () => {
               const { default: Component } = await import('@/routes/auth/reset-password')
+              return { Component }
+            },
+          },
+        ],
+      },
+      {
+        path: 'dashboard',
+        handle: {
+          seo: {
+            title: 'Dashboard - Techstudio Academy Portfolio',
+            description: 'Admin dashboard, manage cohorts portfolios here.',
+          },
+        },
+        lazy: async () => {
+          const { default: Component } = await import('@/routes/dashboard/layout')
+          return { Component }
+        },
+        children: [
+          {
+            index: true,
+            lazy: async () => {
+              const { default: Component } = await import('@/routes/dashboard')
               return { Component }
             },
           },

@@ -1,5 +1,6 @@
-import Nav from '@/components/nav'
-import { Outlet } from 'react-router'
+import Footer from '@/components/ui/footer';
+import Nav from '@/components/ui/nav';
+import { Outlet } from 'react-router';
 
 export default function MainLayout() {
   return (
@@ -8,6 +9,7 @@ export default function MainLayout() {
       <main>
         <Outlet />
       </main>
+      <Footer />
     </>
   )
 }

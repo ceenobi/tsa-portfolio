@@ -64,7 +64,7 @@ export default function VerifyAccount() {
   return (
     <div className="space-y-8">
       <div className="mt-4 space-y-1">
-        <h1 className="text-xl sm:text-2xl md:text-[28px] font=semibold">Verify Account</h1>
+        <h1 className="text-xl sm:text-2xl md:text-[28px] font-semibold">Verify Account</h1>
         <p className="text-sm md:text-base text-mainGray">Enter the verification code sent to your email.</p>
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

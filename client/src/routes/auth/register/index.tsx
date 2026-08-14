@@ -55,7 +55,7 @@ export default function Register() {
   return (
     <div className="space-y-8">
       <div className="mt-4 space-y-1">
-        <h1 className="text-xl sm:text-2xl md:text-[28px] font=semibold">Create an Admin Account</h1>
+        <h1 className="text-xl sm:text-2xl md:text-[28px] font-semibold">Create an Admin Account</h1>
         <p className="text-sm md:text-base text-mainGray">Register to manage the Academy Portfolio Archive</p>
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
