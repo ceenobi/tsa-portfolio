@@ -1,11 +1,20 @@
 import { Outlet } from "react-router";
+import Sidebar from "./sidebar";
+import { Tabs } from "./tabs";
+import DashboardNav from "./dashboardNav";
 
 export default function DashboardLayout() {
   return (
     <>
-      {/*handle the sidebar - create the component in provider folder and import it here, outlet renders the routes for the dashboard sidebar*/}
-      {/*dashboard layout has its own nav, create it in ui folder and import it here*/}
-      <Outlet/>
+       <div className="flex h-screen">
+      <Sidebar tabs={Tabs} />
+      <main className="flex-1 overflow-y-auto">
+        <DashboardNav />
+        <div className="p-6">
+          <Outlet />
+        </div>
+      </main>
+    </div>
     </>
   );
 }
