@@ -1,7 +1,7 @@
 import { createBrowserRouter, type RouteObject } from "react-router";
 import ErrorBoundary from "@/components/provider/error-boundary";
 import SuspenseUi from "@/components/ui/suspense-ui";
-import { guestMiddleware, sessionMiddleware } from "@/middleware/auth";
+import { guestMiddleware, requireAuth, sessionMiddleware } from "@/middleware/auth";
 import AuthLayout from "./auth/layout";
 import MainLayout from "./main/layout";
 import Root from "./root/layout";
@@ -77,21 +77,6 @@ const routes = [
 						},
 					},
 					{
-						path: "register",
-						handle: {
-							seo: {
-								title: "Register - Techstudio Academy Portfolio",
-								description: "Register for an admin account.",
-							},
-						},
-						lazy: async () => {
-							const { default: Component } = await import(
-								"@/routes/auth/register"
-							);
-							return { Component };
-						},
-					},
-					{
 						path: "verify-account",
 						handle: {
 							seo: {
@@ -139,18 +124,21 @@ const routes = [
 				],
 			},
 			{
-				path: "dashboard",
+        path: "dashboard",
+				middleware: [requireAuth],
 				handle: {
 					seo: {
 						title: "Dashboard - Techstudio Academy Portfolio",
 						description: "Admin dashboard, manage cohorts portfolios here.",
 					},
 				},
-				lazy: async () => {
-					const { default: Component } = await import(
-						"@/routes/dashboard/layout"
-					);
-					return { Component };
+				lazy: {
+					Component: () =>
+						import("@/routes/dashboard/layout").then((m) => m.default),
+					loader: () =>
+						import("@/routes/dashboard/loader").then(
+							(m) => m.dashboardLoader
+						),
 				},
 				children: [
 					{
