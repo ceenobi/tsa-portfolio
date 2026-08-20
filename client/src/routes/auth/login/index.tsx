@@ -29,8 +29,8 @@ export default function Login() {
 		},
 		onSuccess: (res) => {
 			if (res.success) {
-				toast.success("Account created successfully");
-				navigate(`/`);
+				toast.success("Login successful");
+				navigate(`/dashboard`);
 			}
 		},
 		onError: (err) => {
