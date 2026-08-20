@@ -135,6 +135,20 @@ const routes = [
               return { Component }
             },
           },
+          {
+            path: "portfolio",
+            lazy: async () => {
+              const { default: Component } = await import('@/routes/dashboard/portfolio')
+              return { Component }
+            },
+          },
+          {
+            path: "settings",
+            lazy: async () => {
+              const { default: Component } = await import('@/routes/dashboard/settings')
+              return { Component }
+            },
+          },
         ],
       },
     ],
