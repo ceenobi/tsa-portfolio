@@ -2,6 +2,8 @@ import { useLocation } from "react-router";
 import { Search, ChevronDown, ChevronUp, UserRoundCog, LogOut } from "lucide-react";
 import { useState } from "react";
 import DefaultAvatar from "../../assets/defaultAvatar.svg"
+import AccountSettingsIcon from "../../assets/account-setting-icon.svg"
+import LogoutOutIcon from "../../assets/log-out-icon.svg"
 
 export default function DashboardNav() {
   const location = useLocation();
@@ -50,10 +52,10 @@ export default function DashboardNav() {
         <div className="absolute right-0 top-full mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg z-50">
           <ul className="py-2 text-sm text-gray-700 text-[16px]">
             <li className="px-4 py-2 hover:bg-gray-100 text-[#292929] cursor-pointer flex items-center gap-2">
-              <UserRoundCog size={24} /> Account Settings
+              <img src={AccountSettingsIcon} alt="" />Account Settings
             </li>
             <li className="px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer flex items-center gap-2">
-              <LogOut />  Log out
+              <img src={LogoutOutIcon} alt="" /> Log out
             </li>
           </ul>
         </div>
