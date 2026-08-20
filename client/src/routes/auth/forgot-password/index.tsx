@@ -8,6 +8,7 @@ import type { z } from "zod";
 import ActionBtn from "@/components/ui/action-btn";
 import { FormBox } from "@/components/ui/form-box";
 import { api } from "@/lib/api";
+
 export default function ForgotPassword() {
 	const {
 		register,
