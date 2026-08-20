@@ -16,6 +16,8 @@ import { globalLimiter } from './middlewares/rateLimit.middleware.js';
 //routes
 import authRoutes from './routes/auth.routes.js';
 import emailRoutes from './routes/email.routes.js';
+import uploadRoutes from './routes/upload.routes.js';
+
 
 declare global {
   namespace Express {
