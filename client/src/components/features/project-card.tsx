@@ -1,22 +1,20 @@
+import type { Project } from "@tsa/shared";
 import { Link } from "react-router";
+import { BlurImage } from "@/components/ui/blur-image";
+import { getBlurPlaceholderUrl, getOptimizedImageUrl } from "@/lib/utils";
 
-type ProjectProps = {
-  _id: string;
-  title: string;
-  category: string;
-  cohort: string;
-  members: number;
-  photoId: string;
-}
+export default function ProjectCard({ project }: { project: Project }) {
+  const cover = getOptimizedImageUrl(project.coverImageUrl, 800, 500);
 
-export default function ProjectCard({ project }: { project: ProjectProps }) {
   return (
-    <Link to={`/projects/${project.title.replace(/\s+/g, '-').toLowerCase()}/${project._id}`}>
+    <Link to={`/projects/${project.slug}/${project._id}`} className="group">
         <article key={project.title}>
-          <img
-            src={`https://images.unsplash.com/photo-${project.photoId}?w=400&h=250&fit=crop&auto=format`}
+          <BlurImage
+            src={cover}
             alt={project.title}
-            className="mx-auto h-62.5 w-100 max-w-full rounded-[30px] object-cover"
+            blurSrc={getBlurPlaceholderUrl(project.coverImageUrl)}
+            className="mx-auto h-62.5 w-100 max-w-full rounded-[30px] transition-all duration-300 group-hover:border-4 group-hover:border-mainBlue"
+            imgClassName="group-hover:scale-105"
           />
 
           <div className="p-4">
@@ -29,7 +27,7 @@ export default function ProjectCard({ project }: { project: ProjectProps }) {
               <span aria-hidden>·</span>
               <span className="flex items-center gap-1">
                 <img src="/images/User.svg" className="size-4" alt="" />
-                {project.members} members
+                {project.teamMembers.length} members
               </span>
             </p>
           </div>
