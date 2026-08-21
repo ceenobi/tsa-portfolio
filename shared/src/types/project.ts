@@ -11,7 +11,7 @@ export interface ProjectTeamMember {
 export interface ProjectLinks {
   github?: string;
   figma?: string;
-  live?: string;
+  url?: string;
 }
 
 export interface Project {
@@ -24,7 +24,7 @@ export interface Project {
   summary?: string;
   description: string;
   coverImageUrl?: string;
-  gallery?: string[];
+  media?: { mediaUrl: string; publicId: string }[];
   teamMembers: ProjectTeamMember[];
   links?: ProjectLinks;
   status: ProjectStatus;
@@ -39,4 +39,26 @@ export type GetProjectsResponse = ApiSuccessResponse<{
   page: number;
   totalPages: number;
   total: number;
+}>;
+
+export interface ProjectDoc {
+  _id: string;
+  title: string;
+  department: string[];
+  cohort: string;
+  academicYear: string;
+  description: string;
+  thumbnail: string;
+  coverImage: string;
+  media: { mediaUrl: string; publicId: string }[];
+  teamMembers: { fullName: string; image?: string }[];
+  links?: { github?: string; figma?: string };
+  status: ProjectStatus;
+  createdBy: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export type CreateProjectResponse = ApiSuccessResponse<{
+  project: ProjectDoc;
 }>;

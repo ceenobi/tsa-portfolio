@@ -24,10 +24,22 @@ export const uploadFile = tryCatchWrapper(async (req: Request, res: Response) =>
 
 export const deleteFile = tryCatchWrapper(async (req: Request, res: Response) => {
   const { mediaIds } = req.body
-  await Promise.all(mediaIds.map((id: string) => deleteFromCloudinary(id)))
+  const results = await Promise.all(
+    mediaIds.map(async (id: string) => {
+      try {
+        const result = await deleteFromCloudinary(id)
+        return {
+          publicId: id,
+          deleted: result.result === 'ok' || result.result === 'not found',
+        }
+      } catch {
+        return { publicId: id, deleted: false }
+      }
+    })
+  )
   return sendTsRestSuccess(res, 200, {
     success: true,
-    message: 'Media deleted successfully',
-    body: mediaIds,
+    message: 'Media deletion processed',
+    body: results,
   })
 })

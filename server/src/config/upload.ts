@@ -1,4 +1,5 @@
 import { v2 as cloudinary, type UploadApiOptions } from 'cloudinary'
+import { createHash } from 'node:crypto'
 import { env } from './keys.js'
 import logger from './logger.js'
 
@@ -20,8 +21,14 @@ function getUploadErrorMessage(error: unknown): string {
 
 export const uploadToCloudinary = async (file: string, options: Partial<UploadApiOptions> = {}) => {
   try {
+    // Deterministic public_id from content — identical uploads overwrite the
+    // same asset instead of creating orphaned duplicates (idempotent).
+    const publicId = createHash('sha256').update(file).digest('hex')
     const defaultOptions: UploadApiOptions = {
       folder: 'TSAPortfolio',
+      public_id: publicId,
+      overwrite: true,
+      invalidate: true,
       resource_type: 'auto',
       // Image optimization settings
       quality: 'auto',

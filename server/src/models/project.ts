@@ -1,4 +1,4 @@
-import { PROJECT_DEPARTMENTS } from "@tsa/shared";
+import { PROJECT_DEPARTMENTS, PROJECT_STATUS } from "@tsa/shared";
 import mongoose, { type Document, Schema } from "mongoose";
 
 export interface ITeamMember {
@@ -7,6 +7,7 @@ export interface ITeamMember {
 }
 
 export interface IProjectLinks {
+	url?: string;
 	github?: string;
 	figma?: string;
 }
@@ -20,9 +21,16 @@ export interface IProject extends Document {
 	description: string;
 	thumbnail: string;
 	coverImage: string;
+	media: {
+		mediaUrl: string;
+		publicId: string;
+	}[];
 	teamMembers: ITeamMember[];
 	links?: IProjectLinks;
+	status: (typeof PROJECT_STATUS)[number];
 	createdBy: mongoose.Types.ObjectId;
+	createdAt?: Date;
+	updatedAt?: Date;
 }
 
 const TeamMemberSchema = new Schema<ITeamMember>(
@@ -35,6 +43,7 @@ const TeamMemberSchema = new Schema<ITeamMember>(
 
 const ProjectLinksSchema = new Schema<IProjectLinks>(
 	{
+		url: { type: String },
 		github: { type: String },
 		figma: { type: String },
 	},
@@ -80,6 +89,16 @@ const ProjectSchema = new Schema<IProject>(
 			type: String,
 			required: true,
 		},
+		media: {
+			type: [
+				{
+					mediaUrl: String,
+					publicId: String,
+				},
+			],
+			required: true,
+			maxlength: 10,
+		},
 		teamMembers: {
 			type: [TeamMemberSchema],
 			validate: {
@@ -90,6 +109,11 @@ const ProjectSchema = new Schema<IProject>(
 		},
 		links: {
 			type: ProjectLinksSchema,
+		},
+		status: {
+			type: String,
+			enum: PROJECT_STATUS,
+			default: "draft",
 		},
 		createdBy: {
 			type: Schema.Types.ObjectId,
@@ -108,6 +132,8 @@ const ProjectSchema = new Schema<IProject>(
 // and the "Most Recent"/"Oldest" sort (uses createdAt from timestamps).
 ProjectSchema.index({ department: 1, createdAt: -1 });
 ProjectSchema.index({ cohort: 1 });
+// Enforces a unique project per cohort + academic year at the DB level.
+ProjectSchema.index({ title: 1, cohort: 1, academicYear: 1 }, { unique: true });
 
 const Project =
 	mongoose.models.Project ||

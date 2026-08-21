@@ -30,8 +30,10 @@ export const cacheMiddleware = (durationSeconds: number = 60) => {
     // Override res.json to capture the response body for caching
     const originalJson = res.json.bind(res)
     res.json = function (body: any): Response {
-      // Cache the response (don't await — fire and forget)
-      setCache(key, JSON.stringify(body), durationSeconds)
+      // Only cache successful responses — error bodies shouldn't be replayed as 200
+      if (res.statusCode < 400) {
+        setCache(key, JSON.stringify(body), durationSeconds)
+      }
       res.setHeader('x-cache', 'MISS')
       return originalJson(body)
     }
