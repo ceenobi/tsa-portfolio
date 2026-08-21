@@ -68,9 +68,9 @@ export const MOCK_PROJECTS: Project[] = [
 			"1918 Deluxe Auto Insurance is a security monitoring platform built for an auto insurance firm. It centralizes policy data access logs, flags suspicious activity in real time, and keeps the organization aligned with regulatory compliance standards.",
 		coverImageUrl:
 			"https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=1600&auto=format&fit=crop",
-		gallery: [
-			"https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop",
-			"https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop",
+		media: [
+			{ mediaUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-1" },
+			{ mediaUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-2" },
 		],
 		teamMembers: [
 			{ name: "Tunde Bakare", role: "Security Analyst" },
@@ -78,7 +78,7 @@ export const MOCK_PROJECTS: Project[] = [
 			{ name: "Ibrahim Musa", role: "Data Analyst" },
 			{ name: "Grace Okafor", role: "Product Designer" },
 		],
-		links: { live: "https://github.com/", github: "https://github.com/" },
+		links: { url: "https://github.com/", github: "https://github.com/" },
 		status: "published",
 	},
 	{
@@ -93,9 +93,9 @@ export const MOCK_PROJECTS: Project[] = [
 			"Streamline is an AI-powered workflow solution that helps product teams cut repetitive work. It surfaces smart task suggestions, automates status updates, and keeps everyone aligned across sprints.",
 		coverImageUrl:
 			"https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1600&auto=format&fit=crop",
-		gallery: [
-			"https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop",
-			"https://images.unsplash.com/photo-1504868584819-f8e8b4b6b7e3?q=80&w=1200&auto=format&fit=crop",
+		media: [
+			{ mediaUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-1" },
+			{ mediaUrl: "https://images.unsplash.com/photo-1504868584819-f8e8b4b6b7e3?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-2" },
 		],
 		teamMembers: [
 			{ name: "Amara Eze", role: "Product Designer" },
@@ -117,9 +117,9 @@ export const MOCK_PROJECTS: Project[] = [
 			"Accelerate is a full-stack business intelligence platform that turns raw sales data into growth levers. It offers dashboards, forecasting, and drill-down reports that help small businesses find their next 10x opportunity.",
 		coverImageUrl:
 			"https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1600&auto=format&fit=crop",
-		gallery: [
-			"https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop",
-			"https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop",
+		media: [
+			{ mediaUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-1" },
+			{ mediaUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-2" },
 		],
 		teamMembers: [
 			{ name: "Kelechi Obi", role: "Full Stack Developer" },
@@ -127,7 +127,7 @@ export const MOCK_PROJECTS: Project[] = [
 			{ name: "Samuel Ajayi", role: "Backend Developer" },
 			{ name: "Ngozi Umeh", role: "Data Analyst" },
 		],
-		links: { live: "https://github.com/", github: "https://github.com/" },
+		links: { url: "https://github.com/", github: "https://github.com/" },
 		status: "published",
 	},
 	{
@@ -142,9 +142,9 @@ export const MOCK_PROJECTS: Project[] = [
 			"AI Generated Resources is a data analysis project that ingests large libraries of learning material and uses NLP to classify, rank, and recommend resources by topic and difficulty.",
 		coverImageUrl:
 			"https://images.unsplash.com/photo-1522252234503-e356532cafd5?q=80&w=1600&auto=format&fit=crop",
-		gallery: [
-			"https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop",
-			"https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop",
+		media: [
+			{ mediaUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-1" },
+			{ mediaUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-2" },
 		],
 		teamMembers: [
 			{ name: "Oluwaseun Adeyemi", role: "Data Analyst" },
@@ -166,9 +166,9 @@ export const MOCK_PROJECTS: Project[] = [
 			"Empowering Change is a product design project for a platform that connects citizens with local sustainability initiatives. It simplifies volunteering, tracks community impact, and celebrates small wins.",
 		coverImageUrl:
 			"https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=1600&auto=format&fit=crop",
-		gallery: [
-			"https://images.unsplash.com/photo-1504868584819-f8e8b4b6b7e3?q=80&w=1200&auto=format&fit=crop",
-			"https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop",
+		media: [
+			{ mediaUrl: "https://images.unsplash.com/photo-1504868584819-f8e8b4b6b7e3?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-1" },
+			{ mediaUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-2" },
 		],
 		teamMembers: [
 			{ name: "Yemi Adeleke", role: "Product Designer" },
@@ -190,16 +190,16 @@ export const MOCK_PROJECTS: Project[] = [
 			"SecureWave Threat Monitor is a cybersecurity project that aggregates intrusion signals from across a network into a single live dashboard. It visualizes attack vectors and prioritizes incidents by severity.",
 		coverImageUrl:
 			"https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1600&auto=format&fit=crop",
-		gallery: [
-			"https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop",
-			"https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop",
+		media: [
+			{ mediaUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-1" },
+			{ mediaUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-2" },
 		],
 		teamMembers: [
 			{ name: "Aisha Mohammed", role: "Security Analyst" },
 			{ name: "David Osei", role: "Cybersecurity Engineer" },
 			{ name: "Funmilayo Adebisi", role: "Data Analyst" },
 		],
-		links: { live: "https://github.com/", github: "https://github.com/" },
+		links: { url: "https://github.com/", github: "https://github.com/" },
 		status: "published",
 	},
 	{
@@ -214,9 +214,9 @@ export const MOCK_PROJECTS: Project[] = [
 			"This project is a full-stack event ticketing platform that handles everything from purchase to check-in. It automates seat allocation, sends digital tickets, and gives organizers a real-time attendance view.",
 		coverImageUrl:
 			"https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1600&auto=format&fit=crop",
-		gallery: [
-			"https://images.unsplash.com/photo-1504868584819-f8e8b4b6b7e3?q=80&w=1200&auto=format&fit=crop",
-			"https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop",
+		media: [
+			{ mediaUrl: "https://images.unsplash.com/photo-1504868584819-f8e8b4b6b7e3?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-1" },
+			{ mediaUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-2" },
 		],
 		teamMembers: [
 			{ name: "Tobi Alabi", role: "Full Stack Developer" },
@@ -224,7 +224,7 @@ export const MOCK_PROJECTS: Project[] = [
 			{ name: "Chidi Nnaji", role: "Backend Developer" },
 			{ name: "Aisha Bello", role: "Product Designer" },
 		],
-		links: { live: "https://github.com/", github: "https://github.com/" },
+		links: { url: "https://github.com/", github: "https://github.com/" },
 		status: "published",
 	},
 	{
@@ -239,9 +239,9 @@ export const MOCK_PROJECTS: Project[] = [
 			"Read Stories, Speak Stories is a data analysis project that tracks literacy outcomes across schools. It aggregates reading logs, measures progress against benchmarks, and surfaces insights for educators.",
 		coverImageUrl:
 			"https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=1600&auto=format&fit=crop",
-		gallery: [
-			"https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop",
-			"https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop",
+		media: [
+			{ mediaUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-1" },
+			{ mediaUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-2" },
 		],
 		teamMembers: [
 			{ name: "Nnamdi Eze", role: "Data Analyst" },
@@ -263,16 +263,16 @@ export const MOCK_PROJECTS: Project[] = [
 			"The Network Intrusion Detection Suite is a cybersecurity project that monitors network traffic and detects anomalies in real time. It categorizes attack types, generates alerts, and provides replayable evidence for incident response.",
 		coverImageUrl:
 			"https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=1600&auto=format&fit=crop",
-		gallery: [
-			"https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop",
-			"https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop",
+		media: [
+			{ mediaUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-1" },
+			{ mediaUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-2" },
 		],
 		teamMembers: [
 			{ name: "Bisi Adewale", role: "Security Analyst" },
 			{ name: "Kola Ogunleye", role: "Network Engineer" },
 			{ name: "Ada Obi", role: "Cybersecurity Engineer" },
 		],
-		links: { live: "https://github.com/", github: "https://github.com/" },
+		links: { url: "https://github.com/", github: "https://github.com/" },
 		status: "published",
 	},
 	{
