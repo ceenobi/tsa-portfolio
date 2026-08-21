@@ -12,7 +12,6 @@ import {
 	initials,
 } from "@/lib/utils";
 
-
 export default function Project() {
 	const { projectId } = useParams<{ slug: string; projectId: string }>();
 	const { data: project, isLoading, isError } = useProject(projectId);
@@ -26,7 +25,7 @@ export default function Project() {
 	const cover = getOptimizedImageUrl(project.coverImageUrl, 1280, 720);
 	const memberCount = project.teamMembers.length;
 	const links = project.links ?? {};
-	const hasLinks = Boolean(links.live || links.github || links.figma);
+	const hasLinks = Boolean(links.url || links.github || links.figma);
 
 	return (
 		<>
@@ -88,16 +87,16 @@ export default function Project() {
 				)}
 
 				{/* Gallery (optional) */}
-				{project.gallery && project.gallery.length > 0 && (
+				{project.media && project.media.length > 0 && (
 					<section className="mt-12">
 						<h2 className="text-xl font-semibold">Gallery</h2>
 						<div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-							{project.gallery.map((src, i) => (
+							{project.media.map((m, i) => (
 								<BlurImage
-									key={`${src}-${i}`}
-									src={getOptimizedImageUrl(src, 800, 500)}
+									key={`${m.publicId}-${i}`}
+									src={getOptimizedImageUrl(m.mediaUrl, 800, 500)}
 									alt={`${project.title} screenshot ${i + 1}`}
-									blurSrc={getBlurPlaceholderUrl(src)}
+									blurSrc={getBlurPlaceholderUrl(m.mediaUrl)}
 									className="aspect-video w-full rounded-xl border border-border"
 								/>
 							))}
@@ -143,13 +142,13 @@ export default function Project() {
 					<section className="mt-12">
 						<h2 className="text-xl font-semibold">Project links</h2>
 						<div className="mt-4 flex flex-wrap gap-3">
-							{links.live && (
+							{links.url && (
 								<Button
 									size="lg"
 									nativeButton={false}
 									className="h-10 px-5 text-sm"
 									render={
-										<a href={links.live} target="_blank" rel="noreferrer" />
+										<a href={links.url} target="_blank" rel="noreferrer" />
 									}
 								>
 									<ExternalLink /> Live site

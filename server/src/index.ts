@@ -20,6 +20,7 @@ import { globalLimiter } from "./middlewares/rateLimit.middleware.js";
 //routes
 import authRoutes from "./routes/auth.routes.js";
 import emailRoutes from "./routes/email.routes.js";
+import projectRoutes from "./routes/project.routes.js";
 import uploadRoutes from "./routes/upload.routes.js";
 
 declare global {
@@ -99,7 +100,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 	next();
 });
 
-app.use("/health", (req: Request, res: Response, next: NextFunction) => {
+app.use("/health", (req: Request, res: Response) => {
 	res.status(200).json({
 		status: "success",
 		message: "Server is running",
@@ -112,6 +113,7 @@ app.use("/health", (req: Request, res: Response, next: NextFunction) => {
 //api routes
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/upload", uploadRoutes);
+app.use("/api/v1/projects", projectRoutes);
 
 // Handle 404
 app.use(notFoundRoutes);
@@ -121,7 +123,7 @@ app.use(appErrorHandler);
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3800;
 
 const startServer = async (): Promise<void> => {
-	let server: any;
+	let server: ReturnType<typeof app.listen>;
 	try {
 		await connectToDB();
 		server = app.listen(PORT, "0.0.0.0", () => {
@@ -155,11 +157,9 @@ const startServer = async (): Promise<void> => {
 				case "EACCES":
 					logger.error(`Port ${PORT} requires elevated privileges`);
 					process.exit(1);
-					break;
 				case "EADDRINUSE":
 					logger.error(`Port ${PORT} is already in use`);
 					process.exit(1);
-					break;
 				default:
 					throw error;
 			}

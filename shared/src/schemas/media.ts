@@ -10,5 +10,7 @@ export const UploadSchema = z.object({
 })
 
 export const DeleteMediaSchema = z.object({
-  mediaIds: z.array(z.string()),
+  mediaIds: z.array(z.string()).min(1, {
+    message: "At least one media id is required",
+  }),
 })
