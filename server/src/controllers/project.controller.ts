@@ -2,6 +2,7 @@ import type {
 	CreateProjectResponse,
 	GetProjectResponse,
 	GetProjectsResponse,
+	GetRecentProjectsResponse,
 } from "@tsa/shared";
 import type { Request, Response } from "express";
 import { flushCache } from "../libs/cache.js";
@@ -10,6 +11,7 @@ import tryCatchWrapper from "../libs/tryCatchWrapper.js";
 import {
 	createProject,
 	getProject,
+	getRecentlyAddedProjects,
 	listProjects,
 } from "../services/projectService.js";
 
@@ -42,9 +44,26 @@ export const getProjects = tryCatchWrapper(
 		const limit = Number(req.query.limit) || 6;
 		const category =
 			typeof req.query.category === "string" ? req.query.category : undefined;
-		const sort = typeof req.query.sort === "string" ? req.query.sort : undefined;
+		const sort =
+			typeof req.query.sort === "string" ? req.query.sort : undefined;
+		const query =
+			typeof req.query.query === "string" ? req.query.query : undefined;
+		const cohort =
+			typeof req.query.cohort === "string" ? req.query.cohort : undefined;
+		const year = typeof req.query.year === "string" ? req.query.year : undefined;
+		const status =
+			typeof req.query.status === "string" ? req.query.status : undefined;
 
-		const result = await listProjects({ page, limit, category, sort });
+		const result = await listProjects({
+			page,
+			limit,
+			category,
+			sort,
+			query,
+			cohort,
+			year,
+			status,
+		});
 
 		return sendTsRestSuccess<GetProjectsResponse["body"]>(res, 200, {
 			success: true,
@@ -67,7 +86,22 @@ export const getProjectById = tryCatchWrapper(
 		return sendTsRestSuccess<GetProjectResponse["body"]>(res, 200, {
 			success: true,
 			message: "Project fetched successfully.",
-			body: result.project,
+			body: {
+				project: result.project,
+				recommended: result.recommended,
+			},
+		});
+	},
+);
+
+//dashboard controllers
+export const recentlyAddedProjects = tryCatchWrapper(
+	async (req: Request, res: Response) => {
+		const result = await getRecentlyAddedProjects();
+		return sendTsRestSuccess<GetRecentProjectsResponse["body"]>(res, 200, {
+			success: true,
+			message: "Dashboard overview fetched successfully.",
+			body: result,
 		});
 	},
 );
