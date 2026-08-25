@@ -3,7 +3,7 @@ import { Client as Memcached } from "memjs";
 import { env } from "../config/keys.js";
 import logger from "../config/logger.js";
 
-const CACHE_PREFIX = "ev:v1";
+const CACHE_PREFIX = "tsa:v1";
 const DEFAULT_TTL = 3600; // 1 hour
 
 // Memcached client — survives across serverless warm starts

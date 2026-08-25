@@ -1,6 +1,11 @@
-import type { createProjectSchema, Project, ProjectDoc } from "@tsa/shared";
-import { PROJECT_DEPARTMENTS } from "@tsa/shared";
-import { isValidObjectId, type QueryFilter } from "mongoose";
+import type {
+	createProjectSchema,
+	Project,
+	ProjectDoc,
+	RecentProjectsOverview,
+} from "@tsa/shared";
+import { PROJECT_DEPARTMENTS, PROJECT_STATUS } from "@tsa/shared";
+import { isValidObjectId, type QueryFilter, Types } from "mongoose";
 import type { z } from "zod";
 import logger from "../config/logger.js";
 import ProjectModel, { type IProject } from "../models/project.js";
@@ -95,11 +100,19 @@ export const listProjects = async ({
 	limit = 6,
 	category,
 	sort,
+	query,
+	cohort,
+	year,
+	status,
 }: {
 	page?: number;
 	limit?: number;
 	category?: string;
 	sort?: string;
+	query?: string;
+	cohort?: string;
+	year?: string;
+	status?: string;
 }): Promise<ProjectsList> => {
 	const safePage = Math.max(1, Math.floor(page) || 1);
 	const safeLimit = Math.min(50, Math.max(1, Math.floor(limit) || 6));
@@ -111,6 +124,20 @@ export const listProjects = async ({
 		(PROJECT_DEPARTMENTS as readonly string[]).includes(category)
 	) {
 		filter.department = category as (typeof PROJECT_DEPARTMENTS)[number];
+	}
+	if (query?.trim()) {
+		const escaped = query.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+		filter.title = { $regex: escaped, $options: "i" };
+	}
+	if (cohort) {
+		filter.cohort = cohort;
+	}
+	if (year) {
+		filter.academicYear = year;
+	}
+	// Only applied when explicitly requested — public listing stays published-only.
+	if (status && (PROJECT_STATUS as readonly string[]).includes(status)) {
+		filter.status = status as (typeof PROJECT_STATUS)[number];
 	}
 
 	const order: 1 | -1 = sort === "Oldest" ? 1 : -1;
@@ -132,10 +159,59 @@ export const listProjects = async ({
 	};
 };
 
+const RECOMMENDED_LIMIT = 6;
+
+export const getRecommendedProjects = async (
+	excludeId: string,
+	limit: number = RECOMMENDED_LIMIT,
+): Promise<Project[]> => {
+	const docs = await ProjectModel.aggregate([
+		{
+			$match: {
+				status: "published",
+				_id: { $ne: new Types.ObjectId(excludeId) },
+			},
+		},
+		{ $sample: { size: limit } },
+	]);
+
+	return docs.map((doc) => toProjectView(doc as unknown as IProject));
+};
+
+const RECENT_PROJECTS_LIMIT = 10;
+
+export const getRecentlyAddedProjects = async (
+	limit: number = RECENT_PROJECTS_LIMIT,
+): Promise<RecentProjectsOverview> => {
+	const safeLimit = Math.min(
+		50,
+		Math.max(1, Math.floor(limit) || RECENT_PROJECTS_LIMIT),
+	);
+
+	// Dashboard view — includes drafts, newest first.
+	const [docs, total, draftCount] = await Promise.all([
+		ProjectModel.find({})
+			.sort({ createdAt: -1 })
+			.limit(safeLimit)
+			.lean(),
+		ProjectModel.countDocuments({}),
+		ProjectModel.countDocuments({ status: "draft" }),
+	]);
+
+	return {
+		items: docs.map((doc) => toProjectView(doc as unknown as IProject)),
+		stats: {
+			totalProjects: total,
+			draftProjects: draftCount,
+			publishedProjects: total - draftCount,
+		},
+	};
+};
+
 export const getProject = async (
 	projectId: string,
 ): Promise<
-	| { success: true; project: Project }
+	| { success: true; project: Project; recommended: Project[] }
 	| { success: false; status: number; message: string }
 > => {
 	if (!isValidObjectId(projectId)) {
@@ -158,5 +234,19 @@ export const getProject = async (
 		};
 	}
 
-	return { success: true, project: toProjectView(doc as unknown as IProject) };
+	let recommended: Project[] = [];
+	try {
+		recommended = await getRecommendedProjects(projectId);
+	} catch (error) {
+		logger.warn(
+			{ err: error, projectId },
+			"Failed to load recommended projects",
+		);
+	}
+
+	return {
+		success: true,
+		project: toProjectView(doc as unknown as IProject),
+		recommended,
+	};
 };

@@ -31,7 +31,7 @@ export default function ProjectShowcase() {
 	const sort: SortOrder = sortParam === "Oldest" ? "Oldest" : "Most Recent";
 
 	const { data, isLoading, isError } = useProjects({ page, category, sort });
-	console.log(data);
+
 	if (isLoading) return <ProjectShowcaseSkeleton />;
 
 	if (isError || !data || data.items.length === 0) {

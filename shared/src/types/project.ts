@@ -32,7 +32,12 @@ export interface Project {
   updatedAt?: string;
 }
 
-export type GetProjectResponse = ApiSuccessResponse<Project>;
+export interface ProjectDetail {
+  project: Project;
+  recommended: Project[];
+}
+
+export type GetProjectResponse = ApiSuccessResponse<ProjectDetail>;
 
 export type GetProjectsResponse = ApiSuccessResponse<{
   items: Project[];
@@ -58,6 +63,19 @@ export interface ProjectDoc {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export interface ProjectStats {
+  totalProjects: number;
+  draftProjects: number;
+  publishedProjects: number;
+}
+
+export interface RecentProjectsOverview {
+  items: Project[];
+  stats: ProjectStats;
+}
+
+export type GetRecentProjectsResponse = ApiSuccessResponse<RecentProjectsOverview>;
 
 export type CreateProjectResponse = ApiSuccessResponse<{
   project: ProjectDoc;

@@ -1,7 +1,11 @@
 import { createBrowserRouter, type RouteObject } from "react-router";
 import ErrorBoundary from "@/components/provider/error-boundary";
 import SuspenseUi from "@/components/ui/suspense-ui";
-import { guestMiddleware, requireAuth, sessionMiddleware } from "@/middleware/auth";
+import {
+	guestMiddleware,
+	requireAuth,
+	sessionMiddleware,
+} from "@/middleware/auth";
 import AuthLayout from "./auth/layout";
 import MainLayout from "./main/layout";
 import Root from "./root/layout";
@@ -55,7 +59,7 @@ const routes = [
 				],
 			},
 			{
-				path: "/auth",
+				path: "/admin",
 				Component: AuthLayout,
 				middleware: [guestMiddleware],
 				ErrorBoundary,
@@ -124,7 +128,7 @@ const routes = [
 				],
 			},
 			{
-        path: "dashboard",
+				path: "dashboard",
 				middleware: [requireAuth],
 				handle: {
 					seo: {
@@ -136,9 +140,7 @@ const routes = [
 					Component: () =>
 						import("@/routes/dashboard/layout").then((m) => m.default),
 					loader: () =>
-						import("@/routes/dashboard/loader").then(
-							(m) => m.dashboardLoader
-						),
+						import("@/routes/dashboard/loader").then((m) => m.dashboardLoader),
 				},
 				children: [
 					{

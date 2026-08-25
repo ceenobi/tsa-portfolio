@@ -1,6 +1,5 @@
 import type { GetProjectsResponse, Project } from "@tsa/shared";
 
-
 export const CATEGORIES = [
 	"All",
 	"Product Design",
@@ -11,6 +10,10 @@ export const CATEGORIES = [
 
 export const SORT_OPTIONS = ["Most Recent", "Oldest"] as const;
 export type SortOrder = (typeof SORT_OPTIONS)[number];
+export const STATUS_STYLES: Record<string, string> = {
+	published: "bg-emerald-100 text-emerald-700",
+	draft: "bg-amber-100 text-amber-700",
+};
 
 export type ProjectsPage = NonNullable<GetProjectsResponse["body"]>;
 
@@ -69,8 +72,16 @@ export const MOCK_PROJECTS: Project[] = [
 		coverImageUrl:
 			"https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=1600&auto=format&fit=crop",
 		media: [
-			{ mediaUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-1" },
-			{ mediaUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-2" },
+			{
+				mediaUrl:
+					"https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop",
+				publicId: "mock-media-1",
+			},
+			{
+				mediaUrl:
+					"https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop",
+				publicId: "mock-media-2",
+			},
 		],
 		teamMembers: [
 			{ name: "Tunde Bakare", role: "Security Analyst" },
@@ -94,8 +105,16 @@ export const MOCK_PROJECTS: Project[] = [
 		coverImageUrl:
 			"https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1600&auto=format&fit=crop",
 		media: [
-			{ mediaUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-1" },
-			{ mediaUrl: "https://images.unsplash.com/photo-1504868584819-f8e8b4b6b7e3?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-2" },
+			{
+				mediaUrl:
+					"https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop",
+				publicId: "mock-media-1",
+			},
+			{
+				mediaUrl:
+					"https://images.unsplash.com/photo-1504868584819-f8e8b4b6b7e3?q=80&w=1200&auto=format&fit=crop",
+				publicId: "mock-media-2",
+			},
 		],
 		teamMembers: [
 			{ name: "Amara Eze", role: "Product Designer" },
@@ -118,8 +137,16 @@ export const MOCK_PROJECTS: Project[] = [
 		coverImageUrl:
 			"https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1600&auto=format&fit=crop",
 		media: [
-			{ mediaUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-1" },
-			{ mediaUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-2" },
+			{
+				mediaUrl:
+					"https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop",
+				publicId: "mock-media-1",
+			},
+			{
+				mediaUrl:
+					"https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop",
+				publicId: "mock-media-2",
+			},
 		],
 		teamMembers: [
 			{ name: "Kelechi Obi", role: "Full Stack Developer" },
@@ -143,8 +170,16 @@ export const MOCK_PROJECTS: Project[] = [
 		coverImageUrl:
 			"https://images.unsplash.com/photo-1522252234503-e356532cafd5?q=80&w=1600&auto=format&fit=crop",
 		media: [
-			{ mediaUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-1" },
-			{ mediaUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-2" },
+			{
+				mediaUrl:
+					"https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop",
+				publicId: "mock-media-1",
+			},
+			{
+				mediaUrl:
+					"https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop",
+				publicId: "mock-media-2",
+			},
 		],
 		teamMembers: [
 			{ name: "Oluwaseun Adeyemi", role: "Data Analyst" },
@@ -167,8 +202,16 @@ export const MOCK_PROJECTS: Project[] = [
 		coverImageUrl:
 			"https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=1600&auto=format&fit=crop",
 		media: [
-			{ mediaUrl: "https://images.unsplash.com/photo-1504868584819-f8e8b4b6b7e3?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-1" },
-			{ mediaUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-2" },
+			{
+				mediaUrl:
+					"https://images.unsplash.com/photo-1504868584819-f8e8b4b6b7e3?q=80&w=1200&auto=format&fit=crop",
+				publicId: "mock-media-1",
+			},
+			{
+				mediaUrl:
+					"https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop",
+				publicId: "mock-media-2",
+			},
 		],
 		teamMembers: [
 			{ name: "Yemi Adeleke", role: "Product Designer" },
@@ -191,8 +234,16 @@ export const MOCK_PROJECTS: Project[] = [
 		coverImageUrl:
 			"https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1600&auto=format&fit=crop",
 		media: [
-			{ mediaUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-1" },
-			{ mediaUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-2" },
+			{
+				mediaUrl:
+					"https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop",
+				publicId: "mock-media-1",
+			},
+			{
+				mediaUrl:
+					"https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop",
+				publicId: "mock-media-2",
+			},
 		],
 		teamMembers: [
 			{ name: "Aisha Mohammed", role: "Security Analyst" },
@@ -215,8 +266,16 @@ export const MOCK_PROJECTS: Project[] = [
 		coverImageUrl:
 			"https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1600&auto=format&fit=crop",
 		media: [
-			{ mediaUrl: "https://images.unsplash.com/photo-1504868584819-f8e8b4b6b7e3?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-1" },
-			{ mediaUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-2" },
+			{
+				mediaUrl:
+					"https://images.unsplash.com/photo-1504868584819-f8e8b4b6b7e3?q=80&w=1200&auto=format&fit=crop",
+				publicId: "mock-media-1",
+			},
+			{
+				mediaUrl:
+					"https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop",
+				publicId: "mock-media-2",
+			},
 		],
 		teamMembers: [
 			{ name: "Tobi Alabi", role: "Full Stack Developer" },
@@ -240,8 +299,16 @@ export const MOCK_PROJECTS: Project[] = [
 		coverImageUrl:
 			"https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=1600&auto=format&fit=crop",
 		media: [
-			{ mediaUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-1" },
-			{ mediaUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-2" },
+			{
+				mediaUrl:
+					"https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop",
+				publicId: "mock-media-1",
+			},
+			{
+				mediaUrl:
+					"https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop",
+				publicId: "mock-media-2",
+			},
 		],
 		teamMembers: [
 			{ name: "Nnamdi Eze", role: "Data Analyst" },
@@ -264,8 +331,16 @@ export const MOCK_PROJECTS: Project[] = [
 		coverImageUrl:
 			"https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=1600&auto=format&fit=crop",
 		media: [
-			{ mediaUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-1" },
-			{ mediaUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop", publicId: "mock-media-2" },
+			{
+				mediaUrl:
+					"https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop",
+				publicId: "mock-media-1",
+			},
+			{
+				mediaUrl:
+					"https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop",
+				publicId: "mock-media-2",
+			},
 		],
 		teamMembers: [
 			{ name: "Bisi Adewale", role: "Security Analyst" },
