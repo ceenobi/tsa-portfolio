@@ -35,10 +35,11 @@ export default function Hero() {
 
         <a href="https://www.techstudioacademy.com/register" rel="noopener noreferrer">
           <button
-          className="mt-6 h-10 rounded-md bg-[#FCFDFF] font-medium px-6 text-sm text-mainBlue text-[16px] hover:bg-white/90"
-        >
-          Join Us Now
-        </button>
+            className="mt-6 h-10 rounded-md bg-[#FCFDFF] font-medium px-6 text-sm text-mainBlue text-[16px] hover:bg-white/90"
+            type="button"
+          >
+            Join Us Now
+          </button>
         </a>
 
         {/* <div className="mt-10 grid grid-cols-2 gap-3 sm:flex sm:gap-3">

@@ -10,6 +10,7 @@
   --color-mainBlue: #0266F4;
   --color-deepBlue: #1F2666;
   --color-mainGray: #6E6C6C;
+  --color-lightGray: #292929;
 }
 
 @theme inline {
@@ -186,4 +187,3 @@
     margin-left: 15%;
   }
 }
-
