@@ -1,5 +1,5 @@
-import LogoIcon from "../../assets/tsaIcon.svg"
-import { Link, useLocation } from "react-router"
+import { Link, useLocation } from "react-router";
+import LogoIcon from "../../assets/tsaIcon.svg";
 
 export interface SidebarTab {
   key: string;
@@ -17,13 +17,13 @@ export default function Sidebar({
 }: Props) {
     const location = useLocation();
   return (
-    <div className="bg-deepBlue w-27.75 flex flex-col justify-between items-center h-screen py-5 px-5 ">
+    <div className="hidden bg-deepBlue w-27.75 md:flex flex-col justify-between items-center h-screen py-5 px-4">
       <nav className="flex flex-col gap-5">
       <Link to="/">
       <img src={LogoIcon} alt="Tech Studio Academy Logo" className="mx-auto w-fit mb-1 h-10.75" />
       </Link>
         {tabs.map((tab) => {
-          const isActive = (tab.key === "dashboard" && (location.pathname === "/dashboard" || 
+          const isActive = (tab.key === "dashboard" && (location.pathname === "/dashboard" ||
             location.pathname === "/dashboard/")) || location.pathname === `/dashboard/${tab.key}`;
 
           return (
