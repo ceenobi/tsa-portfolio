@@ -155,32 +155,42 @@ export default function CreateProject() {
   const busy = pending !== null;
 
   return (
-    <div className="container mx-auto max-w-4xl">
+    <div className="">
       <Seo title="Add New Project - Techstudio Academy Portfolio" />
 
-      {/* Breadcrumb + heading */}
-      <nav className="flex items-center gap-1 text-sm text-mainGray">
-        <Link to="/dashboard/portfolio" className="hover:text-mainBlue">
-          Portfolio
-        </Link>
-        <ChevronRight className="size-4" />
-        <span className="text-mainBlack">Add New Project</span>
-      </nav>
-      <h1 className="mt-2 text-2xl font-semibold text-mainBlack">
-        Create Portfolio Project
-      </h1>
+      <div className="mt-6 flex flex-col items-start gap-6">
+        {/* Breadcrumb + heading */}
+        <nav className="flex items-center gap-1 text-base">
+          <Link
+            to="/dashboard/portfolio"
+            className="hover:text-mainBlue text-[#6E6D6D]"
+          >
+            Portfolio
+          </Link>
+          <ChevronRight className="size-4" />
+          <span className="text-[#000000]">Add New Project</span>
+        </nav>
+        <h1 className="text-xl font-semibold text-[#1D1D1D]">
+          Create Portfolio Project
+        </h1>
+      </div>
 
       <form
         onSubmit={handleSubmit((d) => submit(d, "published"))}
-        className="mt-8 space-y-12"
+        className="mt-16 space-y-16 container mx-auto max-w-4xl"
       >
         {/* Project Information */}
-        <section className="space-y-5">
-          <h2 className="font-semibold text-mainBlue">Project Information</h2>
+        <section className="space-y-6">
+          <h2 className="font-semibold text-deepBlue text-xl">
+            Project Information
+          </h2>
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="title" className="text-sm text-mainBlack">
+            <div className="space-y-2.5">
+              <Label
+                htmlFor="title"
+                className="text-base text-mainBlack font-semibold"
+              >
                 Project Title
               </Label>
               <Input
@@ -196,8 +206,10 @@ export default function CreateProject() {
               )}
             </div>
 
-            <div className="space-y-1.5">
-              <Label className="text-sm text-mainBlack">Department</Label>
+            <div className="space-y-2.5">
+              <Label className="text-base text-mainBlack font-semibold">
+                Department
+              </Label>
               <Controller
                 control={control}
                 name="department"
@@ -223,8 +235,11 @@ export default function CreateProject() {
               )}
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="cohort" className="text-sm text-mainBlack">
+            <div className="space-y-2.5">
+              <Label
+                htmlFor="cohort"
+                className="text-base text-mainBlack font-semibold"
+              >
                 Cohort
               </Label>
               <Input
@@ -240,8 +255,11 @@ export default function CreateProject() {
               )}
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="academicYear" className="text-sm text-mainBlack">
+            <div className="space-y-2.5">
+              <Label
+                htmlFor="academicYear"
+                className="text-base text-mainBlack font-semibold"
+              >
                 Academic Year
               </Label>
               <Input
@@ -258,13 +276,16 @@ export default function CreateProject() {
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="description" className="text-sm text-mainBlack">
+          <div className="space-y-2.5">
+            <Label
+              htmlFor="description"
+              className="text-base text-mainBlack font-semibold"
+            >
               Project Description
             </Label>
             <textarea
               id="description"
-              rows={5}
+              rows={9}
               placeholder="What's this project about?"
               className="w-full rounded-md border border-input bg-input/20 px-3 py-2 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
               {...register("description")}
@@ -278,9 +299,9 @@ export default function CreateProject() {
         </section>
 
         {/* Project Media */}
-        <section className="space-y-5">
-          <h2 className="font-semibold text-mainBlue">Project Media</h2>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+        <section className="space-y-6">
+          <h2 className="font-semibold text-deepBlue text-xl">Project Media</h2>
+          <div className="grid grid-cols-1 gap-7 sm:grid-cols-[1fr_2fr]">
             <UploadBox
               label="Project Thumbnail"
               hint="Square, min 800 x 800px"
@@ -300,21 +321,24 @@ export default function CreateProject() {
         </section>
 
         {/* Team Members */}
-        <section className="space-y-4">
+        <section className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-mainBlue">Team Members</h2>
+            <h2 className="font-semibold text-deepBlue text-xl">
+              Team Members
+            </h2>
             <Button
               type="button"
               variant="outline"
               size="lg"
               onClick={() => fields.length < 20 && append({ fullName: "" })}
+              className="border-[1.13px] h-12 border-mainBlue text-mainBlue px-4.5 py-3 rounded-[7px] flex items-center gap-1.5 text-base font-semibold"
             >
-              <Plus /> Add Members
+              <Plus className="size-6 text-mainBlue" /> Add Members
             </Button>
           </div>
 
           {fields.length === 0 ? (
-            <p className="text-sm text-mainGray">
+            <p className="text-base text-mainBlack text-center">
               No contributors yet. Add up to 20.
             </p>
           ) : (
@@ -349,11 +373,14 @@ export default function CreateProject() {
         </section>
 
         {/* Project Links */}
-        <section className="space-y-5">
-          <h2 className="font-semibold text-mainBlue">Project Links</h2>
+        <section className="space-y-6">
+          <h2 className="font-semibold text-deepBlue text-xl">Project Links</h2>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="github" className="text-sm text-mainBlack">
+            <div className="space-y-2.5">
+              <Label
+                htmlFor="github"
+                className="text-base text-mainBlack font-semibold"
+              >
                 GitHub
               </Label>
               <Input
@@ -368,8 +395,11 @@ export default function CreateProject() {
                 </p>
               )}
             </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="figma" className="text-sm text-mainBlack">
+            <div className="space-y-2.5">
+              <Label
+                htmlFor="figma"
+                className="text-base text-mainBlack font-semibold"
+              >
                 Figma
               </Label>
               <Input
@@ -388,7 +418,7 @@ export default function CreateProject() {
         </section>
 
         {/* Actions */}
-        <div className="flex items-center justify-center gap-3 pb-10">
+        <div className="flex items-center justify-end gap-12.5 pb-10">
           <ActionBtn
             type="button"
             variant="outline"
@@ -406,7 +436,7 @@ export default function CreateProject() {
             loading={pending === "draft"}
             disabled={busy}
             onClick={handleSubmit((d) => submit(d, "draft"))}
-            classname="h-10 px-6"
+            classname="h-10 px-6 border-mainBlue"
           />
           <ActionBtn
             type="submit"
@@ -434,9 +464,9 @@ function UploadBox({
   onSelect: (file: File | null) => void;
 }) {
   return (
-    <div className="space-y-1.5">
-      <p className="text-sm text-mainBlack">{label}</p>
-      <label className="flex aspect-video w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed border-input bg-input/20 transition-colors hover:border-mainBlue">
+    <div className="space-y-2.5">
+      <p className="text-base text-mainBlack font-semibold">{label}</p>
+      <label className="flex h-[250PX] w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed border-input bg-input/20 transition-colors hover:border-mainBlue">
         {preview ? (
           <img
             src={preview}
@@ -444,10 +474,14 @@ function UploadBox({
             className="h-full w-full object-cover"
           />
         ) : (
-          <div className="flex flex-col items-center gap-2 px-4 text-center text-mainGray">
-            <Upload className="size-6" />
-            <span className="text-sm font-medium">Click to upload</span>
-            <span className="text-xs">{hint}</span>
+          <div className="flex flex-col items-center gap-4.5 px-4 text-center text-mainGray">
+            <Upload className="size-10" />
+            <div className="flex flex-col items-center gap-2 text-center">
+              <span className="text-base font-semibold text-lightGray">
+                Click to upload
+              </span>
+              <span className="text-base text-[#747474]">{hint}</span>
+            </div>
           </div>
         )}
         <input
