@@ -4,6 +4,8 @@ import {
 	registerSchema,
 	resendOtpSchema,
 	resetPasswordSchema,
+	updateEmailSchema,
+	updatePasswordSchema,
 	verifyEmailSchema,
 } from "@tsa/shared";
 import { Router } from "express";
@@ -15,6 +17,7 @@ import {
 	registerAccount,
 	resendOtpController,
 	resetPasswordController,
+	updateUserController,
 	verifyEmailController,
 } from "../controllers/auth.controller.js";
 import { verifySession } from "../middlewares/auth.middleware.js";
@@ -62,5 +65,18 @@ router.post(
 router.post("/logout", verifySession, logoutUser);
 
 router.get("/me", verifySession, getUserController);
+
+router.patch(
+	"/update-email",
+	verifySession,
+	validateFormData(updateEmailSchema),
+	updateUserController,
+);
+router.patch(
+	"/update-password",
+	verifySession,
+	validateFormData(updatePasswordSchema),
+	updateUserController,
+);
 
 export default router;
