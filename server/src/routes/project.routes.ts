@@ -2,6 +2,7 @@ import { createProjectSchema } from "@tsa/shared";
 import { Router } from "express";
 import {
 	addAProject,
+	editAProject,
 	getProjectById,
 	getProjects,
 	recentlyAddedProjects,
@@ -35,6 +36,14 @@ router.post(
 	requireRole("admin", "super_admin"),
 	validateFormData(createProjectSchema),
 	addAProject,
+);  
+
+router.patch(
+	"/edit/:projectId",
+	customRateLimiter(10),
+	requireRole("admin", "super_admin"),
+	validateFormData(createProjectSchema),
+	editAProject
 );
 
 export default router;

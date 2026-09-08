@@ -250,3 +250,54 @@ export const getProject = async (
 		recommended,
 	};
 };
+
+export const editProject = async (
+	data: { createdBy: string; _id: string } & Partial<z.infer<typeof createProjectSchema>>,
+): Promise<CreateProjectResult> => {
+	const { _id, ...updateData } = data;
+
+	if (!isValidObjectId(_id)) {
+		return {
+			success: false,
+			status: 404,
+			message: "Project not found.",
+		};
+	}
+
+	const project = await ProjectModel.findByIdAndUpdate(
+		_id,
+		{ $set: updateData },
+		{ new: true },
+	).lean();
+
+	if (!project) {
+		return {
+			success: false,
+			status: 404,
+			message: "Project not found.",
+		};
+	}
+
+	logger.info({ projectId: project._id }, "Project updated");
+
+	return {
+		success: true,
+		project: {
+			_id: project._id.toString(),
+			title: project.title,
+			department: project.department,
+			cohort: project.cohort,
+			academicYear: project.academicYear,
+			description: project.description,
+			thumbnail: project.thumbnail,
+			coverImage: project.coverImage,
+			media: project.media,
+			teamMembers: project.teamMembers,
+			links: project.links,
+			status: project.status,
+			createdBy: project.createdBy.toString(),
+			createdAt: project.createdAt?.toISOString(),
+			updatedAt: project.updatedAt?.toISOString(),
+		},
+	};
+};

@@ -162,6 +162,14 @@ const routes = [
             },
           },
           {
+            path: "portfolio/edit/:portfolioId",
+            lazy: async () => {
+              const { default: Component } =
+                await import("@/routes/dashboard/portfolio/edit");
+              return { Component };
+            },
+          },
+          {
             path: "settings",
             lazy: async () => {
               const { default: Component } =
