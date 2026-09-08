@@ -1,10 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PROJECT_DEPARTMENTS } from "@tsa/shared";
-import {
-	type EditProjectInput,
-	useEditProject,
-} from "@/hooks/use-edit-project";
-import { useUploadFiles } from "@/hooks/use-create-project";
 import { ChevronRight, Plus, Upload, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
@@ -23,6 +18,11 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { useUploadFiles } from "@/hooks/use-create-project";
+import {
+	type EditProjectInput,
+	useEditProject,
+} from "@/hooks/use-edit-project";
 import { useProject } from "@/hooks/use-project";
 
 const formSchema = z.object({
@@ -92,7 +92,9 @@ export default function EditProject() {
 		const p = project.project;
 		reset({
 			title: p.title ?? "",
-			department: (p.category as (typeof PROJECT_DEPARTMENTS)[number]) ?? "Full Stack Web Development",
+			department:
+				(p.category as (typeof PROJECT_DEPARTMENTS)[number]) ??
+				"Full Stack Web Development",
 			cohort: p.cohort ?? "",
 			academicYear: p.year ?? "2024",
 			description: p.description ?? "",
@@ -118,25 +120,31 @@ export default function EditProject() {
 	}
 
 	async function submit(data: FormValues) {
-		if (!thumbnail && !cover) {
-			setImageError(
-				"Please upload at least a new thumbnail or cover image.",
-			);
-			toast.error("Please upload at least a new thumbnail or cover image.");
+		// Existing images from the project (fallback when user doesn't upload new ones).
+		const existingThumb = project?.project?.media?.[0]?.mediaUrl;
+		const existingCover = project?.project?.coverImageUrl;
+
+		const hasExisting = Boolean(existingThumb || existingCover);
+		const hasNew = Boolean(thumbnail || cover);
+
+		if (!hasExisting && !hasNew) {
+			setImageError("Please upload at least a thumbnail or cover image.");
+			toast.error("Please upload at least a thumbnail or cover image.");
 			return;
 		}
 
 		try {
 			setPending("published");
 
-			let thumbUp = project?.project?.coverImageUrl
-				? { mediaUrl: project.project.coverImageUrl, publicId: "" }
+			// Start with existing images as defaults.
+			let thumbUp = existingThumb
+				? { mediaUrl: existingThumb, publicId: "" }
 				: undefined;
-			let coverUp = project?.project?.coverImageUrl
-				? { mediaUrl: project.project.coverImageUrl, publicId: "" }
+			let coverUp = existingCover
+				? { mediaUrl: existingCover, publicId: "" }
 				: undefined;
 
-			// Upload new images if provided.
+			// Upload new images if provided, replacing the defaults.
 			const filesToUpload: string[] = [];
 			if (thumbnail) {
 				filesToUpload.push(await readAsDataUrl(thumbnail.file));
@@ -149,10 +157,10 @@ export default function EditProject() {
 				const uploaded = await uploadFiles.mutateAsync({
 					files: filesToUpload,
 					folder: "TSAPortfolio/projects",
-				}
-				);
-				if (thumbnail) thumbUp = uploaded[0];
-				if (cover) coverUp = uploaded[filesToUpload.length > 1 ? 1 : 0];
+				});
+				let idx = 0;
+				if (thumbnail) thumbUp = uploaded[idx++];
+				if (cover) coverUp = uploaded[idx];
 			}
 
 			const payload: EditProjectInput = {
@@ -163,7 +171,10 @@ export default function EditProject() {
 				description: data.description,
 				thumbnail: thumbUp?.mediaUrl ?? "",
 				coverImage: coverUp?.mediaUrl ?? "",
-				media: [thumbUp, coverUp].filter(Boolean) as { mediaUrl: string; publicId: string }[],
+				media: [thumbUp, coverUp].filter(Boolean) as {
+					mediaUrl: string;
+					publicId: string;
+				}[],
 				teamMembers: data.teamMembers.filter((m) => m.fullName.trim()),
 				links: {
 					github: data.github || undefined,
@@ -351,7 +362,7 @@ export default function EditProject() {
 							label="Project Thumbnail"
 							hint="Square, min 800 x 800px"
 							preview={thumbnail?.preview ?? null}
-							existing={project?.project?.coverImageUrl}
+							existing={project?.project?.media?.[0]?.mediaUrl}
 							onSelect={pick(setThumbnail)}
 						/>
 						<UploadBox
