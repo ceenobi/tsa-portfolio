@@ -76,7 +76,7 @@ export default function Login() {
 						setIsVisible={setIsVisible}
 					/>
 					<Link
-						to="/auth/forgot-password"
+						to="/admin/forgot-password"
 						className="text-sm font-semibold text-deepBlue hover:underline"
 					>
 						Forgot Password?
@@ -89,7 +89,7 @@ export default function Login() {
 					classname="w-full h-12 text-base bg-mainBlue hover:bg-mainBlue/90"
 				/>
 			</form>
-			<div className="flex items-center justify-center gap-2 mt-10">
+			{/*<div className="flex items-center justify-center gap-2 mt-10">
 				<p className="text-[13px] text-muted-foreground">
 					Don't have an account?{" "}
 					<Link
@@ -99,7 +99,7 @@ export default function Login() {
 						Create an Account
 					</Link>
 				</p>
-			</div>
+			</div>*/}
 		</div>
 	);
 }

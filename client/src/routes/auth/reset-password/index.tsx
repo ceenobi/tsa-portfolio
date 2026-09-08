@@ -47,7 +47,7 @@ export default function ResetPassword() {
 		onSuccess: (res) => {
 			if (res.success) {
 				toast.success(res.message || "Password reset successful");
-				navigate(`/auth/login`);
+				navigate(`/admin/login`);
 			}
 		},
 		onError: (err) => {
@@ -96,7 +96,7 @@ export default function ResetPassword() {
 					setIsVisible={setIsConfirm}
 				/>
 				<ActionBtn
-					text="Register"
+					text="Reset"
 					type="submit"
 					loading={mutation.isPending}
 					classname="w-full h-12 text-base bg-mainBlue hover:bg-mainBlue/90"

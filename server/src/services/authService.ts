@@ -59,7 +59,7 @@ export const registerUser = async (data: {
 		otpLastSentAt: new Date(),
 	});
 
-	const verificationLink = `${env.CLIENT_URL}/auth/verify-account?email=${encodeURIComponent(user.email)}`;
+	const verificationLink = `${env.CLIENT_URL}/admin/verify-account?email=${encodeURIComponent(user.email)}`;
 	await EmailService.sendVerifyAccountEmail({
 		user,
 		otp,
@@ -162,7 +162,7 @@ export const forgotPassword = async (data: {
 	user.resetPasswordExpiresAt = getTokenExpiry(15);
 	await user.save();
 
-	const resetLink = `${env.CLIENT_URL}/auth/reset-password?token=${resetToken}`;
+	const resetLink = `${env.CLIENT_URL}/admin/reset-password?token=${resetToken}`;
 	await EmailService.sendPasswordResetEmail({ user, resetLink });
 
 	logger.info({ userId: user._id }, "Password reset email sent");
@@ -319,7 +319,7 @@ export const resendOtp = async (data: {
 	user.otpLastSentAt = new Date();
 	await user.save();
 
-	const verificationLink = `${env.CLIENT_URL}/auth/verify-account?email=${encodeURIComponent(user.email)}`;
+	const verificationLink = `${env.CLIENT_URL}/admin/verify-account?email=${encodeURIComponent(user.email)}`;
 	await EmailService.sendVerifyAccountEmail({
 		user,
 		otp,
