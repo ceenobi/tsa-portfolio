@@ -25,7 +25,9 @@ client/src/
   routes/index.tsx        # ALL routes; pages lazy-imported; layouts static
   middleware/auth.ts      # guestMiddleware / sessionMiddleware (requireAuth defined, NOT wired)
   lib/api.ts              # axios client, BASE_URL /api/v1
-  hooks/use-project*.ts   # TanStack Query hooks for showcase/detail
+  hooks/use-project*.ts   # TanStack Query hooks for showcase/detail/edit
+  hooks/use-create-project.ts  # useCreateProject, useUploadFiles mutations
+  hooks/use-edit-project.ts    # useEditProject mutation (PATCH /projects/edit/:id)
 server/src/
   controllers/            # thin: tryCatchWrapper + sendTsRestSuccess/Error
   services/               # authService, projectService, emailService (plain named exports)
@@ -93,6 +95,7 @@ shared/src/
 - `GET /` — public, paginated (`?page&limit&category&sort=Newest|Oldest`), **published only**; `category` validated against `PROJECT_DEPARTMENTS`.
 - `GET /:projectId` — published only (draft/invalid id → 404).
 - `POST /add` — admin/super_admin, `createProjectSchema`; duplicate title+cohort+academicYear → 409.
+- `PATCH /edit/:projectId` — admin/super_admin, `validateFormData(createProjectSchema)`, calls `editProject` service (`findByIdAndUpdate` with `{ $set }`).
 - `status` defaults to `"draft"` unless explicitly sent as `"published"` (schema field, not just model default).
 - Stored model ≠ client shape: `projectService.toProjectView` maps `department[0]`→`category`, `thumbnail`→`gallery`, `academicYear`→`year`, `fullName`→`name`, derives `slug`. Client consumes only the showcase `Project` type from `@tsa/shared`.
 
