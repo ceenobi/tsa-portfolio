@@ -29,6 +29,7 @@ jobs:
       - run: npm ci
       - run: npm run typecheck --workspace shared
       - run: npm run typecheck --workspace server
+      - run: npm run build --workspace @tsa/shared
       - run: npm run build --workspace client
 
   lint:

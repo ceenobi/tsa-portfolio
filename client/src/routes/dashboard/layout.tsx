@@ -11,8 +11,8 @@ export default function DashboardLayout() {
 		<div className="flex h-screen">
 			<Sidebar tabs={Tabs} />
 			<main className="flex-1 overflow-y-auto">
-        <DashboardNav user={user} />
-				<div className="p-6">
+				<DashboardNav user={user} />
+				<div className="pt-6 pb-12 px-6">
 					<Outlet context={{ user }} />
 				</div>
 			</main>

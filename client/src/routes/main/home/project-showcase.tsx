@@ -34,7 +34,7 @@ export default function ProjectShowcase() {
 
 	if (isLoading) return <ProjectShowcaseSkeleton />;
 
-	if (isError || !data) {
+	if (isError || !data || data.items.length === 0) {
 		return <NotFound />;
 	}
 

@@ -1,5 +1,7 @@
+import type { Project } from "@tsa/shared";
 import { ArrowLeft, Calendar, ExternalLink, Users } from "lucide-react";
 import { Link, useParams } from "react-router";
+import ProjectCard from "@/components/features/project-card";
 import { Seo } from "@/components/provider/seo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BlurImage } from "@/components/ui/blur-image";
@@ -12,10 +14,12 @@ import {
 	initials,
 } from "@/lib/utils";
 
-
-export default function Project() {
+export default function ProjectDetail() {
 	const { projectId } = useParams<{ slug: string; projectId: string }>();
-	const { data: project, isLoading, isError } = useProject(projectId);
+	const { data, isLoading, isError } = useProject(projectId);
+	console.log(data);
+	const project = data?.project;
+	const recommended = data?.recommended || [];
 
 	if (isLoading) return <ProjectSkeleton />;
 
@@ -26,7 +30,7 @@ export default function Project() {
 	const cover = getOptimizedImageUrl(project.coverImageUrl, 1280, 720);
 	const memberCount = project.teamMembers.length;
 	const links = project.links ?? {};
-	const hasLinks = Boolean(links.live || links.github || links.figma);
+	const hasLinks = Boolean(links.url || links.github || links.figma);
 
 	return (
 		<>
@@ -88,16 +92,16 @@ export default function Project() {
 				)}
 
 				{/* Gallery (optional) */}
-				{project.gallery && project.gallery.length > 0 && (
+				{project.media && project.media.length > 0 && (
 					<section className="mt-12">
 						<h2 className="text-xl font-semibold">Gallery</h2>
 						<div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-							{project.gallery.map((src, i) => (
+							{project.media.map((m, i) => (
 								<BlurImage
-									key={`${src}-${i}`}
-									src={getOptimizedImageUrl(src, 800, 500)}
+									key={`${m.publicId}-${i}`}
+									src={getOptimizedImageUrl(m.mediaUrl, 800, 500)}
 									alt={`${project.title} screenshot ${i + 1}`}
-									blurSrc={getBlurPlaceholderUrl(src)}
+									blurSrc={getBlurPlaceholderUrl(m.mediaUrl)}
 									className="aspect-video w-full rounded-xl border border-border"
 								/>
 							))}
@@ -143,13 +147,13 @@ export default function Project() {
 					<section className="mt-12">
 						<h2 className="text-xl font-semibold">Project links</h2>
 						<div className="mt-4 flex flex-wrap gap-3">
-							{links.live && (
+							{links.url && (
 								<Button
 									size="lg"
 									nativeButton={false}
 									className="h-10 px-5 text-sm"
 									render={
-										<a href={links.live} target="_blank" rel="noreferrer" />
+										<a href={links.url} target="_blank" rel="noreferrer" />
 									}
 								>
 									<ExternalLink /> Live site
@@ -184,6 +188,51 @@ export default function Project() {
 						</div>
 					</section>
 				)}
+				{recommended.length > 0 && (
+					<section className="mt-12">
+						<div className="flex justify-between items-center">
+							<h2 className="text-xl font-semibold">More projects</h2>
+							<Link
+								to="/projects"
+								className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+							>
+								See all
+							</Link>
+						</div>
+						<div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+							{recommended.map((project: Project) => (
+								<ProjectCard project={project} key={project._id} />
+							))}
+						</div>
+					</section>
+				)}
+				<div className="mt-20 relative mx-auto min-h-103.25 max-w-7xl overflow-hidden rounded-2xl bg-[hsla(215,98%,48%,0.1)]">
+					<img
+						className="absolute top-0 left-0 w-24 sm:w-32 lg:w-48"
+						src="/images/leftStar.svg"
+						alt=""
+					/>
+					<img
+						className="absolute right-0 bottom-0 w-24 sm:w-32 lg:w-48"
+						src="/images/rightStar.svg"
+						alt=""
+					/>
+
+					<div className="relative z-10 flex h-full min-h-103.25 flex-col items-center justify-center gap-6 px-6 py-16 text-center">
+						<h2 className="max-w-2xl text-3xl font-extrabold tracking-tight text-blue-950 sm:text-4xl lg:text-5xl">
+							Start your journey in tech and build projects that shape the
+							future.
+						</h2>
+						<a
+							href="https://www.techstudioacademy.com/register"
+							rel="noopener noreferrer"
+						>
+							<Button className="h-10 rounded-md bg-blue-600 px-6 text-sm text-white hover:bg-blue-500">
+								Join Us Now
+							</Button>
+						</a>
+					</div>
+				</div>
 			</article>
 		</>
 	);

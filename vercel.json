@@ -9,14 +9,14 @@
   },
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/:path((?!api/).*)",
       "destination": "/index.html"
     }
   ],
   "crons": [
     {
       "path": "/api/cron-email",
-      "schedule": "*/10 * * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }

@@ -12,7 +12,8 @@ export class EmailService {
     otp: string
     link: string
   }): Promise<{ success: boolean; queued: boolean }> {
-    const htmlBody = verifyAccountTemplate(otp, link)
+    const greeting = user.email.split('@')[0]
+    const htmlBody = verifyAccountTemplate(otp, link, greeting)
     const result = await sendEmail({
       email: user.email,
       subject: 'Verify your account - Techstudio Academy',
@@ -41,7 +42,8 @@ export class EmailService {
     user: any
     resetLink: string
   }): Promise<{ success: boolean; queued: boolean }> {
-    const htmlBody = resetPasswordTemplate(resetLink)
+    const greeting = user.email.split('@')[0]
+    const htmlBody = resetPasswordTemplate(resetLink, greeting)
     const result = await sendEmail({
       email: user.email,
       subject: 'Reset your password - Techstudio Academy',

@@ -29,3 +29,5 @@ export type LogoutResponse = ApiSuccessResponse<{
 }>
 
 export type GetUserResponse = ApiSuccessResponse<UserProfile>
+
+export type ListUsersResponse = ApiSuccessResponse<UserProfile[]>
