@@ -1,10 +1,13 @@
+import { useState } from "react";
 import type { Project } from "@tsa/shared";
 import { useNavigate, useSearchParams } from "react-router";
+import { toast } from "react-toastify";
 import AddProject from "@/components/features/add-project";
 import Filter from "@/components/features/portfolio/filter";
 import RenderData from "@/components/features/portfolio/render-data";
+import DeleteConfirmDialog from "@/components/ui/delete-confirm-dialog";
 import PaginateBox from "@/components/ui/paginate-box";
-import { useProjects } from "@/hooks/use-project";
+import { useDeleteProject, useProjects } from "@/hooks/use-project";
 import { CATEGORIES, STATUS_STYLES } from "@/lib/constants";
 
 type Category = (typeof CATEGORIES)[number];
@@ -20,6 +23,9 @@ export default function Portfolio() {
 		categoryParam && (CATEGORIES as readonly string[]).includes(categoryParam)
 			? (categoryParam as Category)
 			: "All";
+
+	const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
+	const deleteProject = useDeleteProject();
 
 	const { data, isLoading, isError } = useProjects({
 		page,
@@ -61,17 +67,17 @@ export default function Portfolio() {
 			)}
 			{data && !isLoading && !isError && (
 				<>
-<RenderData
-					data={data}
-					STATUS_STYLE={STATUS_STYLES}
-					onView={(project: Project) =>
-						navigate(`/projects/${project.slug ?? "project"}/${project._id}`)
-					}
-					onEdit={(project: Project) =>
-						navigate(`/dashboard/portfolio/edit/${project._id}`)
-					}
-					// onDelete={(project: Project) => { /* TODO */ }}
-				/>
+					<RenderData
+						data={data}
+						STATUS_STYLE={STATUS_STYLES}
+						onView={(project: Project) =>
+							navigate(`/projects/${project.slug ?? "project"}/${project._id}`)
+						}
+						onEdit={(project: Project) =>
+							navigate(`/dashboard/portfolio/edit/${project._id}`)
+						}
+						onDelete={(project: Project) => setProjectToDelete(project)}
+					/>
 					{(data.items.length ?? 0) > 0 && (
 						<div className="mt-6">
 							<PaginateBox
@@ -83,6 +89,24 @@ export default function Portfolio() {
 					)}
 				</>
 			)}
+			<DeleteConfirmDialog
+				open={projectToDelete !== null}
+				onOpenChange={(open) => {
+					if (!open) setProjectToDelete(null);
+				}}
+				projectName={projectToDelete?.title ?? ""}
+				isPending={deleteProject.isPending}
+				onConfirm={async () => {
+					if (!projectToDelete) return;
+					try {
+						await deleteProject.mutateAsync(projectToDelete._id);
+						toast.success("Project deleted successfully.");
+						setProjectToDelete(null);
+					} catch {
+						toast.error("Failed to delete project. Please try again.");
+					}
+				}}
+			/>
 		</div>
 	);
 }

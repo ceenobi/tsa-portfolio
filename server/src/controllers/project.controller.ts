@@ -10,6 +10,7 @@ import { sendTsRestError, sendTsRestSuccess } from "../libs/responseHandler.js";
 import tryCatchWrapper from "../libs/tryCatchWrapper.js";
 import {
 	createProject,
+	deleteProject,
 	editProject,
 	getProject,
 	getRecentlyAddedProjects,
@@ -127,6 +128,29 @@ export const editAProject = tryCatchWrapper(
 			success: true,
 			message: "Project updated successfully.",
 			body: { project: result.project },
+		});
+	},
+);
+
+export const deleteAProject = tryCatchWrapper(
+	async (req: Request, res: Response) => {
+		const createdBy = req.session?.userId;
+		if (!createdBy) {
+			return sendTsRestError(res, 401, "Access denied. Please log in.");
+		}
+
+		const { projectId } = req.params;
+		const result = await deleteProject(String(projectId));
+
+		if (!result.success) {
+			return sendTsRestError(res, 404, result.message);
+		}
+
+		await flushCache();
+
+		return sendTsRestSuccess<undefined>(res, 200, {
+			success: true,
+			message: result.message,
 		});
 	},
 );

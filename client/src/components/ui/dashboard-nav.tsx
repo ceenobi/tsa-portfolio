@@ -3,6 +3,8 @@ import type { LogoutResponse, UserProfile } from "@tsa/shared";
 import {
 	ChevronDown,
 	ChevronUp,
+	ClipboardList,
+	LayoutDashboard,
 	LogOut,
 	Search,
 	UserRoundCog,
@@ -13,6 +15,7 @@ import { toast } from "react-toastify";
 import { api } from "@/lib/api";
 import { queryClient } from "@/lib/utils";
 import DefaultAvatar from "../../assets/defaultAvatar.svg";
+import LogoIcon from "../../assets/tsaIcon.svg";
 
 export default function DashboardNav({ user }: { user: UserProfile | null }) {
 	const location = useLocation();
@@ -50,7 +53,12 @@ export default function DashboardNav({ user }: { user: UserProfile | null }) {
 	};
 
 	return (
-		<header className="flex items-center justify-between gap-4 px-4 border-b h-18.5 border-[#E7E4E4]">
+		<header className="sticky top-0 z-50 bg-white flex items-center justify-between gap-4 px-4 border-b h-18.5 border-[#E7E4E4]">
+			<img
+				src={LogoIcon}
+				alt="Tech Studio Academy Logo"
+				className="md:hidden mx-auto w-fit mb-1 h-8.75"
+			/>
 			<h1 className="hidden md:block font-bold text-xl lg:text-[28px] text-deepBlue">
 				{getHeading()}
 			</h1>
@@ -89,7 +97,40 @@ export default function DashboardNav({ user }: { user: UserProfile | null }) {
 				{menuOpen && (
 					<div className="absolute right-0 top-full mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg z-50">
 						<ul className="py-2 text-sm text-gray-700 text-[16px]">
-							<li className="px-4 py-2 hover:bg-gray-100 text-lightGray cursor-pointer flex items-center gap-2">
+							<li
+								className="md:hidden px-4 py-2 hover:bg-gray-100 text-lightGray cursor-pointer flex items-center gap-2"
+								onClick={() => navigate("/dashboard")}
+								onKeyDown={(e) => {
+									if (e.key === "Enter" || e.key === " ") {
+										e.preventDefault();
+										navigate("/dashboard");
+									}
+								}}
+							>
+								<LayoutDashboard size={24} /> Dashboard
+							</li>
+							<li
+								className="md:hidden px-4 py-2 hover:bg-gray-100 text-lightGray cursor-pointer flex items-center gap-2"
+								onClick={() => navigate("/dashboard/portfolio")}
+								onKeyDown={(e) => {
+									if (e.key === "Enter" || e.key === " ") {
+										e.preventDefault();
+										navigate("/dashboard/portfolio");
+									}
+								}}
+							>
+								<ClipboardList size={24} /> Portfolio
+							</li>
+							<li
+								className="md:hidden px-4 py-2 hover:bg-gray-100 text-lightGray cursor-pointer flex items-center gap-2"
+								onClick={() => navigate("/dashboard/settings")}
+								onKeyDown={(e) => {
+									if (e.key === "Enter" || e.key === " ") {
+										e.preventDefault();
+										navigate("/dashboard/settings");
+									}
+								}}
+							>
 								<UserRoundCog size={24} /> Account Settings
 							</li>
 							<li

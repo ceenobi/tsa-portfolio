@@ -1,8 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import type { ProjectDetail, RecentProjectsOverview } from "@tsa/shared";
 import { api } from "@/lib/api";
 import type { ProjectsPage, SortOrder } from "@/lib/constants";
-import { PAGE_SIZE } from "@/lib/utils";
+import { PAGE_SIZE, queryClient } from "@/lib/utils";
 
 // const USE_MOCK = import.meta.env.VITE_USE_MOCK === "true";
 // const MOCK_DELAY_MS = 300;
@@ -75,6 +75,19 @@ export function useRecentProjects() {
 		queryFn: async (): Promise<RecentProjectsOverview> => {
 			const res = await api.get<RecentProjectsOverview>("/projects/recent");
 			return res.body;
+		},
+	});
+}
+
+/** Deletes a project by ID and invalidates all project-related queries. */
+export function useDeleteProject() {
+	return useMutation({
+		mutationFn: async (projectId: string) => {
+			const res = await api.delete(`/projects/delete/${projectId}`);
+			return res;
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries();
 		},
 	});
 }
