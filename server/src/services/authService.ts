@@ -340,3 +340,44 @@ export const getUser = async (
 	}
 	return { success: true, user: user as unknown as UserProfile };
 };
+
+//update user email or password
+export const updateUser = async (
+	userId: string,
+	data: { currentPassword: string; email?: string; password?: string },
+): Promise<MessageResult> => {
+	const { currentPassword, email, password } = data;
+
+	const user = await User.findById(userId).select("+password");
+	if (!user) {
+		return { success: false, status: 404, message: "User not found." };
+	}
+
+	const isPasswordCorrect = await bcrypt.compare(currentPassword, user.password);
+	if (!isPasswordCorrect) {
+		return { success: false, status: 401, message: "Current password is incorrect." };
+	}
+
+	if (email) {
+		if (email === user.email) {
+			return { success: false, status: 400, message: "New email is the same as the current email." };
+		}
+		const existing = await User.findOne({ email });
+		if (existing) {
+			return { success: false, status: 409, message: "An account with this email already exists." };
+		}
+		user.email = email;
+	}
+
+	if (password) {
+		const salt = await bcrypt.genSalt(10);
+		user.password = await bcrypt.hash(password, salt);
+		user.passwordChangedAt = new Date();
+	}
+
+	await user.save();
+
+	logger.info({ userId: user._id }, "User updated");
+
+	return { success: true, message: "Account updated successfully." };
+};

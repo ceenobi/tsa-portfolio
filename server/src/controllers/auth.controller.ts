@@ -17,6 +17,7 @@ import {
 	registerUser,
 	resendOtp,
 	resetPassword,
+	updateUser,
 	verifyEmail,
 } from "../services/authService.js";
 
@@ -157,6 +158,33 @@ export const logoutUser = tryCatchWrapper(
 				success: true,
 				message: "Logout successful",
 				body: { message: "Logout successful." },
+			});
+		});
+	},
+);
+
+//update user email or password
+export const updateUserController = tryCatchWrapper(
+	async (req: Request, res: Response) => {
+		const userId = req.session?.userId;
+		if (!userId) {
+			return sendTsRestError(res, 401, "Access denied. Please log in.");
+		}
+
+		const result = await updateUser(userId, req.body);
+		if (!result.success) {
+			return sendTsRestError(res, result.status, result.message);
+		}
+
+		// Destroy session after successful update — user must re-authenticate.
+		req.session.destroy((err) => {
+			if (err) {
+				return sendTsRestError(res, 500, "Account updated but failed to log out. Please log in again.");
+			}
+			res.clearCookie("_tsaPortfolio");
+			return sendTsRestSuccess<undefined>(res, 200, {
+				success: true,
+				message: result.message,
 			});
 		});
 	},
