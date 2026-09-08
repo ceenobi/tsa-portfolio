@@ -2,6 +2,7 @@ import { createProjectSchema } from "@tsa/shared";
 import { Router } from "express";
 import {
 	addAProject,
+	deleteAProject,
 	editAProject,
 	getProjectById,
 	getProjects,
@@ -44,6 +45,13 @@ router.patch(
 	requireRole("admin", "super_admin"),
 	validateFormData(createProjectSchema),
 	editAProject
+);
+
+router.delete(
+	"/delete/:projectId",
+	customRateLimiter(10),
+	requireRole("admin", "super_admin"),
+	deleteAProject
 );
 
 export default router;

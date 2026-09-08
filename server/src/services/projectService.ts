@@ -8,6 +8,7 @@ import { PROJECT_DEPARTMENTS, PROJECT_STATUS } from "@tsa/shared";
 import { isValidObjectId, type QueryFilter, Types } from "mongoose";
 import type { z } from "zod";
 import logger from "../config/logger.js";
+import { deleteFromCloudinary } from "../config/upload.js";
 import ProjectModel, { type IProject } from "../models/project.js";
 
 type CreateProjectInput = z.infer<typeof createProjectSchema> & {
@@ -300,4 +301,35 @@ export const editProject = async (
 			updatedAt: project.updatedAt?.toISOString(),
 		},
 	};
+};
+
+export const deleteProject = async (
+	projectId: string,
+): Promise<{ success: boolean; message: string }> => {
+	if (!isValidObjectId(projectId)) {
+		return { success: false, message: "Project not found." };
+	}
+
+	const project = await ProjectModel.findById(projectId).lean();
+
+	if (!project) {
+		return { success: false, message: "Project not found." };
+	}
+
+	// Clean up Cloudinary assets (best-effort, don't fail the delete).
+	const publicIds = (project.media ?? [])
+		.map((m: { mediaUrl: string; publicId: string }) => m.publicId)
+		.filter(Boolean);
+
+	if (publicIds.length > 0) {
+		await Promise.allSettled(
+			publicIds.map((id: string) => deleteFromCloudinary(id)),
+		);
+	}
+
+	await ProjectModel.findByIdAndDelete(projectId);
+
+	logger.info({ projectId: project._id }, "Project deleted");
+
+	return { success: true, message: "Project deleted successfully." };
 };
