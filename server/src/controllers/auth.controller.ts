@@ -19,8 +19,8 @@ import {
 	registerUser,
 	resendOtp,
 	resetPassword,
-	updateUserRole,
 	updateUser,
+	updateUserRole,
 	verifyEmail,
 } from "../services/authService.js";
 
@@ -88,8 +88,7 @@ export const forgotPasswordController = tryCatchWrapper(
 
 export const resetPasswordController = tryCatchWrapper(
 	async (req: Request, res: Response) => {
-		const token =
-			typeof req.query.token === "string" ? req.query.token : "";
+		const token = typeof req.query.token === "string" ? req.query.token : "";
 		const result = await resetPassword({ password: req.body.password, token });
 		if (!result.success) {
 			return sendTsRestError(res, result.status, result.message);
@@ -105,8 +104,7 @@ export const resetPasswordController = tryCatchWrapper(
 
 export const verifyEmailController = tryCatchWrapper(
 	async (req: Request, res: Response) => {
-		const email =
-			typeof req.query.email === "string" ? req.query.email : "";
+		const email = typeof req.query.email === "string" ? req.query.email : "";
 		const result = await verifyEmail({ email, otp: req.body.otp });
 		if (!result.success) {
 			return sendTsRestError(res, result.status, result.message);
@@ -182,7 +180,11 @@ export const updateUserController = tryCatchWrapper(
 		// Destroy session after successful update — user must re-authenticate.
 		req.session.destroy((err) => {
 			if (err) {
-				return sendTsRestError(res, 500, "Account updated but failed to log out. Please log in again.");
+				return sendTsRestError(
+					res,
+					500,
+					"Account updated but failed to log out. Please log in again.",
+				);
 			}
 			res.clearCookie("_tsaPortfolio");
 			return sendTsRestSuccess<undefined>(res, 200, {

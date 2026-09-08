@@ -45,7 +45,7 @@ const sendViaBrevo = async (
     const recipients = (Array.isArray(to) ? to : [to]).map(email => ({ email }))
 
     const payload: Record<string, any> = {
-      sender: { name: 'Techstudio Academy', email: env.EMAIL_OWNER || 'onboarding@eventra.com' },
+      sender: { name: 'Techstudio Academy', email: env.EMAIL_OWNER || 'tsa-portfolio@techstudioacademy.com' },
       to: recipients,
       subject,
       htmlContent: html,
