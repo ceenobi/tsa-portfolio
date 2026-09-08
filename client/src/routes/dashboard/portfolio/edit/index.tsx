@@ -1,14 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PROJECT_DEPARTMENTS } from "@tsa/shared";
 import {
-	type CreateProjectInput,
-	useCreateProject,
-	useUploadFiles,
-} from "client/src/hooks/use-create-project.ts";
+	type EditProjectInput,
+	useEditProject,
+} from "@/hooks/use-edit-project";
+import { useUploadFiles } from "@/hooks/use-create-project";
 import { ChevronRight, Plus, Upload, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import { toast } from "react-toastify";
 import { z } from "zod";
 import { Seo } from "@/components/provider/seo";
@@ -23,9 +23,8 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { useProject } from "@/hooks/use-project";
 
-// Form fields the admin types. Images are handled separately (uploaded on
-// submit), and `department` is a single choice here that we send as an array.
 const formSchema = z.object({
 	title: z.string().min(1, { message: "Project title is required" }),
 	department: z.enum(PROJECT_DEPARTMENTS, {
@@ -64,35 +63,47 @@ function readAsDataUrl(file: File): Promise<string> {
 	});
 }
 
-export default function CreateProject() {
+export default function EditProject() {
+	const { portfolioId } = useParams<{ portfolioId: string }>();
 	const navigate = useNavigate();
+	const { data: project, isLoading: projectLoading } = useProject(portfolioId);
 	const uploadFiles = useUploadFiles();
-	const createProject = useCreateProject();
+	const editProject = useEditProject(portfolioId!);
 
 	const [thumbnail, setThumbnail] = useState<ImagePick>(null);
 	const [cover, setCover] = useState<ImagePick>(null);
 	const [imageError, setImageError] = useState<string | null>(null);
-	// Which button is mid-submit, so only that one shows a spinner.
 	const [pending, setPending] = useState<null | "draft" | "published">(null);
 
 	const {
 		register,
 		control,
 		handleSubmit,
+		reset,
 		formState: { errors },
 	} = useForm<FormValues>({
 		resolver: zodResolver(formSchema),
 		mode: "onChange",
-		defaultValues: {
-			title: "",
-			cohort: "",
-			academicYear: "2024",
-			description: "",
-			github: "",
-			figma: "",
-			teamMembers: [],
-		},
 	});
+
+	// Pre-populate form once project data loads.
+	useEffect(() => {
+		if (!project) return;
+		const p = project.project;
+		reset({
+			title: p.title ?? "",
+			department: (p.category as (typeof PROJECT_DEPARTMENTS)[number]) ?? "Full Stack Web Development",
+			cohort: p.cohort ?? "",
+			academicYear: p.year ?? "2024",
+			description: p.description ?? "",
+			github: p.links?.github ?? "",
+			figma: p.links?.figma ?? "",
+			teamMembers: (p.teamMembers ?? []).map((m) => ({
+				fullName: m.name ?? "",
+				image: m.avatarUrl ?? "",
+			})),
+		});
+	}, [project, reset]);
 
 	const { fields, append, remove } = useFieldArray({
 		control,
@@ -106,49 +117,63 @@ export default function CreateProject() {
 		};
 	}
 
-	async function submit(data: FormValues, status: "draft" | "published") {
-		if (!thumbnail || !cover) {
-			setImageError("Please upload both a thumbnail and a cover image.");
-			toast.error("Please upload both a thumbnail and a cover image.");
+	async function submit(data: FormValues) {
+		if (!thumbnail && !cover) {
+			setImageError(
+				"Please upload at least a new thumbnail or cover image.",
+			);
+			toast.error("Please upload at least a new thumbnail or cover image.");
 			return;
 		}
 
 		try {
-			setPending(status);
-			const [thumbData, coverData] = await Promise.all([
-				readAsDataUrl(thumbnail.file),
-				readAsDataUrl(cover.file),
-			]);
+			setPending("published");
 
-			const uploaded = await uploadFiles.mutateAsync({
-				files: [thumbData, coverData],
-				folder: "TSAPortfolio/projects",
-			});
-			const [thumbUp, coverUp] = uploaded;
+			let thumbUp = project?.project?.coverImageUrl
+				? { mediaUrl: project.project.coverImageUrl, publicId: "" }
+				: undefined;
+			let coverUp = project?.project?.coverImageUrl
+				? { mediaUrl: project.project.coverImageUrl, publicId: "" }
+				: undefined;
 
-			const payload: CreateProjectInput = {
+			// Upload new images if provided.
+			const filesToUpload: string[] = [];
+			if (thumbnail) {
+				filesToUpload.push(await readAsDataUrl(thumbnail.file));
+			}
+			if (cover) {
+				filesToUpload.push(await readAsDataUrl(cover.file));
+			}
+
+			if (filesToUpload.length > 0) {
+				const uploaded = await uploadFiles.mutateAsync({
+					files: filesToUpload,
+					folder: "TSAPortfolio/projects",
+				}
+				);
+				if (thumbnail) thumbUp = uploaded[0];
+				if (cover) coverUp = uploaded[filesToUpload.length > 1 ? 1 : 0];
+			}
+
+			const payload: EditProjectInput = {
 				title: data.title,
 				department: [data.department],
 				cohort: data.cohort,
 				academicYear: data.academicYear,
 				description: data.description,
-				thumbnail: thumbUp.mediaUrl,
-				coverImage: coverUp.mediaUrl,
-				// The design has no separate gallery, so thumbnail + cover double
-				// as the required media items (schema needs at least one).
-				media: [thumbUp, coverUp],
+				thumbnail: thumbUp?.mediaUrl ?? "",
+				coverImage: coverUp?.mediaUrl ?? "",
+				media: [thumbUp, coverUp].filter(Boolean) as { mediaUrl: string; publicId: string }[],
 				teamMembers: data.teamMembers.filter((m) => m.fullName.trim()),
 				links: {
 					github: data.github || undefined,
 					figma: data.figma || undefined,
 				},
-				status,
+				status: "published",
 			};
 
-			await createProject.mutateAsync(payload);
-			toast.success(
-				status === "published" ? "Project published" : "Draft saved",
-			);
+			await editProject.mutateAsync(payload);
+			toast.success("Project updated successfully");
 			navigate("/dashboard/portfolio");
 		} catch (err) {
 			toast.error(err instanceof Error ? err.message : "Something went wrong");
@@ -159,12 +184,27 @@ export default function CreateProject() {
 
 	const busy = pending !== null;
 
+	if (projectLoading) {
+		return (
+			<div className="container mx-auto mt-10 text-center text-mainGray">
+				Loading project…
+			</div>
+		);
+	}
+
+	if (!project) {
+		return (
+			<div className="container mx-auto mt-10 text-center text-mainGray">
+				Project not found.
+			</div>
+		);
+	}
+
 	return (
 		<div className="">
-			<Seo title="Add New Project - Techstudio Academy Portfolio" />
+			<Seo title="Edit Project - Techstudio Academy Portfolio" />
 
 			<div className="mt-6 flex flex-col items-start gap-6">
-				{/* Breadcrumb + heading */}
 				<nav className="flex items-center gap-1 text-base">
 					<Link
 						to="/dashboard/portfolio"
@@ -173,15 +213,15 @@ export default function CreateProject() {
 						Portfolio
 					</Link>
 					<ChevronRight className="size-4" />
-					<span className="text-[#000000]">Add New Project</span>
+					<span className="text-[#000000]">Edit Project</span>
 				</nav>
 				<h1 className="text-xl font-semibold text-[#1D1D1D]">
-					Create Portfolio Project
+					Edit Portfolio Project
 				</h1>
 			</div>
 
 			<form
-				onSubmit={handleSubmit((d) => submit(d, "published"))}
+				onSubmit={handleSubmit(submit)}
 				className="mt-16 space-y-16 container mx-auto max-w-4xl"
 			>
 				{/* Project Information */}
@@ -311,12 +351,14 @@ export default function CreateProject() {
 							label="Project Thumbnail"
 							hint="Square, min 800 x 800px"
 							preview={thumbnail?.preview ?? null}
+							existing={project?.project?.coverImageUrl}
 							onSelect={pick(setThumbnail)}
 						/>
 						<UploadBox
 							label="Cover Image"
 							hint="Landscape, min 1600 x 900px"
 							preview={cover?.preview ?? null}
+							existing={project?.project?.coverImageUrl}
 							onSelect={pick(setCover)}
 						/>
 					</div>
@@ -440,26 +482,26 @@ export default function CreateProject() {
 						disabled={busy}
 						onClick={() => navigate(-1)}
 						classname="h-10 px-6"
-          />
-          <div className="flex gap-4 items-center">       
-					<ActionBtn
-						type="button"
-						variant="outline"
-						size="lg"
-						text="Save Draft"
-						loading={pending === "draft"}
-						disabled={busy}
-						onClick={handleSubmit((d) => submit(d, "draft"))}
-						classname="h-10 px-6 border-mainBlue"
 					/>
-					<ActionBtn
-						type="submit"
-						size="lg"
-						text="Publish Project"
-						loading={pending === "published"}
-						disabled={busy}
-						classname="h-10 bg-mainBlue px-6 text-white hover:bg-mainBlue/90"
-					/>
+					<div className="flex gap-4 items-center">
+						<ActionBtn
+							type="button"
+							variant="outline"
+							size="lg"
+							text="Save Draft"
+							loading={pending === "draft"}
+							disabled={busy}
+							onClick={handleSubmit((d) => submit(d))}
+							classname="h-10 px-6 border-mainBlue"
+						/>
+						<ActionBtn
+							type="submit"
+							size="lg"
+							text="Update Project"
+							loading={pending === "published"}
+							disabled={busy}
+							classname="h-10 bg-mainBlue px-6 text-white hover:bg-mainBlue/90"
+						/>
 					</div>
 				</div>
 			</form>
@@ -471,11 +513,13 @@ function UploadBox({
 	label,
 	hint,
 	preview,
+	existing,
 	onSelect,
 }: {
 	label: string;
 	hint: string;
 	preview: string | null;
+	existing?: string;
 	onSelect: (file: File | null) => void;
 }) {
 	return (
@@ -485,6 +529,12 @@ function UploadBox({
 				{preview ? (
 					<img
 						src={preview}
+						alt={label}
+						className="h-full w-full object-cover"
+					/>
+				) : existing ? (
+					<img
+						src={existing}
 						alt={label}
 						className="h-full w-full object-cover"
 					/>

@@ -61,13 +61,17 @@ export default function Portfolio() {
 			)}
 			{data && !isLoading && !isError && (
 				<>
-					<RenderData
-						data={data}
-						STATUS_STYLE={STATUS_STYLES}
-						onView={(project: Project) =>
-							navigate(`/projects/${project.slug ?? "project"}/${project._id}`)
-						}
-					/>
+<RenderData
+					data={data}
+					STATUS_STYLE={STATUS_STYLES}
+					onView={(project: Project) =>
+						navigate(`/projects/${project.slug ?? "project"}/${project._id}`)
+					}
+					onEdit={(project: Project) =>
+						navigate(`/dashboard/portfolio/edit/${project._id}`)
+					}
+					// onDelete={(project: Project) => { /* TODO */ }}
+				/>
 					{(data.items.length ?? 0) > 0 && (
 						<div className="mt-6">
 							<PaginateBox
