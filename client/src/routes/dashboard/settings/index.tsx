@@ -2,12 +2,14 @@ import { useState } from "react";
 import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
+import type { GetUserResponse, UserProfile } from "@tsa/shared";
 import { updateEmailSchema, updatePasswordSchema } from "@tsa/shared";
 import { api } from "@/lib/api";
 import { queryClient } from "@/lib/utils";
+import { getSessionQuery } from "@/middleware/auth";
 import { FormBox } from "@/components/ui/form-box";
 import ActionBtn from "@/components/ui/action-btn";
 
@@ -19,6 +21,9 @@ export default function Settings() {
 	const [emailVisible, setEmailVisible] = useState(false);
 	const [passwordVisible, setPasswordVisible] = useState(false);
 	const [currentPasswordVisible, setCurrentPasswordVisible] = useState(false);
+
+	const { data: user } = useQuery(getSessionQuery());
+	const isSuperAdmin = user?.role === "super_admin";
 
 	const emailForm = useForm<EmailForm>({
 		resolver: zodResolver(updateEmailSchema),
@@ -157,6 +162,109 @@ export default function Settings() {
 						/>
 					</form>
 				</div>
+			</div>
+
+			{/* Manage Users — super_admin only */}
+			{isSuperAdmin && <ManageUsersSection currentUser={user!} />}
+		</div>
+	);
+}
+
+function ManageUsersSection({ currentUser }: { currentUser: UserProfile }) {
+	const queryClient = useQueryClient();
+
+	const { data: users, isLoading } = useQuery({
+		queryKey: ["users"],
+		queryFn: async () => {
+			const res = await api.get<GetUserResponse["body"][]>("/auth/users");
+			return res.body || [];
+		},
+	});
+
+	const promoteMutation = useMutation({
+		mutationFn: (userId: string) => {
+			return api.patch(`/auth/users/${userId}/role`, { role: "super_admin" });
+		},
+		onSuccess: (res) => {
+			if (res.success) {
+				toast.success(res.message);
+				queryClient.invalidateQueries({ queryKey: ["users"] });
+			}
+		},
+		onError: (err) => {
+			toast.error(err.message);
+		},
+	});
+
+	return (
+		<div className="rounded-lg border bg-white p-6">
+			<div className="space-y-2">
+				<h2 className="text-2xl font-semibold">Manage Users</h2>
+				<p>Promote admin users to super_admin</p>
+			</div>
+
+			<div className="mt-4">
+				{isLoading ? (
+					<p className="text-sm text-muted-foreground">Loading users...</p>
+				) : !users || users.length === 0 ? (
+					<p className="text-sm text-muted-foreground">No users found.</p>
+				) : (
+					<div className="overflow-x-auto">
+						<table className="w-full text-sm">
+							<thead>
+								<tr className="border-b text-left text-muted-foreground">
+									<th className="pb-3 font-medium">Email</th>
+									<th className="pb-3 font-medium">Role</th>
+									<th className="pb-3 font-medium">Joined</th>
+									<th className="pb-3 font-medium text-right">Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								{users.map((u) => (
+									<tr key={u._id} className="border-b last:border-0">
+										<td className="py-3">{u.email}</td>
+										<td className="py-3">
+											<span
+												className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
+													u.role === "super_admin"
+														? "bg-purple-100 text-purple-700"
+														: "bg-gray-100 text-gray-700"
+												}`}
+											>
+												{u.role}
+											</span>
+										</td>
+										<td className="py-3 text-muted-foreground">
+											{u.createdAt
+												? new Date(u.createdAt).toLocaleDateString()
+												: "—"}
+										</td>
+										<td className="py-3 text-right">
+											{u._id === currentUser._id ? (
+												<span className="text-xs text-muted-foreground">
+													You
+												</span>
+											) : u.role === "super_admin" ? (
+												<span className="text-xs text-muted-foreground">
+													—
+												</span>
+											) : (
+												<button
+													type="button"
+													onClick={() => promoteMutation.mutate(u._id)}
+													disabled={promoteMutation.isPending}
+													className="rounded bg-mainBlue px-3 py-1 text-xs text-white hover:bg-mainBlue/90 disabled:opacity-50"
+												>
+													{promoteMutation.isPending ? "Promoting..." : "Promote"}
+												</button>
+											)}
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+				)}
 			</div>
 		</div>
 	);

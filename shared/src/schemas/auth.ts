@@ -99,3 +99,7 @@ export const updatePasswordSchema = z.object({
     .regex(/[!@#$%^&*(),.?":{}|<>]/, { message: 'Password must contain at least one special character' })
     .regex(/\d/, { message: 'Password must contain at least one number' }),
 })
+
+export const updateUserRoleSchema = z.object({
+  role: z.enum(['admin', 'super_admin'], { message: 'Role must be admin or super_admin' }),
+})

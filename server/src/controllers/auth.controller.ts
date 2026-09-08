@@ -2,6 +2,7 @@ import type {
 	AuthResponse,
 	ForgotPasswordResponse,
 	GetUserResponse,
+	ListUsersResponse,
 	LogoutResponse,
 	ResendOtpResponse,
 	ResetPasswordResponse,
@@ -13,10 +14,12 @@ import tryCatchWrapper from "../libs/tryCatchWrapper.js";
 import {
 	forgotPassword,
 	getUser,
+	listUsers,
 	loginUser,
 	registerUser,
 	resendOtp,
 	resetPassword,
+	updateUserRole,
 	updateUser,
 	verifyEmail,
 } from "../services/authService.js";
@@ -186,6 +189,44 @@ export const updateUserController = tryCatchWrapper(
 				success: true,
 				message: result.message,
 			});
+		});
+	},
+);
+
+export const listUsersController = tryCatchWrapper(
+	async (req: Request, res: Response) => {
+		const result = await listUsers();
+		if (!result.success) {
+			return sendTsRestError(res, result.status, result.message);
+		}
+
+		return sendTsRestSuccess<ListUsersResponse["body"]>(res, 200, {
+			success: true,
+			message: "Users fetched successfully",
+			body: result.users,
+		});
+	},
+);
+
+export const updateUserRoleController = tryCatchWrapper(
+	async (req: Request, res: Response) => {
+		const requesterId = req.session?.userId;
+		if (!requesterId) {
+			return sendTsRestError(res, 401, "Access denied. Please log in.");
+		}
+
+		const userId = req.params.userId as string;
+		const { role } = req.body;
+
+		const result = await updateUserRole(userId, role, requesterId);
+		if (!result.success) {
+			return sendTsRestError(res, result.status, result.message);
+		}
+
+		return sendTsRestSuccess(res, 200, {
+			success: true,
+			message: result.message,
+			body: result.user,
 		});
 	},
 );

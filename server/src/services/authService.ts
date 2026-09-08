@@ -381,3 +381,53 @@ export const updateUser = async (
 
 	return { success: true, message: "Account updated successfully." };
 };
+
+type UserListResult =
+	| { success: true; users: UserProfile[] }
+	| ServiceError;
+
+type RoleUpdateResult =
+	| { success: true; user: UserProfile; message: string }
+	| ServiceError;
+
+export const listUsers = async (): Promise<UserListResult> => {
+	const users = await User.find()
+		.select("email emailVerified role isSuspended lastLoginAt createdAt updatedAt")
+		.sort({ createdAt: -1 });
+
+	return { success: true, users: users as unknown as UserProfile[] };
+};
+
+export const updateUserRole = async (
+	userId: string,
+	role: "admin" | "super_admin",
+	requesterId: string,
+): Promise<RoleUpdateResult> => {
+	if (userId === requesterId) {
+		return { success: false, status: 400, message: "You cannot change your own role." };
+	}
+
+	if (role !== "super_admin") {
+		return { success: false, status: 400, message: "Only promotion to super_admin is allowed." };
+	}
+
+	const user = await User.findById(userId).select("email emailVerified role isSuspended lastLoginAt createdAt updatedAt");
+	if (!user) {
+		return { success: false, status: 404, message: "User not found." };
+	}
+
+	if (user.role === "super_admin") {
+		return { success: false, status: 400, message: "User is already a super_admin." };
+	}
+
+	user.role = "super_admin";
+	await user.save();
+
+	logger.info({ userId: user._id, requesterId }, "User role updated to super_admin");
+
+	return {
+		success: true,
+		user: user.toObject() as unknown as UserProfile,
+		message: `${user.email} has been promoted to super_admin.`,
+	};
+};
