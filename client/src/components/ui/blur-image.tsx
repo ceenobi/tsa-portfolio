@@ -7,6 +7,8 @@ type BlurImageProps = {
 	blurSrc?: string;
 	className?: string;
 	imgClassName?: string;
+	/** Above-the-fold images: eager load with high fetch priority (LCP). */
+	eager?: boolean;
 };
 
 export function BlurImage({
@@ -15,6 +17,7 @@ export function BlurImage({
 	blurSrc,
 	className,
 	imgClassName,
+	eager = false,
 }: BlurImageProps) {
 	const [loaded, setLoaded] = useState(false);
 
@@ -32,7 +35,8 @@ export function BlurImage({
 				<img
 					src={src}
 					alt={alt}
-					loading="lazy"
+					loading={eager ? "eager" : "lazy"}
+					fetchPriority={eager ? "high" : "auto"}
 					onLoad={() => setLoaded(true)}
 					onError={() => setLoaded(true)}
 					className={cn(

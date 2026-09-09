@@ -1,7 +1,6 @@
 import { COURSES } from "client/src/lib/constants";
 import { ArrowRight } from "lucide-react";
 import { useState } from "react";
-import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import Logo from "./logo";
 
@@ -50,8 +49,10 @@ const SOCIALS = [
 export default function Footer() {
 	const [email, setEmail] = useState("");
 
-	function handleSubscribe(e: React.SubmitEvent) {
+	async function handleSubscribe(e: React.SubmitEvent) {
 		e.preventDefault();
+		// Dynamic import keeps react-toastify out of the main bundle.
+		const { toast } = await import("react-toastify");
 		toast.info("Coming soon!");
 		setEmail("");
 	}

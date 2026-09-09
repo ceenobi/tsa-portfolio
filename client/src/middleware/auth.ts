@@ -66,7 +66,7 @@ export const guestMiddleware: MiddlewareFunction = async (
 			const url = new URL(request.url);
 			const from = url.searchParams.get("from")
 				? url.searchParams.get("from")
-				: "/";
+				: "/dashboard";
 			return redirect(from as string);
 		}
 	} catch {

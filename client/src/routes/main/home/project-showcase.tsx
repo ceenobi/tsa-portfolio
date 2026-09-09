@@ -7,7 +7,10 @@ import NotFound from "@/components/ui/not-found";
 import { useProjects } from "@/hooks/use-project";
 
 export default function ProjectShowcase() {
-	const { data, isLoading, isError } = useProjects({ limit: 6 });
+	const { data, isLoading, isError } = useProjects(
+		{ limit: 6 },
+		{ refetchOnWindowFocus: false },
+	);
 
 	const projects = data?.items ?? [];
 

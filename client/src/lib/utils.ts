@@ -15,6 +15,8 @@ export const queryClient = new QueryClient({
 			staleTime: 1000 * 10,
 			refetchOnWindowFocus: true,
 			gcTime: 5 * 60 * 1000,
+			// One retry: failed lists shouldn't hammer the API 3x by default.
+			retry: 1,
 		},
 	},
 });
