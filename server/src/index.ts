@@ -61,12 +61,7 @@ allowedOrigins.push("http://localhost:5178", "http://127.0.0.1:5178");
 // Local development — fallback port
 allowedOrigins.push("http://localhost:5199", "http://127.0.0.1:5199");
 
-// Vercel preview deployments — each preview gets its own *.vercel.app origin
-if (process.env.VERCEL_URL) {
-	allowedOrigins.push(`https://${process.env.VERCEL_URL}`);
-}
-
-// Render deployments — each service gets its own *.onrender.com origin
+// Render deployments — the service's own *.onrender.com origin
 if (process.env.RENDER_EXTERNAL_URL) {
 	allowedOrigins.push(process.env.RENDER_EXTERNAL_URL);
 }
@@ -211,12 +206,6 @@ const startServer = async (): Promise<void> => {
 	}
 };
 
-if (!process.env.VERCEL) {
-	startServer();
-} else {
-	connectToDB().catch((err) => {
-		console.error("Serverless DB connection failed:", err);
-	});
-}
+startServer();
 
 export default app;

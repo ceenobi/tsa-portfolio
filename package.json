@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Techstudio Academy Portfolio — React Router 7 client + Express API, deployed to Vercel as a single full-stack project.",
+  "description": "Techstudio Academy Portfolio — React Router 7 client + Express API, deployed to Render as a single full-stack web service.",
   "workspaces": [
     "client",
     "server",
