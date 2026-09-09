@@ -94,7 +94,6 @@ const corsOptions: cors.CorsOptions = {
 
 app.use(createExpressLogger()); //Pino HTTP middleware for request logging
 app.use(cors(corsOptions));
-app.use(globalLimiter);
 app.use(createSessionMiddleware());
 app.use(helmet(helmetOptions));
 app.use(express.json({ limit: "25mb" }));
@@ -115,6 +114,11 @@ app.use("/health", (req: Request, res: Response) => {
 		uptime: process.uptime(),
 	});
 });
+
+// Rate-limit API traffic only. Static assets, the SPA fallback and health
+// checks are exempt — a single page load pulls dozens of assets, and
+// counting those trips the limiter and takes the whole site down.
+app.use("/v1", globalLimiter);
 
 //api routes
 app.use("/v1/auth", authRoutes);
