@@ -1,22 +1,10 @@
 import { ChevronDown, Menu, X } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router";
-import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import Logo from "@/components/ui/logo";
+import { COURSES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
-const COURSES = [
-	"Front End Development",
-	"Android Development",
-	"UI/UX Design",
-	"Full Stack Development",
-	"Data Science",
-];
-
-function comingSoon() {
-	toast.info("Coming soon!");
-}
 
 export default function Nav() {
 	const [mobileOpen, setMobileOpen] = useState(false);
@@ -55,16 +43,21 @@ export default function Nav() {
 							</button>
 
 							{coursesOpen && (
-								<div className="absolute left-0 top-full w-56 rounded-md border border-border bg-popover p-1 shadow-lg">
+								<div className="absolute left-0 top-full w-64 rounded-md border border-border bg-popover p-1 shadow-lg">
 									{COURSES.map((course) => (
-										<button
-											key={course}
-											type="button"
-											onClick={comingSoon}
-											className="block w-full rounded-sm px-3 py-2 text-left text-sm text-foreground hover:bg-muted"
+										<a
+											key={course.name}
+											href={course.href}
+											target="_blank"
+											rel="noopener noreferrer"
 										>
-											{course}
-										</button>
+											<button
+												type="button"
+												className="block w-full rounded-sm px-3 py-2 text-left text-sm text-foreground hover:bg-muted"
+											>
+												{course.name}
+											</button>
+										</a>
 									))}
 								</div>
 							)}
@@ -93,12 +86,14 @@ export default function Nav() {
 					</nav>
 
 					<div className="hidden lg:block">
-						<Button
-							onClick={comingSoon}
-							className="h-9 rounded-md bg-mainBlue py-3 px-6.5 text-sm text-white hover:bg-blue-500"
+						<a
+							href="https://www.techstudioacademy.com/register"
+							rel="noopener noreferrer"
 						>
-							Register
-						</Button>
+							<Button className="h-9 rounded-md bg-mainBlue py-3 px-6.5 text-sm text-white hover:bg-blue-500">
+								Register
+							</Button>
+						</a>
 					</div>
 
 					<button
@@ -122,58 +117,68 @@ export default function Nav() {
 					)}
 				>
 					<div className="flex min-h-0 flex-col gap-1 text-sm font-medium">
-						<Link
-							to="/about"
-							className="rounded-md px-2 py-2 hover:bg-white/10"
-						>
-							About Us
-						</Link>
-						{COURSES.map((course) => (
+						<a href="https://www.techstudioacademy.com/about">
 							<button
-								key={course}
 								type="button"
-								onClick={comingSoon}
 								className="rounded-md px-2 py-2 text-left hover:bg-white/10"
 							>
-								{course}
+								About Us
 							</button>
+						</a>
+						{COURSES.map((course) => (
+							<a
+								key={course.name}
+								href={course.href}
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								<button
+									type="button"
+									className="rounded-md px-2 py-2 text-left hover:bg-white/10"
+								>
+									{course.name}
+								</button>
+							</a>
 						))}
-						<button
-							type="button"
-							onClick={comingSoon}
-							className="rounded-md px-2 py-2 text-left hover:bg-white/10"
+						<a
+							href="https://www.techstudioacademy.com/faq"
+							rel="noopener noreferrer"
 						>
-							Employers
-						</button>
-						<button
-							type="button"
-							onClick={comingSoon}
-							className="rounded-md px-2 py-2 text-left hover:bg-white/10"
+							<button
+								type="button"
+								className="rounded-md px-2 py-2 text-left hover:bg-white/10"
+							>
+								FAQ
+							</button>
+						</a>
+						<a
+							href="https://www.techstudioacademy.com/contact"
+							rel="noopener noreferrer"
 						>
-							FAQ
-						</button>
-						<button
-							type="button"
-							onClick={comingSoon}
-							className="rounded-md px-2 py-2 text-left hover:bg-white/10"
+							<button
+								type="button"
+								className="rounded-md px-2 py-2 text-left hover:bg-white/10"
+							>
+								Contact Us
+							</button>
+						</a>
+						<a
+							href="https://www.techstudioacademy.com/portfolio"
+							rel="noopener noreferrer"
 						>
-							Contact Us
-						</button>
-						<button
-							type="button"
-							onClick={comingSoon}
-							className="rounded-md px-2 py-2 text-left hover:bg-white/10"
-						>
-							Portfolio
-						</button>
+							<button
+								type="button"
+								className="rounded-md px-2 py-2 text-left hover:bg-white/10"
+							>
+								Portfolio
+							</button>
+						</a>
+
 						<a
 							href="https://www.techstudioacademy.com/register"
 							rel="noopener noreferrer"
 						>
-							<Button
-								onClick={comingSoon}
-								className="mt-2 h-9 w-full rounded-md bg-blue-600 text-sm text-white hover:bg-blue-500"
-							>
+							<Button className="mt-2 h-9 w-full rounded-md bg-blue-600 text-sm text-white hover:bg-blue-500">
 								Register
 							</Button>
 						</a>

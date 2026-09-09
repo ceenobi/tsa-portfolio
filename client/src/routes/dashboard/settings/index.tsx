@@ -1,17 +1,17 @@
-import { useState } from "react";
-import type { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router";
-import { toast } from "react-toastify";
 import type { GetUserResponse, UserProfile } from "@tsa/shared";
 import { updateEmailSchema, updatePasswordSchema } from "@tsa/shared";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
+import type { z } from "zod";
+import ActionBtn from "@/components/ui/action-btn";
+import { FormBox } from "@/components/ui/form-box";
 import { api } from "@/lib/api";
 import { queryClient } from "@/lib/utils";
 import { getSessionQuery } from "@/middleware/auth";
-import { FormBox } from "@/components/ui/form-box";
-import ActionBtn from "@/components/ui/action-btn";
 
 type EmailForm = z.infer<typeof updateEmailSchema>;
 type PasswordForm = z.infer<typeof updatePasswordSchema>;
@@ -73,7 +73,7 @@ export default function Settings() {
 		<div className="container mx-auto space-y-8">
 			<div className="flex justify-between items-center">
 				<div className="space-y-2">
-					<h1 className="text-2xl font-bold">Settings</h1>
+					<h1 className="text-2xl font-bold">Account</h1>
 					<p>Manage your academy and portfolio preferences</p>
 				</div>
 			</div>
@@ -245,9 +245,7 @@ function ManageUsersSection({ currentUser }: { currentUser: UserProfile }) {
 													You
 												</span>
 											) : u.role === "super_admin" ? (
-												<span className="text-xs text-muted-foreground">
-													—
-												</span>
+												<span className="text-xs text-muted-foreground">—</span>
 											) : (
 												<button
 													type="button"
@@ -255,7 +253,9 @@ function ManageUsersSection({ currentUser }: { currentUser: UserProfile }) {
 													disabled={promoteMutation.isPending}
 													className="rounded bg-mainBlue px-3 py-1 text-xs text-white hover:bg-mainBlue/90 disabled:opacity-50"
 												>
-													{promoteMutation.isPending ? "Promoting..." : "Promote"}
+													{promoteMutation.isPending
+														? "Promoting..."
+														: "Promote"}
 												</button>
 											)}
 										</td>

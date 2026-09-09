@@ -17,11 +17,10 @@ export const getSessionQuery = () =>
 
 export const requireAuth: MiddlewareFunction = async ({ request }, next) => {
 	const session = await queryClient.fetchQuery(getSessionQuery());
-	console.log("ss", session);
 	if (!session) {
 		const params = new URLSearchParams();
 		params.set("redirectTo", new URL(request.url).pathname);
-		throw redirect(`/auth/login?${params}`);
+		throw redirect(`/admin/login?${params}`);
 	}
 	//check role
 	if (!["admin", "super_admin"].includes(session.role)) {
@@ -36,15 +35,14 @@ export const sessionMiddleware: MiddlewareFunction = async (
 ) => {
 	try {
 		const session = await queryClient.fetchQuery(getSessionQuery());
-		console.log("ff", session);
 		// // 1. Email Verification Check
 		const { pathname } = new URL(request.url);
 		if (
 			session &&
 			!session?.emailVerified &&
-			pathname !== "/auth/verify-email"
+			pathname !== "/admin/verify-email"
 		) {
-			return redirect(`/auth/verify-email?email=${session?.email}`);
+			return redirect(`/admin/verify-email?email=${session?.email}`);
 		}
 		if (session) {
 			return session;
@@ -62,7 +60,7 @@ export const guestMiddleware: MiddlewareFunction = async (
 	const { pathname } = new URL(request.url);
 	try {
 		const session = await queryClient.fetchQuery(getSessionQuery());
-		if (pathname === "/auth/verify-email" && !session.emailVerified)
+		if (pathname === "/admin/verify-email" && !session.emailVerified)
 			return await next();
 		if (session) {
 			const url = new URL(request.url);

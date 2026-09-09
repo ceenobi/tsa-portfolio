@@ -41,6 +41,7 @@ const formSchema = z.object({
 		.max(2000, { message: "Description must be at most 2000 characters" }),
 	github: z.url({ message: "Enter a valid GitHub URL" }).or(z.literal("")),
 	figma: z.url({ message: "Enter a valid Figma URL" }).or(z.literal("")),
+	url: z.url({ message: "Enter a valid project URL" }).or(z.literal("")),
 	teamMembers: z
 		.array(
 			z.object({
@@ -90,6 +91,7 @@ export default function CreateProject() {
 			description: "",
 			github: "",
 			figma: "",
+			url: "",
 			teamMembers: [],
 		},
 	});
@@ -139,6 +141,7 @@ export default function CreateProject() {
 				media: [thumbUp, coverUp],
 				teamMembers: data.teamMembers.filter((m) => m.fullName.trim()),
 				links: {
+					url: data.url || undefined,
 					github: data.github || undefined,
 					figma: data.figma || undefined,
 				},
@@ -219,7 +222,10 @@ export default function CreateProject() {
 								control={control}
 								name="department"
 								render={({ field }) => (
-									<Select value={field.value} onValueChange={field.onChange}>
+									<Select
+										value={field.value ?? ""}
+										onValueChange={field.onChange}
+									>
 										<SelectTrigger className="h-13 py-4.5 w-full">
 											<SelectValue placeholder="Department" />
 										</SelectTrigger>
@@ -424,6 +430,25 @@ export default function CreateProject() {
 							{errors.figma && (
 								<p className="text-xs text-destructive">
 									{errors.figma.message}
+								</p>
+							)}
+						</div>
+						<div className="space-y-2.5">
+							<Label
+								htmlFor="url"
+								className="text-base text-mainBlack font-semibold"
+							>
+								Live URL
+							</Label>
+							<Input
+								id="url"
+								placeholder="https://..."
+								className="h-10"
+								{...register("url")}
+							/>
+							{errors.url && (
+								<p className="text-xs text-destructive">
+									{errors.url.message}
 								</p>
 							)}
 						</div>

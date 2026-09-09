@@ -40,6 +40,7 @@ const formSchema = z.object({
 		.max(2000, { message: "Description must be at most 2000 characters" }),
 	github: z.url({ message: "Enter a valid GitHub URL" }).or(z.literal("")),
 	figma: z.url({ message: "Enter a valid Figma URL" }).or(z.literal("")),
+	url: z.url({ message: "Enter a valid project URL" }).or(z.literal("")),
 	teamMembers: z
 		.array(
 			z.object({
@@ -93,13 +94,13 @@ export default function EditProject() {
 		reset({
 			title: p.title ?? "",
 			department:
-				(p.category as (typeof PROJECT_DEPARTMENTS)[number]) ??
-				"Full Stack Web Development",
+				(p.category as (typeof PROJECT_DEPARTMENTS)[number]),
 			cohort: p.cohort ?? "",
 			academicYear: p.year ?? "2024",
 			description: p.description ?? "",
 			github: p.links?.github ?? "",
 			figma: p.links?.figma ?? "",
+			url: p.links?.url ?? "",
 			teamMembers: (p.teamMembers ?? []).map((m) => ({
 				fullName: m.name ?? "",
 				image: m.avatarUrl ?? "",
@@ -121,8 +122,16 @@ export default function EditProject() {
 
 	async function submit(data: FormValues) {
 		// Existing images from the project (fallback when user doesn't upload new ones).
-		const existingThumb = project?.project?.media?.[0]?.mediaUrl;
-		const existingCover = project?.project?.coverImageUrl;
+		// Keep the full { mediaUrl, publicId } objects — the schema requires a
+		// non-empty publicId, so entries missing one are treated as absent.
+		const usableMedia = (
+			m: { mediaUrl?: string; publicId?: string } | undefined,
+		) =>
+			m?.mediaUrl && m?.publicId
+				? { mediaUrl: m.mediaUrl, publicId: m.publicId }
+				: undefined;
+		const existingThumb = usableMedia(project?.project?.media?.[0]);
+		const existingCover = usableMedia(project?.project?.media?.[1]);
 
 		const hasExisting = Boolean(existingThumb || existingCover);
 		const hasNew = Boolean(thumbnail || cover);
@@ -136,13 +145,9 @@ export default function EditProject() {
 		try {
 			setPending("published");
 
-			// Start with existing images as defaults.
-			let thumbUp = existingThumb
-				? { mediaUrl: existingThumb, publicId: "" }
-				: undefined;
-			let coverUp = existingCover
-				? { mediaUrl: existingCover, publicId: "" }
-				: undefined;
+		// Start with existing images as defaults.
+		let thumbUp = existingThumb;
+		let coverUp = existingCover;
 
 			// Upload new images if provided, replacing the defaults.
 			const filesToUpload: string[] = [];
@@ -177,6 +182,7 @@ export default function EditProject() {
 				}[],
 				teamMembers: data.teamMembers.filter((m) => m.fullName.trim()),
 				links: {
+					url: data.url || undefined,
 					github: data.github || undefined,
 					figma: data.figma || undefined,
 				},
@@ -270,7 +276,10 @@ export default function EditProject() {
 								control={control}
 								name="department"
 								render={({ field }) => (
-									<Select value={field.value} onValueChange={field.onChange}>
+									<Select
+										value={field.value ?? ""}
+										onValueChange={field.onChange}
+									>
 										<SelectTrigger className="h-13 py-4.5 w-full">
 											<SelectValue placeholder="Department" />
 										</SelectTrigger>
@@ -477,6 +486,25 @@ export default function EditProject() {
 							{errors.figma && (
 								<p className="text-xs text-destructive">
 									{errors.figma.message}
+								</p>
+							)}
+						</div>
+						<div className="space-y-2.5">
+							<Label
+								htmlFor="url"
+								className="text-base text-mainBlack font-semibold"
+							>
+								Live URL
+							</Label>
+							<Input
+								id="url"
+								placeholder="https://..."
+								className="h-10"
+								{...register("url")}
+							/>
+							{errors.url && (
+								<p className="text-xs text-destructive">
+									{errors.url.message}
 								</p>
 							)}
 						</div>
