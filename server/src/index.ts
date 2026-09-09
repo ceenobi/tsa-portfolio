@@ -1,3 +1,4 @@
+import path from "node:path";
 import cors from "cors";
 import express, {
 	type NextFunction,
@@ -5,7 +6,6 @@ import express, {
 	type Response,
 } from "express";
 import helmet from "helmet";
-import path from "node:path";
 import { connectToDB, gracefulShutdown } from "./config/database.js";
 import { env } from "./config/keys.js";
 import logger, { logError } from "./config/logger.js";

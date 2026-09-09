@@ -1,5 +1,11 @@
 import type { Project } from "@tsa/shared";
-import { ArrowLeft, Calendar, ExternalLink, Users } from "lucide-react";
+import {
+	ArrowLeft,
+	ArrowUpRight,
+	Calendar,
+	ExternalLink,
+	Users,
+} from "lucide-react";
 import { Link, useParams } from "react-router";
 import ProjectCard from "@/components/features/project-card";
 import { Seo } from "@/components/provider/seo";
@@ -17,7 +23,6 @@ import {
 export default function ProjectDetail() {
 	const { projectId } = useParams<{ slug: string; projectId: string }>();
 	const { data, isLoading, isError } = useProject(projectId);
-	console.log(data);
 	const project = data?.project;
 	const recommended = data?.recommended || [];
 
@@ -192,11 +197,11 @@ export default function ProjectDetail() {
 					<section className="mt-12">
 						<div className="flex justify-between items-center">
 							<h2 className="text-xl font-semibold">More projects</h2>
-							<Link
-								to="/projects"
-								className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-							>
-								See all
+							<Link to="/explore">
+								<Button variant="link" className="text-mainBlue">
+									View all
+									<ArrowUpRight />
+								</Button>
 							</Link>
 						</div>
 						<div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

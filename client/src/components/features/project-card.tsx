@@ -18,7 +18,7 @@ export default function ProjectCard({ project }: { project: Project }) {
           />
 
           <div className="p-4">
-            <h3 className=" text-[20px] font-normal">{project.category}</h3>
+            <h3 className=" text-[20px] font-normal truncate">{project.title}</h3>
             <p className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
               <span className="flex items-center gap-1">
                 <img src="/images/Calendar.svg" className="size-4" alt="" />
