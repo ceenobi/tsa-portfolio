@@ -5,24 +5,22 @@ import type {
 	GetRecentProjectsResponse,
 } from "@tsa/shared";
 import type { Request, Response } from "express";
-import { flushCache } from "../libs/cache.js";
 import { sendTsRestError, sendTsRestSuccess } from "../libs/responseHandler.js";
 import tryCatchWrapper from "../libs/tryCatchWrapper.js";
 import {
-	createProject,
-	deleteProject,
-	editProject,
-	getProject,
-	getRecentlyAddedProjects,
-	listProjects,
+  createProject,
+  deleteProject,
+  editProject,
+  getProject,
+  getRecentlyAddedProjects,
+  invalidateProjectCaches,
+  listProjects,
 } from "../services/projectService.js";
 
 export const addAProject = tryCatchWrapper(
 	async (req: Request, res: Response) => {
-		const createdBy = req.session?.userId;
-		if (!createdBy) {
-			return sendTsRestError(res, 401, "Access denied. Please log in.");
-		}
+		// Session is guaranteed by requireRole on the route.
+		const createdBy = req.session.userId as string;
 
 		const result = await createProject({ ...req.body, createdBy });
 
@@ -30,7 +28,7 @@ export const addAProject = tryCatchWrapper(
 			return sendTsRestError(res, result.status, result.message);
 		}
 
-		await flushCache();
+		await invalidateProjectCaches();
 
 		return sendTsRestSuccess<CreateProjectResponse["body"]>(res, 201, {
 			success: true,
@@ -110,10 +108,8 @@ export const recentlyAddedProjects = tryCatchWrapper(
 
 export const editAProject = tryCatchWrapper(
 	async (req: Request, res: Response) => {
-		const createdBy = req.session?.userId;
-		if (!createdBy) {
-			return sendTsRestError(res, 401, "Access denied. Please log in.");
-		}
+		// Session is guaranteed by requireRole on the route.
+		const createdBy = req.session.userId as string;
 
 		const { projectId } = req.params;
 		const result = await editProject({ ...req.body, createdBy, _id: projectId });
@@ -122,7 +118,7 @@ export const editAProject = tryCatchWrapper(
 			return sendTsRestError(res, result.status, result.message);
 		}
 
-		await flushCache();
+		await invalidateProjectCaches(String(projectId));
 
 		return sendTsRestSuccess<CreateProjectResponse["body"]>(res, 200, {
 			success: true,
@@ -134,19 +130,14 @@ export const editAProject = tryCatchWrapper(
 
 export const deleteAProject = tryCatchWrapper(
 	async (req: Request, res: Response) => {
-		const createdBy = req.session?.userId;
-		if (!createdBy) {
-			return sendTsRestError(res, 401, "Access denied. Please log in.");
-		}
-
 		const { projectId } = req.params;
 		const result = await deleteProject(String(projectId));
 
 		if (!result.success) {
-			return sendTsRestError(res, 404, result.message);
+			return sendTsRestError(res, result.status, result.message);
 		}
 
-		await flushCache();
+		await invalidateProjectCaches(String(projectId));
 
 		return sendTsRestSuccess<undefined>(res, 200, {
 			success: true,

@@ -1,21 +1,11 @@
 import type { Request, Response } from "express";
-import { env } from "../config/keys.js";
 import { startEmailCron } from "../jobs/emailCron.js";
-import { sendTsRestError, sendTsRestSuccess } from "../libs/responseHandler.js";
+import { sendTsRestSuccess } from "../libs/responseHandler.js";
 import tryCatchWrapper from "../libs/tryCatchWrapper.js";
 
 export const checkEmailCron = tryCatchWrapper(
 	async (req: Request, res: Response) => {
-		const cronSecret = req.headers["x-cron-secret"];
-
-		if (!cronSecret || cronSecret !== env.CRON_SECRET) {
-			return sendTsRestError(
-				res,
-				401,
-				"Unauthorized: invalid or missing CRON_SECRET",
-			);
-		}
-
+		// Secret is verified by verifyCronSecret on the route.
 		const result = await startEmailCron();
 
 		return sendTsRestSuccess(res, 200, {

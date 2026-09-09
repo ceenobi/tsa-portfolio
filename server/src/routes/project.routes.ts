@@ -15,13 +15,19 @@ import { validateFormData } from "../middlewares/schema.middleware.js";
 
 const router = Router();
 
-router.get("/", customRateLimiter(60), cacheMiddleware(3600), getProjects);
+router.get(
+  "/",
+  customRateLimiter(60),
+  cacheMiddleware(3600, { listNamespace: "projects" }),
+  getProjects,
+);
 
 router.get(
-	"/recent",
-	customRateLimiter(60),
-	requireRole("admin", "super_admin"),
-	recentlyAddedProjects,
+  "/recent",
+  customRateLimiter(60),
+  requireRole("admin", "super_admin"),
+  cacheMiddleware(60, { listNamespace: "projects" }),
+  recentlyAddedProjects,
 );
 
 router.get(

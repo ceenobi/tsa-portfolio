@@ -13,6 +13,19 @@ const getBackoffDelay = (retryCount: number): number => {
 }
 
 /**
+ * Atomically claim a queued email for delivery. Returns null when another
+ * worker (cron tick or immediate drain) already claimed it — the guard
+ * against double-sending.
+ */
+const claimEmail = async (id: unknown) => {
+  return EmailQueue.findOneAndUpdate(
+    { _id: id, status: { $in: ['queued', 'failed'] } },
+    { $set: { status: 'sending' } },
+    { new: true },
+  ).lean()
+}
+
+/**
  * Process queued and failed emails that are due for retry.
  * Called by the scheduled cron job (GET /cron-email) every 10 minutes.
  */
@@ -38,11 +51,18 @@ export const startEmailCron = async (): Promise<{ processed: number; sent: numbe
     logger.info({ count: dueEmails.length }, `Email cron: processing ${dueEmails.length} email(s)`)
 
     for (const email of dueEmails) {
+      const claimed = await claimEmail(email._id)
+      if (!claimed) continue // taken by a concurrent worker
+      if (claimed.retryCount >= claimed.maxRetries) {
+        await EmailQueue.updateOne(
+          { _id: email._id },
+          { $set: { status: 'failed', lastError: 'Max retries exceeded' } },
+        )
+        failed++
+        continue
+      }
       try {
-        // Mark as sending
-        await EmailQueue.updateOne({ _id: email._id }, { $set: { status: 'sending' } })
-
-        const result = await sendEmail(email.to, email.subject, email.html)
+        const result = await sendEmail(claimed.to, claimed.subject, claimed.html)
 
         if (result.success) {
           await EmailQueue.deleteOne({ _id: email._id })
@@ -55,7 +75,7 @@ export const startEmailCron = async (): Promise<{ processed: number; sent: numbe
         const errMsg = error instanceof Error ? error.message : 'Unknown error'
         const errStack = error instanceof Error ? error.stack : undefined
 
-        const nextRetryAt = new Date(Date.now() + getBackoffDelay(email.retryCount + 1))
+        const nextRetryAt = new Date(Date.now() + getBackoffDelay(claimed.retryCount + 1))
 
         await EmailQueue.updateOne(
           { _id: email._id },
@@ -71,7 +91,7 @@ export const startEmailCron = async (): Promise<{ processed: number; sent: numbe
           }
         )
         failed++
-        logger.error({ emailId: email._id, error: errMsg, retryCount: email.retryCount + 1 }, 'Email send failed')
+        logger.error({ emailId: email._id, error: errMsg, retryCount: claimed.retryCount + 1 }, 'Email send failed')
       }
     }
 
@@ -82,6 +102,25 @@ export const startEmailCron = async (): Promise<{ processed: number; sent: numbe
     logger.error({ err: error }, `Email cron: error querying email queue: ${errMsg}`)
     return { processed: 0, sent: 0, failed: 0 }
   }
+}
+
+let immediateDrainInFlight = false
+
+/**
+ * Fire-and-forget delivery attempt for freshly queued mail (auth flows).
+ * Keeps OTP/reset emails arriving in seconds without blocking the API
+ * response; the scheduled cron remains the backstop. Never throws.
+ */
+export const triggerImmediateDelivery = (): void => {
+  if (immediateDrainInFlight) return
+  immediateDrainInFlight = true
+  startEmailCron()
+    .catch((error: unknown) => {
+      logger.error({ err: error }, 'Immediate email delivery failed')
+    })
+    .finally(() => {
+      immediateDrainInFlight = false
+    })
 }
 
 export default { startEmailCron }

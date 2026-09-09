@@ -35,21 +35,67 @@ const getClient = (): Memcached => {
 
 /**
  * Build a consistent cache key from the request.
+ * Uses baseUrl + path so keys are unambiguous across mounted routers
+ * (req.path alone is stripped of the mount point inside a router).
  * Omits query params that shouldn't fingerprint the cache (e.g., cache-busters).
  */
+export const buildCacheKey = (path: string, queryString?: string): string =>
+  queryString ? `${CACHE_PREFIX}:${path}:${queryString}` : `${CACHE_PREFIX}:${path}`;
+
+const sortedQueryString = (query: Request["query"]): string => {
+  if (Object.keys(query).length === 0) return "";
+  return new URLSearchParams(
+    Object.entries(query)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([k, v]) => [k, String(v)]),
+  ).toString();
+};
+
 export const generateCacheKey = (req: Request, suffix?: string): string => {
-	const base = `${CACHE_PREFIX}:${req.path}`;
-	if (suffix) return `${base}:${suffix}`;
-	// Include sorted query string so ordering doesn't matter
-	if (Object.keys(req.query).length > 0) {
-		const sorted = new URLSearchParams(
-			Object.entries(req.query)
-				.sort(([a], [b]) => a.localeCompare(b))
-				.map(([k, v]) => [k, String(v)]),
-		).toString();
-		return `${base}:${sorted}`;
-	}
-	return base;
+  // Include sorted query string so ordering doesn't matter
+  const key = buildCacheKey(
+    `${req.baseUrl}${req.path}`,
+    sortedQueryString(req.query) || undefined,
+  );
+  return suffix ? `${key}:${suffix}` : key;
+};
+
+/**
+ * List-namespace generations — targeted invalidation for memcached, which
+ * has no prefix scan. List keys embed the current generation; a write bumps
+ * it instead of flushing the whole cache. Generations are cached in-process
+ * (10s) so reads rarely pay an extra round-trip, and stored with a long TTL
+ * so they always outlive the data keys they version.
+ */
+const GEN_TTL_SECONDS = 30 * 24 * 3600;
+const GEN_CACHE_MS = 10_000;
+const generationCache = new Map<string, { gen: number; at: number }>();
+
+const generationKey = (namespace: string): string =>
+  `${CACHE_PREFIX}:gen:${namespace}`;
+
+export const getListGeneration = async (namespace: string): Promise<number> => {
+  const cached = generationCache.get(namespace);
+  if (cached && Date.now() - cached.at < GEN_CACHE_MS) return cached.gen;
+  const raw = await getCache(generationKey(namespace));
+  const gen = raw ? Number.parseInt(raw, 10) || 0 : 0;
+  generationCache.set(namespace, { gen, at: Date.now() });
+  return gen;
+};
+
+export const bumpListGeneration = async (namespace: string): Promise<void> => {
+  const gen = (await getListGeneration(namespace)) + 1;
+  generationCache.set(namespace, { gen, at: Date.now() });
+  await setCache(generationKey(namespace), String(gen), GEN_TTL_SECONDS);
+};
+
+/** Versioned key for cacheable list endpoints. */
+export const generateVersionedKey = async (
+  req: Request,
+  namespace: string,
+): Promise<string> => {
+  const gen = await getListGeneration(namespace);
+  return generateCacheKey(req, `v${gen}`);
 };
 
 /**
