@@ -2,6 +2,7 @@ import type { Project } from "@tsa/shared";
 import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router";
 import ProjectCard from "@/components/features/project-card";
+import { AnimateOnScroll } from "@/components/ui/animate-on-scroll";
 import { Button } from "@/components/ui/button";
 import NotFound from "@/components/ui/not-found";
 import PaginateBox from "@/components/ui/paginate-box";
@@ -82,9 +83,11 @@ export default function Explore() {
 	
 	return (
 		<div className="mx-auto max-w-7xl pb-20 px-4 pt-25 sm:px-6 lg:px-8">
-			<h2 className="text-3xl font-bold  tracking-[-5%] uppercase sm:text-4xl">
-				Explore Projects
-			</h2>
+			<AnimateOnScroll>
+				<h2 className="text-3xl font-bold  tracking-[-5%] uppercase sm:text-4xl">
+					Explore Projects
+				</h2>
+			</AnimateOnScroll>
 			<div className="mt-4 flex flex-wrap items-center justify-between gap-2">
 				<div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter by course">
 						<span className="text-[14px] font-medium text-muted-foreground">
@@ -147,8 +150,10 @@ export default function Explore() {
 						isFetching && !isLoading && "opacity-70",
 					)}
 				>
-					{projects.map((project: Project) => (
-						<ProjectCard project={project} key={project._id} />
+					{projects.map((project: Project, index: number) => (
+						<AnimateOnScroll key={project._id} delay={index * 60}>
+							<ProjectCard project={project} />
+						</AnimateOnScroll>
 					))}
 				</div>
 			)}

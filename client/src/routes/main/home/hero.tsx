@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { AnimateOnScroll } from "@/components/ui/animate-on-scroll";
 
 //   {
 //     src: "/images/Component19.svg",
@@ -26,27 +27,34 @@ export default function Hero() {
   return (
     <section className="py-20 bg-deepBlue text-white">
       <div className="mx-auto max-w-7xl px-4 pt-17.25 pb-1 sm:px-6 lg:px-8">
-        <h1 className="max-w-3xl text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl uppercase">
-          500+ Student Projects Built, Countless Careers Launched
-        </h1>
-        <p className="mt-4 max-w-2xl text-[#A3A3A3]">
-          With 1,000+ learners trained and hundreds of real-world projects
-          shipped, this archive showcases what happens when ambition meets
-          practical tech education.
-        </p>
+        <AnimateOnScroll>
+          <h1 className="max-w-3xl text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl uppercase">
+            500+ Student Projects Built, Countless Careers Launched
+          </h1>
+        </AnimateOnScroll>
 
-        <Button
-          nativeButton={false}
-            className="mt-6 h-10 rounded-md bg-white px-6 text-sm font-medium text-[16px] text-mainBlue hover:bg-white/90"
-          render={
-            <a
-              href="https://www.techstudioacademy.com/register"
-              rel="noopener noreferrer"
-            />
-          }
-        >
-          Join Us Now
-        </Button>
+        <AnimateOnScroll delay={100}>
+          <p className="mt-4 max-w-2xl text-[#A3A3A3]">
+            With 1,000+ learners trained and hundreds of real-world projects
+            shipped, this archive showcases what happens when ambition meets
+            practical tech education.
+          </p>
+        </AnimateOnScroll>
+
+        <AnimateOnScroll delay={200}>
+          <Button
+            nativeButton={false}
+              className="mt-6 h-10 rounded-md bg-white px-6 text-sm font-medium text-[16px] text-mainBlue hover:bg-white/90"
+            render={
+              <a
+                href="https://www.techstudioacademy.com/register"
+                rel="noopener noreferrer"
+              />
+            }
+          >
+            Join Us Now
+          </Button>
+        </AnimateOnScroll>
 
         {/* <div className="mt-10 grid grid-cols-2 gap-3 sm:flex sm:gap-3">
           {GRADUATE_PHOTOS.map((photo) => (
@@ -67,13 +75,15 @@ export default function Hero() {
         </div> */}
       </div>
 
-      <img
-        src="/images/students.svg"
-        width={1440}
-        height={686}
-        className="block w-full py-12.5"
-        alt=""
-      />
+      <AnimateOnScroll delay={300}>
+        <img
+          src="/images/students.svg"
+          width={1440}
+          height={686}
+          className="block w-full py-12.5"
+          alt=""
+        />
+      </AnimateOnScroll>
     </section>
   );
 }
