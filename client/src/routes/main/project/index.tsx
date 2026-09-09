@@ -10,6 +10,7 @@ import { Link, useParams } from "react-router";
 import ProjectCard from "@/components/features/project-card";
 import CtaCard from "@/components/features/cta-card";
 import { Seo } from "@/components/provider/seo";
+import { AnimateOnScroll } from "@/components/ui/animate-on-scroll";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BlurImage } from "@/components/ui/blur-image";
 import { Button } from "@/components/ui/button";
@@ -61,10 +62,10 @@ export default function ProjectDetail() {
 
 			<article className="mx-auto max-w-7xl px-4 py-25 sm:px-6 lg:px-8">
 				<Link
-					to="/"
+					to="/explore"
 					className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:underline focus-visible:outline-none"
 				>
-					<ArrowLeft className="size-4" /> Back to home
+					<ArrowLeft className="size-4" /> Back to explore
 				</Link>
 
 				{/* Title + meta */}
@@ -103,15 +104,18 @@ export default function ProjectDetail() {
 					/>
 				)}
 
-				{/* Description */}
-				{project.description && (
+			{/* Description */}
+			{project.description && (
+				<AnimateOnScroll>
 					<p className="mt-8 whitespace-pre-line text-xl leading-[38.4px] text-lightGray">
 						{project.description}
 					</p>
-				)}
+				</AnimateOnScroll>
+			)}
 
-				{/* Gallery (optional) */}
-				{project.media && project.media.length > 0 && (
+			{/* Gallery (optional) */}
+			{project.media && project.media.length > 0 && (
+				<AnimateOnScroll>
 					<section className="mt-12">
 						<h2 className="text-xl font-semibold">Gallery</h2>
 						<div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -126,10 +130,12 @@ export default function ProjectDetail() {
 							))}
 						</div>
 					</section>
-				)}
+				</AnimateOnScroll>
+			)}
 
-				{/* Team members */}
-				{memberCount > 0 && (
+			{/* Team members */}
+			{memberCount > 0 && (
+				<AnimateOnScroll>
 					<section className="mt-12">
 						<h2 className="text-xl font-semibold">Team members</h2>
 						<ul className="mt-5 flex flex-wrap gap-8">
@@ -159,10 +165,12 @@ export default function ProjectDetail() {
 							))}
 						</ul>
 					</section>
-				)}
+				</AnimateOnScroll>
+			)}
 
-				{/* Project links */}
-				{hasLinks && (
+			{/* Project links */}
+			{hasLinks && (
+				<AnimateOnScroll>
 					<section className="mt-12">
 						<h2 className="text-xl font-semibold">Project links</h2>
 						<div className="mt-4 flex flex-wrap gap-3">
@@ -206,8 +214,10 @@ export default function ProjectDetail() {
 							)}
 						</div>
 					</section>
-				)}
-				{recommended.length > 0 && (
+				</AnimateOnScroll>
+			)}
+			{recommended.length > 0 && (
+				<AnimateOnScroll>
 					<section className="mt-12">
 						<div className="flex justify-between items-center">
 							<h2 className="text-xl font-semibold">More projects</h2>
@@ -219,15 +229,20 @@ export default function ProjectDetail() {
 							</Link>
 						</div>
 						<div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-							{recommended.map((project: Project) => (
-								<ProjectCard project={project} key={project._id} />
+							{recommended.map((project: Project, index: number) => (
+								<AnimateOnScroll key={project._id} delay={index * 60}>
+									<ProjectCard project={project} />
+								</AnimateOnScroll>
 							))}
 						</div>
 					</section>
-				)}
-				<div className="mt-20">
+				</AnimateOnScroll>
+			)}
+			<div className="mt-20">
+				<AnimateOnScroll>
 					<CtaCard />
-				</div>
+				</AnimateOnScroll>
+			</div>
 			</article>
 		</>
 	);
