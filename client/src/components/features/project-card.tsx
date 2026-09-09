@@ -17,7 +17,7 @@ function ProjectCard({ project }: { project: Project }) {
   return (
     <Link
       to={`/projects/${project.slug}/${project._id}`}
-      className="group block transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg hover:shadow-black/5 motion-reduce:transform-none motion-reduce:shadow-none motion-reduce:transition-none"
+      className="group block transition-all duration-300 ease-out motion-reduce:transform-none motion-reduce:shadow-none motion-reduce:transition-none"
     >
         <article key={project.title}>
           <BlurImage
