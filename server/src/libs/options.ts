@@ -42,7 +42,12 @@ export const helmetOptions = {
 		directives: {
 			defaultSrc: ["'self'"],
 			scriptSrc: ["'self'"], // Removed 'unsafe-inline' and 'unsafe-eval' for security
-			styleSrc: ["'self'", "'unsafe-inline'"],
+			styleSrc: [
+				"'self'",
+				"'unsafe-inline'",
+				"https://fonts.googleapis.com",
+				"https://fonts.cdnfonts.com",
+			],
 			imgSrc: ["'self'", "data:", "https:", "https://res.cloudinary.com"], // Specific to Cloudinary
 			connectSrc: [
 				"'self'",
@@ -71,7 +76,9 @@ export const helmetOptions = {
 	referrerPolicy: {
 		policy: "strict-origin-when-cross-origin" as const,
 	},
-	crossOriginEmbedderPolicy: true,
+	// Disabled: require-corp blocks cross-origin <img> (Cloudinary) that
+	// don't send a Cross-Origin-Resource-Policy header.
+	crossOriginEmbedderPolicy: false,
 	crossOriginOpenerPolicy: { policy: "same-origin" as const },
 	crossOriginResourcePolicy: { policy: "same-site" as const },
 	hidePoweredBy: true,

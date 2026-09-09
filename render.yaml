@@ -1,10 +1,13 @@
 services:
+  # Single-origin production: the API serves the SPA from client/dist, so
+  # session cookies stay first-party (static rewrites drop Set-Cookie).
+  # Build bakes VITE_API_URL=/v1 into the client bundle (same-origin calls).
   - type: web
     name: tsa-api
     runtime: node
     plan: free
     region: oregon
-    buildCommand: npm ci && npm run build --workspace=@tsa/shared && npm run build --workspace=server
+    buildCommand: npm ci && npm run build --workspace=@tsa/shared && npm run build --workspace=server && npm run build --workspace=client
     startCommand: node server/dist/index.js
     healthCheckPath: /health
     envVars:
@@ -12,10 +15,12 @@ services:
         value: production
       - key: PORT
         value: "10000"
+      - key: VITE_API_URL
+        value: /v1
       # Set these in Render Dashboard → Environment:
       # MONGO_URI
       # SESSION_SECRET
-      # CLIENT_URL (your frontend URL, e.g. https://tsa-client.onrender.com)
+      # CLIENT_URL (single origin, e.g. https://tsa-api-4yew.onrender.com)
       # BREVO_API_KEY
       # EMAIL_OWNER
       # CRON_SECRET
@@ -25,20 +30,3 @@ services:
       # MEMCACHIER_SERVERS (optional)
       # MEMCACHIER_USERNAME (optional)
       # MEMCACHIER_PASSWORD (optional)
-
-  - type: web
-    name: tsa-client
-    runtime: static
-    plan: free
-    buildCommand: npm ci && npm run build --workspace=@tsa/shared && npm run build --workspace=client
-    staticPublishPath: client/dist
-    routes:
-      - type: rewrite
-        source: /api/*
-        destination: https://tsa-api-4yew.onrender.com/*
-      - type: rewrite
-        source: /cron-email
-        destination: https://tsa-api-4yew.onrender.com/cron-email
-      - type: rewrite
-        source: /*
-        destination: /index.html
