@@ -1,0 +1,45 @@
+services:
+  - type: web
+    name: tsa-api
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm ci && npm run build --workspace=server
+    startCommand: node server/dist/index.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "10000"
+      # Set these in Render Dashboard → Environment:
+      # MONGO_URI
+      # SESSION_SECRET
+      # CLIENT_URL (your frontend URL, e.g. https://tsa-client.onrender.com)
+      # BREVO_API_KEY
+      # EMAIL_OWNER
+      # CRON_SECRET
+      # CLOUDINARY_CLOUD_NAME
+      # CLOUDINARY_API_KEY
+      # CLOUDINARY_API_SECRET
+      # MEMCACHIER_SERVERS (optional)
+      # MEMCACHIER_USERNAME (optional)
+      # MEMCACHIER_PASSWORD (optional)
+
+  - type: web
+    name: tsa-client
+    runtime: static
+    plan: free
+    region: oregon
+    buildCommand: npm ci && npm run build --workspace=client
+    staticPublishPath: client/dist
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://tsa-api.onrender.com/api/*
+      - type: rewrite
+        source: /cron-email
+        destination: https://tsa-api.onrender.com/cron-email
+      - type: rewrite
+        source: /*
+        destination: /index.html
