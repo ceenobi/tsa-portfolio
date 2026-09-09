@@ -20,7 +20,7 @@ export default function Dashboard() {
 		<div className="container mx-auto">
 			<div className="space-y-2">
 				<h1 className="font-semibold text-[26px] text-mainBlack">
-					Welcome back Admin 👋🏼
+					Welcome back Admin
 				</h1>
 				<p className="text-lg text-mainGray">
 					Here's what's happening with your portfolio projects today

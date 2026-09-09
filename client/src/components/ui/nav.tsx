@@ -13,7 +13,7 @@ export default function Nav() {
 	return (
 		<div className="fixed top-0 w-full z-100 bg-deepBlue">
 			<header className="relative text-[14px]">
-				<div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-25">
+				<div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
 					<a href="https://www.techstudioacademy.com" rel="noopener noreferrer">
 						<Logo />
 					</a>
@@ -22,7 +22,7 @@ export default function Nav() {
 						<a
 							href="https://www.techstudioacademy.com/about"
 							rel="noopener noreferrer"
-							className="hover:text-blue-300"
+							className="hover:text-blue-300 focus-visible:text-blue-300 focus-visible:underline focus-visible:outline-none"
 						>
 							About Us
 						</a>
@@ -44,7 +44,7 @@ export default function Nav() {
 					>
 							<button
 								type="button"
-								className="flex items-center gap-1 hover:text-blue-300"
+								className="flex items-center gap-1 hover:text-blue-300 focus-visible:text-blue-300 focus-visible:underline focus-visible:outline-none"
 								onClick={() => setCoursesOpen((open) => !open)}
 								aria-expanded={coursesOpen}
 								aria-haspopup="true"
@@ -76,21 +76,21 @@ export default function Nav() {
 						<a
 							href="https://www.techstudioacademy.com/faq"
 							rel="noopener noreferrer"
-							className="hover:text-blue-300"
+							className="hover:text-blue-300 focus-visible:text-blue-300 focus-visible:underline focus-visible:outline-none"
 						>
 							FAQ
 						</a>
 						<a
 							href="https://www.techstudioacademy.com/contact"
 							rel="noopener noreferrer"
-							className="hover:text-blue-300"
+							className="hover:text-blue-300 focus-visible:text-blue-300 focus-visible:underline focus-visible:outline-none"
 						>
 							Contact Us
 						</a>
 						<a
 							href="https://www.techstudioacademy.com/portfolio"
 							rel="noopener noreferrer"
-							className="hover:text-blue-300"
+							className="hover:text-blue-300 focus-visible:text-blue-300 focus-visible:underline focus-visible:outline-none"
 						>
 							Portfolio
 						</a>
@@ -113,7 +113,7 @@ export default function Nav() {
 
 					<button
 						type="button"
-						className="text-white lg:hidden"
+						className="p-2 -m-2 text-white lg:hidden"
 						onClick={() => setMobileOpen((open) => !open)}
 						aria-label="Toggle menu"
 						aria-expanded={mobileOpen}
@@ -142,7 +142,7 @@ export default function Nav() {
 					<div className="flex min-h-0 flex-col gap-1 text-sm font-medium">
 						<a
 							href="https://www.techstudioacademy.com/about"
-							className="rounded-md px-2 py-2 text-left hover:bg-white/10"
+							className="rounded-md px-2 py-2 text-left hover:bg-white/10 focus-visible:bg-white/10 focus-visible:outline-none"
 							onClick={() => setMobileOpen(false)}
 						>
 							About Us
@@ -153,7 +153,7 @@ export default function Nav() {
 								href={course.href}
 								target="_blank"
 								rel="noopener noreferrer"
-								className="rounded-md px-2 py-2 text-left hover:bg-white/10"
+								className="rounded-md px-2 py-2 text-left hover:bg-white/10 focus-visible:bg-white/10 focus-visible:outline-none"
 								onClick={() => setMobileOpen(false)}
 							>
 								{course.name}
@@ -162,7 +162,7 @@ export default function Nav() {
 						<a
 							href="https://www.techstudioacademy.com/faq"
 							rel="noopener noreferrer"
-							className="rounded-md px-2 py-2 text-left hover:bg-white/10"
+							className="rounded-md px-2 py-2 text-left hover:bg-white/10 focus-visible:bg-white/10 focus-visible:outline-none"
 							onClick={() => setMobileOpen(false)}
 						>
 							FAQ
@@ -170,7 +170,7 @@ export default function Nav() {
 						<a
 							href="https://www.techstudioacademy.com/contact"
 							rel="noopener noreferrer"
-							className="rounded-md px-2 py-2 text-left hover:bg-white/10"
+							className="rounded-md px-2 py-2 text-left hover:bg-white/10 focus-visible:bg-white/10 focus-visible:outline-none"
 							onClick={() => setMobileOpen(false)}
 						>
 							Contact Us
@@ -178,7 +178,7 @@ export default function Nav() {
 						<a
 							href="https://www.techstudioacademy.com/portfolio"
 							rel="noopener noreferrer"
-							className="rounded-md px-2 py-2 text-left hover:bg-white/10"
+							className="rounded-md px-2 py-2 text-left hover:bg-white/10 focus-visible:bg-white/10 focus-visible:outline-none"
 							onClick={() => setMobileOpen(false)}
 						>
 							Portfolio

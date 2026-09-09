@@ -1,6 +1,7 @@
 import { Menu } from "@base-ui/react/menu";
 import type { Project } from "@tsa/shared";
 import { EllipsisVertical, Eye, Pencil, Trash2 } from "lucide-react";
+import StatusBadge from "@/components/ui/status-badge";
 import type { ProjectsPage } from "@/lib/constants";
 
 interface RenderDataProps {
@@ -43,14 +44,22 @@ export default function RenderData({
 			{/* Table — tablet/desktop */}
 			<div className="hidden overflow-x-auto rounded-xl border border-border md:block">
 				<table className="w-full text-left text-sm">
+					<caption className="sr-only">
+						Portfolio projects with status and actions
+					</caption>
 					<thead>
 						<tr className="border-b border-border bg-muted/50">
 							{HEADERS.map((header, i) => (
 								<th
 									key={`${header}-${i}`}
-									className="px-5 py-3 font-medium whitespace-nowrap text-mainBlack"
+									scope="col"
+									className="px-5 py-3 font-medium whitespace-nowrap text-mainGray"
 								>
-									{header}
+									{header === "" ? (
+										<span className="sr-only">Actions</span>
+									) : (
+										header
+									)}
 								</th>
 							))}
 						</tr>
@@ -156,7 +165,7 @@ function RowActions({
 					<button
 						type="button"
 						aria-label={`Actions for ${project.title}`}
-						className="rounded-md p-1.5 text-mainGray transition-colors hover:bg-muted hover:text-mainBlack"
+						className="relative rounded-md p-1.5 text-mainGray transition-colors before:absolute before:-inset-3 before:content-[''] hover:bg-muted hover:text-mainBlack"
 					/>
 				}
 			>
@@ -211,18 +220,6 @@ function MenuItem({
 			{icon}
 			{label}
 		</Menu.Item>
-	);
-}
-
-function StatusBadge({ status, styles }: { status: string; styles?: string }) {
-	return (
-		<span
-			className={`w-fit rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${
-				styles ?? "bg-muted text-mainGray"
-			}`}
-		>
-			{status}
-		</span>
 	);
 }
 

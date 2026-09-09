@@ -14,6 +14,10 @@ type PaginateBoxProps = {
 	onPageChange: (page: number) => void;
 };
 
+// 28px visuals, 44px hit areas (invisible expansion keeps the look).
+const hitArea =
+	"relative before:absolute before:-inset-2 before:content-['']";
+
 export default function PaginateBox({ page, totalPages, onPageChange }: PaginateBoxProps) {
 	return (
 		<Pagination className="mx-0 w-auto justify-end">
@@ -26,9 +30,10 @@ export default function PaginateBox({ page, totalPages, onPageChange }: Paginate
 						className={cn(
 							buttonVariants({ variant: "ghost", size: "icon" }),
 							"size-7 rounded-md border-transparent",
+							hitArea,
 							page === 1
 								? "bg-muted text-muted-foreground opacity-60"
-								: "bg-[#1988FE] text-white hover:bg-[#1988FE]/90",
+								: "bg-mainBlue text-white hover:bg-mainBlue/90",
 						)}
 						onClick={() => onPageChange(Math.max(1, page - 1))}
 					>
@@ -50,8 +55,9 @@ export default function PaginateBox({ page, totalPages, onPageChange }: Paginate
 								disabled={item === page}
 								className={cn(
 									buttonVariants({ variant: "ghost", size: "icon" }),
-									"size-7 border-transparent bg-transparent text-sm font-medium text-[#878789] hover:bg-transparent hover:underline",
-									item === page && "font-semibold text-[#E00017]",
+									"size-7 border-transparent bg-transparent text-sm font-medium text-muted-foreground hover:bg-transparent hover:underline",
+									hitArea,
+									item === page && "font-semibold text-destructive",
 								)}
 								onClick={() => onPageChange(item)}
 							>
@@ -69,9 +75,10 @@ export default function PaginateBox({ page, totalPages, onPageChange }: Paginate
 						className={cn(
 							buttonVariants({ variant: "ghost", size: "icon" }),
 							"size-7 rounded-md border-transparent",
+							hitArea,
 							page === totalPages
 								? "bg-muted text-muted-foreground opacity-60"
-								: "bg-[#1988FE] text-white hover:bg-[#1988FE]/90",
+								: "bg-mainBlue text-white hover:bg-mainBlue/90",
 						)}
 						onClick={() => onPageChange(Math.min(totalPages, page + 1))}
 					>

@@ -81,7 +81,7 @@ export default function Explore() {
   };
 	
 	return (
-		<div className="mx-auto max-w-7xl pb-20 px-4 pt-25 sm:px-6 lg:px-25">
+		<div className="mx-auto max-w-7xl pb-20 px-4 pt-25 sm:px-6 lg:px-8">
 			<h2 className="text-3xl font-bold  tracking-[-5%] uppercase sm:text-4xl">
 				Explore Projects
 			</h2>
@@ -98,7 +98,7 @@ export default function Explore() {
 							variant={category === item ? "default" : "outline"}
 							onClick={() => handleCategoryChange(item)}
 							className={cn(
-								"h-auto rounded-full px-3 py-1 text-sm",
+								"h-auto min-h-11 rounded-full px-3 py-1 text-sm",
 								category === item
 									? "border-blue-600 bg-blue-600 text-white hover:bg-blue-600/90"
 									: "text-muted-foreground",
@@ -113,7 +113,7 @@ export default function Explore() {
 					value={sort}
 					onValueChange={(value) => handleSortChange(value as SortOrder)}
 				>
-					<SelectTrigger className="h-auto rounded-full bg-white px-3 py-1.5 text-sm">
+							<SelectTrigger className="h-auto min-h-11 rounded-full bg-white px-3 py-1.5 text-sm">
 						<SelectValue />
 					</SelectTrigger>
 					<SelectContent
