@@ -65,7 +65,7 @@ export function initials(name: string) {
 		.join("");
 }
 
-export const PAGE_SIZE = 6;
+export const PAGE_SIZE = 10;
 
 const range = (start: number, end: number) =>
 	end < start
