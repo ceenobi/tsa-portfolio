@@ -10,10 +10,11 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "outDir": "./dist",
+    "rootDir": "./src",
     "noEmit": false,
     "types": ["node", "bcrypt"],
     "lib": ["ES2022"],
   },
-  "include": ["api/**/*.ts", "src/**/*.ts", "src/**/*.json"],
+  "include": ["src/**/*.ts", "src/**/*.json"],
   "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts", "**/*.d.ts"],
 }
