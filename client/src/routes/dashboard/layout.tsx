@@ -6,7 +6,6 @@ import type { dashboardLoader } from "./loader";
 
 export default function DashboardLayout() {
 	const { user } = useLoaderData<typeof dashboardLoader>();
-	console.log("gg", user);
 	return (
 		<div className="flex h-screen">
 			<Sidebar tabs={Tabs} />

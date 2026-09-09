@@ -115,7 +115,7 @@ export default function Settings() {
 							text="Update Email"
 							type="submit"
 							loading={updateEmailMutation.isPending}
-							classname="w-full h-12 text-base bg-mainBlue hover:bg-mainBlue/90"
+							className="w-full h-12 text-base bg-mainBlue hover:bg-mainBlue/90"
 						/>
 					</form>
 				</div>
@@ -158,7 +158,7 @@ export default function Settings() {
 							text="Update Password"
 							type="submit"
 							loading={updatePasswordMutation.isPending}
-							classname="w-full h-12 text-base bg-mainBlue hover:bg-mainBlue/90"
+							className="w-full h-12 text-base bg-mainBlue hover:bg-mainBlue/90"
 						/>
 					</form>
 				</div>

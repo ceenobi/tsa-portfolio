@@ -59,7 +59,7 @@ export default function Footer() {
 
 	return (
 		<footer className="bg-blue-950 text-white">
-			<div className="mx-auto max-w-7xl px-4 py-12 lg:py-15 sm:px-6 lg:px-25">
+			<div className="mx-auto max-w-7xl px-4 py-12 lg:py-15 sm:px-6 lg:px-8">
 				<div className="grid gap-7.5 sm:grid-cols-2 lg:grid-cols-4">
 					<div>
 						<Logo />
@@ -75,7 +75,7 @@ export default function Footer() {
 								<li key={course.name}>
 									<a
 										href={course.href}
-										className="hover:text-white"
+										className="hover:text-white focus-visible:text-white focus-visible:underline focus-visible:outline-none"
 										rel="noopener noreferrer"
 									>
 										{course.name}
@@ -92,7 +92,7 @@ export default function Footer() {
 								<li key={link.name}>
 									<a
 										href={link.href}
-										className="hover:text-white"
+										className="hover:text-white focus-visible:text-white focus-visible:underline focus-visible:outline-none"
 										rel="noopener noreferrer"
 									>
 										{link.name}
@@ -132,7 +132,7 @@ export default function Footer() {
 					<div className="flex flex-col justify-end items-center gap-4 md:gap-10.5 sm:flex-row">
 						<button
 							type="button"
-							className="align-middle font-sans text-[16px] font-normal tracking-[0.2px] text-white leading-[28.8px] hover:text-white [leading-trim:none]"
+							className="align-middle font-sans text-[16px] font-normal tracking-[0.2px] text-white leading-[28.8px] hover:text-white focus-visible:underline focus-visible:outline-none [leading-trim:none]"
 						>
 							Terms and Policy
 						</button>
@@ -142,7 +142,7 @@ export default function Footer() {
 									key={social.label}
 									href={social.href}
 									aria-label={social.label}
-									className="text-white hover:text-white"
+									className="inline-flex p-2 -m-2 text-white hover:text-white"
 								>
 									<SocialIcon path={social.path} label={social.label} />
 								</a>

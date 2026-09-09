@@ -86,7 +86,7 @@ export default function Login() {
 					text="Login"
 					type="submit"
 					loading={mutation.isPending}
-					classname="w-full h-12 text-base bg-mainBlue hover:bg-mainBlue/90"
+					className="w-full h-12 text-base bg-mainBlue hover:bg-mainBlue/90"
 				/>
 			</form>
 			{/*<div className="flex items-center justify-center gap-2 mt-10">

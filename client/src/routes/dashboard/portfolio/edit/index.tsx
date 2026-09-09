@@ -255,14 +255,14 @@ export default function EditProject() {
 				<nav aria-label="Breadcrumb" className="flex items-center gap-1 text-base">
 					<Link
 						to="/dashboard/portfolio"
-						className="hover:text-mainBlue text-[#6E6D6D]"
+						className="hover:text-mainBlue text-muted-foreground"
 					>
 						Portfolio
 					</Link>
 					<ChevronRight className="size-4" aria-hidden="true" />
-					<span aria-current="page" className="text-[#000000]">Edit Project</span>
+					<span aria-current="page" className="text-foreground">Edit Project</span>
 				</nav>
-				<h1 className="text-xl font-semibold text-[#1D1D1D]">
+				<h1 className="text-xl font-semibold text-mainBlack">
 					Edit Portfolio Project
 				</h1>
 			</div>
@@ -576,7 +576,7 @@ export default function EditProject() {
 						text="Cancel"
 						disabled={busy}
 						onClick={() => navigate(-1)}
-						classname="h-10 px-6"
+						className="h-10 px-6"
 					/>
 					<div className="flex gap-4 items-center">
 						<ActionBtn
@@ -587,7 +587,7 @@ export default function EditProject() {
 							loading={pending === "draft"}
 							disabled={busy}
 							onClick={handleSubmit((d) => submit(d, "draft"))}
-							classname="h-10 px-6 border-mainBlue"
+							className="h-10 px-6 border-mainBlue"
 						/>
 						<ActionBtn
 							type="submit"
@@ -595,7 +595,7 @@ export default function EditProject() {
 							text="Update Project"
 							loading={pending === "published"}
 							disabled={busy}
-							classname="h-10 bg-mainBlue px-6 text-white hover:bg-mainBlue/90"
+							className="h-10 bg-mainBlue px-6 text-white hover:bg-mainBlue/90"
 						/>
 					</div>
 				</div>
@@ -667,7 +667,7 @@ function UploadBox({
 							<span className="text-base font-semibold text-lightGray">
 								Click to upload
 							</span>
-							<span className="text-base text-[#747474]">{hint}</span>
+							<span className="text-base text-muted-foreground">{hint}</span>
 						</div>
 					</div>
 				)}

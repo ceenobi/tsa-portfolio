@@ -29,7 +29,7 @@ type FormFieldProps<T extends FieldValues> = {
   isVisible?: boolean;
   setIsVisible?: (visible: boolean | ((prev: boolean) => boolean)) => void;
   name: Path<T>;
-  classname?: string;
+  className?: string;
   disabled?: boolean;
   defaultValue?: string | Date | number | boolean;
   inputType?: "input" | "textarea" | "select" | "switch" | "radio" | "otp";
@@ -49,7 +49,7 @@ export function FormBox<T extends FieldValues>({
   register,
   errors,
   name,
-  classname,
+  className,
   disabled = false,
   defaultValue,
   inputType,
@@ -120,7 +120,8 @@ export function FormBox<T extends FieldValues>({
             {type === "password" && (
               <button
                 type="button"
-                className="absolute inset-y-0 right-2 text-xs border-0 focus:outline-none font-semibold cursor-pointer text-gray-700 w-fit"
+                aria-label={isVisible ? "Hide password" : "Show password"}
+                className="absolute inset-y-0 right-0 px-3 text-xs border-0 focus:outline-none font-semibold cursor-pointer text-gray-700"
                 onClick={toggleVisibility}
               >
                 {isVisible ? <EyeOff /> : <Eye />}
@@ -132,7 +133,7 @@ export function FormBox<T extends FieldValues>({
   }
 
   return (
-      <div className={`${classname}`}>
+      <div className={`${className}`}>
         <FieldSet>
           <FieldLegend className="w-full relative">
             <Field>

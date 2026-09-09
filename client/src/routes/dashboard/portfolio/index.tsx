@@ -54,7 +54,7 @@ export default function Portfolio() {
 	return (
 		<div className="container mx-auto space-y-8">
 			<div className="flex justify-between items-center">
-				<h1 className="font-semibold text-[26px] text-mainBlack">Projects</h1>
+				<h1 className="font-bold text-2xl text-mainBlack">Projects</h1>
 				<AddProject />
 			</div>
 			<Filter cohorts={cohorts} years={years} />

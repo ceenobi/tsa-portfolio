@@ -25,7 +25,7 @@ import { Button } from "@/components/ui/button";
 export default function Hero() {
   return (
     <section className="py-20 bg-deepBlue text-white">
-      <div className="mx-auto max-w-7xl px-4 pt-17.25 pb-1 sm:px-6 lg:px-25">
+      <div className="mx-auto max-w-7xl px-4 pt-17.25 pb-1 sm:px-6 lg:px-8">
         <h1 className="max-w-3xl text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl uppercase">
           500+ Student Projects Built, Countless Careers Launched
         </h1>
@@ -37,7 +37,7 @@ export default function Hero() {
 
         <Button
           nativeButton={false}
-          className="mt-6 h-10 rounded-md bg-[#FCFDFF] px-6 text-sm font-medium text-[16px] text-mainBlue hover:bg-white/90"
+            className="mt-6 h-10 rounded-md bg-white px-6 text-sm font-medium text-[16px] text-mainBlue hover:bg-white/90"
           render={
             <a
               href="https://www.techstudioacademy.com/register"
