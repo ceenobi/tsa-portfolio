@@ -2,6 +2,7 @@ import type { Project } from "@tsa/shared";
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router";
 import ProjectCard from "@/components/features/project-card";
+import { AnimateOnScroll } from "@/components/ui/animate-on-scroll";
 import { Button } from "@/components/ui/button";
 import NotFound from "@/components/ui/not-found";
 import QueryError from "@/components/ui/query-error";
@@ -16,15 +17,19 @@ export default function ProjectShowcase() {
 		<section className="bg-muted/50">
 			<div className="mx-auto max-w-7xl px-4 pt-25 sm:px-6 lg:px-8">
 				<div className="flex items-center justify-between">
-					<h2 className="text-3xl font-bold tracking-[-5%] uppercase sm:text-4xl">
-						Project Showcase
-					</h2>
-					<Link to="/explore">
-						<Button variant="link" className="text-mainBlue">
-							View all
-							<ArrowUpRight />
-						</Button>
-					</Link>
+					<AnimateOnScroll>
+						<h2 className="text-3xl font-bold tracking-[-5%] uppercase sm:text-4xl">
+							Project Showcase
+						</h2>
+					</AnimateOnScroll>
+					<AnimateOnScroll delay={100}>
+						<Link to="/explore">
+							<Button variant="link" className="text-mainBlue">
+								View all
+								<ArrowUpRight />
+							</Button>
+						</Link>
+					</AnimateOnScroll>
 				</div>
 				{isLoading ? (
 					<ProjectShowcaseSkeleton />
@@ -37,8 +42,10 @@ export default function ProjectShowcase() {
 					<NotFound />
 				) : (
 					<div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-						{projects.map((project: Project) => (
-							<ProjectCard project={project} key={project._id} />
+						{projects.map((project: Project, index: number) => (
+							<AnimateOnScroll key={project._id} delay={index * 60}>
+								<ProjectCard project={project} />
+							</AnimateOnScroll>
 						))}
 					</div>
 				)}
