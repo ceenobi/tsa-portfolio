@@ -63,6 +63,8 @@ export default function Hero() {
 
       <img
         src="/images/students.svg"
+        width={1440}
+        height={686}
         className="block w-full py-12.5"
         alt=""
       />

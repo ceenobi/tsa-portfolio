@@ -85,6 +85,7 @@ export default function ProjectDetail() {
 						src={cover}
 						alt={project.title}
 						blurSrc={getBlurPlaceholderUrl(cover)}
+						eager
 						className="mt-8 aspect-video w-full rounded-2xl border border-border"
 					/>
 				)}

@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 import type { ProjectDetail, RecentProjectsOverview } from "@tsa/shared";
 import { api } from "@/lib/api";
 import type { ProjectsPage, SortOrder } from "@/lib/constants";
@@ -29,12 +29,16 @@ export function useProjects({
 	cohort?: string;
 	year?: string;
 	status?: string;
-} = {}) {
+} = {}, options: { refetchOnWindowFocus?: boolean } = {}) {
 	return useQuery({
 		queryKey: [
 			"projects",
 			{ page, limit, category, sort, query, cohort, year, status },
 		],
+		// Keep the previous page visible while the next one loads —
+		// no full-skeleton flash on paginate/filter changes.
+		placeholderData: keepPreviousData,
+		refetchOnWindowFocus: options.refetchOnWindowFocus ?? true,
 		queryFn: async (): Promise<ProjectsPage> => {
 			// if (USE_MOCK) {
 			// 	await delay(MOCK_DELAY_MS);
@@ -87,7 +91,7 @@ export function useDeleteProject() {
 			return res;
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries();
+			queryClient.invalidateQueries({ queryKey: ["projects"] });
 		},
 	});
 }
