@@ -30,7 +30,6 @@ services:
     name: tsa-client
     runtime: static
     plan: free
-    region: oregon
     buildCommand: npm ci && npm run build --workspace=client
     staticPublishPath: client/dist
     routes:
