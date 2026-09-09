@@ -358,3 +358,54 @@ export const deleteProject = async (
 
 	return { success: true, message: "Project deleted successfully." };
 };
+
+const FEATURED_LIMIT = 6;
+
+/**
+ * FNV-1a hash of the current UTC date (YYYY-MM-DD) — one seed per day,
+ * so every caller sees the same featured set until midnight UTC.
+ */
+const dailySeed = (now: Date = new Date()): number => {
+  const day = now.toISOString().slice(0, 10);
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < day.length; i++) {
+    hash ^= day.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return hash >>> 0;
+};
+
+/** Deterministic PRNG (mulberry32) for the daily shuffle. */
+const mulberry32 = (seed: number): (() => number) => {
+  let state = seed;
+  return () => {
+    state |= 0;
+    state = (state + 0x6d2b79f5) | 0;
+    let t = Math.imul(state ^ (state >>> 15), 1 | state);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+};
+
+/**
+ * Homepage featured projects — up to 6 published projects, shuffled once
+ * per UTC day. Deterministic (no per-request $sample, no cache-coherency
+ * issues, stable across restarts and instances).
+ */
+export const getFeaturedProjects = async (): Promise<Project[]> => {
+  const docs = await ProjectModel.find({ status: "published" })
+    .select("-description")
+    .lean();
+
+  const shuffled = [...docs];
+  const rand = mulberry32(dailySeed());
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+
+  return shuffled
+    .slice(0, FEATURED_LIMIT)
+    .map((doc) => toProjectView(doc as unknown as IProject));
+};
+

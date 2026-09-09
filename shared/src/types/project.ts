@@ -46,6 +46,8 @@ export type GetProjectsResponse = ApiSuccessResponse<{
   total: number;
 }>;
 
+export type GetFeaturedProjectsResponse = ApiSuccessResponse<Project[]>;
+
 export interface ProjectDoc {
   _id: string;
   title: string;

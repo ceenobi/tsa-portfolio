@@ -93,6 +93,7 @@ shared/src/
 
 ### Projects (`/v1/projects`)
 - `GET /` — public, paginated (`?page&limit&category&sort=Newest|Oldest`), **published only**; `category` validated against `PROJECT_DEPARTMENTS`.
+- `GET /featured` — public homepage set (≤6 published, day-seeded shuffle, 5-min namespaced cache). Must stay above `/:projectId` in routes.
 - `GET /:projectId` — published only (draft/invalid id → 404).
 - `POST /add` — admin/super_admin, `createProjectSchema`; duplicate title+cohort+academicYear → 409.
 - `PATCH /edit/:projectId` — admin/super_admin, `validateFormData(createProjectSchema)`, calls `editProject` service (`findByIdAndUpdate` with `{ $set }`).

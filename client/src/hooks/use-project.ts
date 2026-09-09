@@ -1,5 +1,5 @@
 import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
-import type { ProjectDetail, RecentProjectsOverview } from "@tsa/shared";
+import type { Project, ProjectDetail, RecentProjectsOverview } from "@tsa/shared";
 import { api } from "@/lib/api";
 import type { ProjectsPage, SortOrder } from "@/lib/constants";
 import { PAGE_SIZE, queryClient } from "@/lib/utils";
@@ -68,6 +68,18 @@ export function useProject(projectId: string | undefined) {
 			// if (USE_MOCK) return MOCK_PROJECTS.find((p) => p._id === projectId);
 			const res = await api.get<ProjectDetail>(`/projects/${projectId}`);
 			return res.body; // ApiSuccessResponse<ProjectDetail> → { project, recommended }
+		},
+	});
+}
+
+/** Homepage featured projects — server reshuffles the set daily. */
+export function useFeaturedProjects() {
+	return useQuery({
+		queryKey: ["projects", "featured"],
+		refetchOnWindowFocus: false,
+		queryFn: async (): Promise<Project[]> => {
+			const res = await api.get<Project[]>("/projects/featured");
+			return res.body;
 		},
 	});
 }
