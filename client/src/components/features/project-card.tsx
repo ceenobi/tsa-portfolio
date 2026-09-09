@@ -13,7 +13,7 @@ export default function ProjectCard({ project }: { project: Project }) {
             src={cover}
             alt={project.title}
             blurSrc={getBlurPlaceholderUrl(project.coverImageUrl)}
-            className="mx-auto h-62.5 w-100 max-w-full rounded-[30px] transition-all duration-300 group-hover:border-4 group-hover:border-mainBlue"
+            className="aspect-[8/5] w-full rounded-[30px] border-4 border-transparent transition-all duration-300 group-hover:border-mainBlue"
             imgClassName="group-hover:scale-105"
           />
 

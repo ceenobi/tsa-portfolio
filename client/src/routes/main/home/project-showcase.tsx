@@ -147,7 +147,7 @@ function ProjectShowcaseSkeleton() {
 				<div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
 					{Array.from({ length: PAGE_SIZE }).map((_, i) => (
 						<div key={i} className="animate-pulse">
-							<div className="mx-auto h-62.5 w-100 max-w-full rounded-[30px] bg-muted" />
+							<div className="aspect-[8/5] w-full rounded-[30px] bg-muted" />
 							<div className="space-y-2 p-4">
 								<div className="h-4 w-1/3 rounded bg-muted" />
 								<div className="h-4 w-1/2 rounded bg-muted" />
