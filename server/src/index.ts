@@ -43,7 +43,11 @@ declare module "express-session" {
 
 const app = express();
 
-app.set("trust-proxy", 1);
+// Trust all proxy hops (Cloudflare + Render edge + internal routing).
+// Trusting only 1 hop leaves req.secure false and collapses req.ip to a
+// single internal address — breaking secure cookies and per-user rate
+// limiting. The app is only reachable through the proxies, so this is safe.
+app.set("trust-proxy", true);
 //global error handler
 setupGlobalErrorHandlers();
 

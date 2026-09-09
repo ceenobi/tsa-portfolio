@@ -26,6 +26,10 @@ export const createSessionMiddleware = () => {
     name: '_tsaPortfolio', // Custom cookie name to avoid default 'connect.sid'
     resave: false, // Don't save session if unmodified
     saveUninitialized: false, // Don't create session until something stored
+    // Trust X-Forwarded-Proto behind Render/Cloudflare. Without this,
+    // express-session sees plain HTTP, silently drops the Secure cookie,
+    // and every login 200s but no session ever reaches the browser.
+    proxy: true,
     store: createSessionStore(),
     cookie: {
       maxAge: SESSION_MAX_AGE,
