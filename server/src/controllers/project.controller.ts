@@ -1,5 +1,6 @@
 import type {
 	CreateProjectResponse,
+	GetFeaturedProjectsResponse,
 	GetProjectResponse,
 	GetProjectsResponse,
 	GetRecentProjectsResponse,
@@ -8,13 +9,14 @@ import type { Request, Response } from "express";
 import { sendTsRestError, sendTsRestSuccess } from "../libs/responseHandler.js";
 import tryCatchWrapper from "../libs/tryCatchWrapper.js";
 import {
-  createProject,
-  deleteProject,
-  editProject,
-  getProject,
-  getRecentlyAddedProjects,
-  invalidateProjectCaches,
-  listProjects,
+	createProject,
+	deleteProject,
+	editProject,
+	getFeaturedProjects,
+	getProject,
+	getRecentlyAddedProjects,
+	invalidateProjectCaches,
+	listProjects,
 } from "../services/projectService.js";
 
 export const addAProject = tryCatchWrapper(
@@ -142,6 +144,19 @@ export const deleteAProject = tryCatchWrapper(
 		return sendTsRestSuccess<undefined>(res, 200, {
 			success: true,
 			message: result.message,
+		});
+	},
+);
+
+
+// Homepage featured projects — reshuffled daily (see service).
+export const getFeaturedProjectsController = tryCatchWrapper(
+	async (req: Request, res: Response) => {
+		const result = await getFeaturedProjects();
+		return sendTsRestSuccess<GetFeaturedProjectsResponse["body"]>(res, 200, {
+			success: true,
+			message: "Featured projects fetched successfully.",
+			body: result,
 		});
 	},
 );

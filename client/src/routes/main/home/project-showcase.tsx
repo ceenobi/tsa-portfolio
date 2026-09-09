@@ -5,15 +5,12 @@ import ProjectCard from "@/components/features/project-card";
 import { Button } from "@/components/ui/button";
 import NotFound from "@/components/ui/not-found";
 import QueryError from "@/components/ui/query-error";
-import { useProjects } from "@/hooks/use-project";
+import { useFeaturedProjects } from "@/hooks/use-project";
 
 export default function ProjectShowcase() {
-	const { data, isLoading, isError, refetch } = useProjects(
-		{ limit: 6 },
-		{ refetchOnWindowFocus: false },
-	);
+	const { data, isLoading, isError, refetch } = useFeaturedProjects();
 
-	const projects = data?.items ?? [];
+	const projects = data ?? [];
 
 	return (
 		<section className="bg-muted/50">
