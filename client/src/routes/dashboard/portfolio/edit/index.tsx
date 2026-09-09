@@ -120,7 +120,7 @@ export default function EditProject() {
 		};
 	}
 
-	async function submit(data: FormValues) {
+	async function submit(data: FormValues, status: "draft" | "published") {
 		// Existing images from the project (fallback when user doesn't upload new ones).
 		// Keep the full { mediaUrl, publicId } objects — the schema requires a
 		// non-empty publicId, so entries missing one are treated as absent.
@@ -143,7 +143,7 @@ export default function EditProject() {
 		}
 
 		try {
-			setPending("published");
+			setPending(status);
 
 		// Start with existing images as defaults.
 		let thumbUp = existingThumb;
@@ -186,11 +186,13 @@ export default function EditProject() {
 					github: data.github || undefined,
 					figma: data.figma || undefined,
 				},
-				status: "published",
+				status,
 			};
 
 			await editProject.mutateAsync(payload);
-			toast.success("Project updated successfully");
+			toast.success(
+				status === "published" ? "Project updated successfully" : "Draft saved",
+			);
 			navigate("/dashboard/portfolio");
 		} catch (err) {
 			toast.error(err instanceof Error ? err.message : "Something went wrong");
@@ -238,7 +240,7 @@ export default function EditProject() {
 			</div>
 
 			<form
-				onSubmit={handleSubmit(submit)}
+				onSubmit={handleSubmit((d) => submit(d, "published"))}
 				className="mt-16 space-y-16 container mx-auto max-w-4xl"
 			>
 				{/* Project Information */}
@@ -413,7 +415,11 @@ export default function EditProject() {
 							{fields.map((f, i) => (
 								<li key={f.id} className="flex items-start gap-3">
 									<div className="flex-1 space-y-1.5">
+										<Label htmlFor={`member-name-${i}`}>
+											Member {i + 1} full name
+										</Label>
 										<Input
+											id={`member-name-${i}`}
 											placeholder="Full name"
 											className="h-10"
 											{...register(`teamMembers.${i}.fullName` as const)}
@@ -423,11 +429,17 @@ export default function EditProject() {
 												{errors.teamMembers[i]?.fullName?.message}
 											</p>
 										)}
-										<div className="my-2 text-xs text-mainBlue">
-											Image URL:
+										<div className="my-2 space-y-1.5">
+											<Label
+												htmlFor={`member-image-${i}`}
+												className="text-xs text-mainBlue"
+											>
+												Image URL (optional)
+											</Label>
 											<Input
+												id={`member-image-${i}`}
 												placeholder="https://..."
-												className="h-6 rounded-md"
+												className="h-10 rounded-md"
 												{...register(`teamMembers.${i}.image` as const)}
 											/>
 										</div>
@@ -530,7 +542,7 @@ export default function EditProject() {
 							text="Save Draft"
 							loading={pending === "draft"}
 							disabled={busy}
-							onClick={handleSubmit((d) => submit(d))}
+							onClick={handleSubmit((d) => submit(d, "draft"))}
 							classname="h-10 px-6 border-mainBlue"
 						/>
 						<ActionBtn

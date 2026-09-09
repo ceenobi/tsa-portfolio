@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 //   {
 //     src: "/images/Component19.svg",
 //     alt: "Techstudio Academy graduate holding certificate",
@@ -33,14 +35,18 @@ export default function Hero() {
           practical tech education.
         </p>
 
-        <a href="https://www.techstudioacademy.com/register" rel="noopener noreferrer">
-          <button
-            className="mt-6 h-10 rounded-md bg-[#FCFDFF] font-medium px-6 text-sm text-mainBlue text-[16px] hover:bg-white/90"
-            type="button"
-          >
-            Join Us Now
-          </button>
-        </a>
+        <Button
+          nativeButton={false}
+          className="mt-6 h-10 rounded-md bg-[#FCFDFF] px-6 text-sm font-medium text-[16px] text-mainBlue hover:bg-white/90"
+          render={
+            <a
+              href="https://www.techstudioacademy.com/register"
+              rel="noopener noreferrer"
+            />
+          }
+        >
+          Join Us Now
+        </Button>
 
         {/* <div className="mt-10 grid grid-cols-2 gap-3 sm:flex sm:gap-3">
           {GRADUATE_PHOTOS.map((photo) => (

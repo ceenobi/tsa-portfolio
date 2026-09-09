@@ -6,7 +6,6 @@ import {
 	ClipboardList,
 	LayoutDashboard,
 	LogOut,
-	Search,
 	UserRoundCog,
 } from "lucide-react";
 import { useState } from "react";
@@ -63,16 +62,7 @@ export default function DashboardNav({ user }: { user: UserProfile | null }) {
 				{getHeading()}
 			</h1>
 
-			<div className="flex-1 flex justify-center">
-				<div className="relative w-full max-w-md">
-					<Search className="absolute left-3 top-2.5 h-[16.21294403076172px] w-[16.21294403076172px] text-[#747474]" />
-					<input
-						type="text"
-						placeholder="Search project"
-						className="w-full font-semibold pl-9 pr-3 h-9.5 border border-[#F0F0F0] bg-[#ffffff] rounded-[5px] text-[10px] text-[#747474] focus:outline-none focus:ring-2 focus:ring-[#747474]"
-					/>
-				</div>
-			</div>
+			<div className="flex-1" aria-hidden="true" />
 
 			<div className="relative flex items-center gap-2 md:gap-3">
 				<img
@@ -90,60 +80,63 @@ export default function DashboardNav({ user }: { user: UserProfile | null }) {
 					onClick={() => setMenuOpen(!menuOpen)}
 					className="cursor-pointer"
 					type="button"
+					aria-label="Account menu"
+					aria-expanded={menuOpen}
+					aria-controls="account-menu"
 				>
 					{menuOpen ? <ChevronUp /> : <ChevronDown />}
 				</button>
 
 				{menuOpen && (
-					<div className="absolute right-0 top-full mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg z-50">
+					<div
+						id="account-menu"
+						className="absolute right-0 top-full mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg z-50"
+					>
 						<ul className="py-2 text-sm text-gray-700 text-[16px]">
-							<li
-								className="md:hidden px-4 py-2 hover:bg-gray-100 text-lightGray cursor-pointer flex items-center gap-2"
-								onClick={() => navigate("/dashboard")}
-								onKeyDown={(e) => {
-									if (e.key === "Enter" || e.key === " ") {
-										e.preventDefault();
+							<li className="md:hidden">
+								<button
+									type="button"
+									className="w-full px-4 py-2 hover:bg-gray-100 text-lightGray cursor-pointer flex items-center gap-2"
+									onClick={() => {
+										setMenuOpen(false);
 										navigate("/dashboard");
-									}
-								}}
-							>
-								<LayoutDashboard size={24} /> Dashboard
+									}}
+								>
+									<LayoutDashboard size={24} /> Dashboard
+								</button>
 							</li>
-							<li
-								className="md:hidden px-4 py-2 hover:bg-gray-100 text-lightGray cursor-pointer flex items-center gap-2"
-								onClick={() => navigate("/dashboard/portfolio")}
-								onKeyDown={(e) => {
-									if (e.key === "Enter" || e.key === " ") {
-										e.preventDefault();
+							<li className="md:hidden">
+								<button
+									type="button"
+									className="w-full px-4 py-2 hover:bg-gray-100 text-lightGray cursor-pointer flex items-center gap-2"
+									onClick={() => {
+										setMenuOpen(false);
 										navigate("/dashboard/portfolio");
-									}
-								}}
-							>
-								<ClipboardList size={24} /> Portfolio
+									}}
+								>
+									<ClipboardList size={24} /> Portfolio
+								</button>
 							</li>
-							<li
-								className="md:hidden px-4 py-2 hover:bg-gray-100 text-lightGray cursor-pointer flex items-center gap-2"
-								onClick={() => navigate("/dashboard/settings")}
-								onKeyDown={(e) => {
-									if (e.key === "Enter" || e.key === " ") {
-										e.preventDefault();
+							<li className="md:hidden">
+								<button
+									type="button"
+									className="w-full px-4 py-2 hover:bg-gray-100 text-lightGray cursor-pointer flex items-center gap-2"
+									onClick={() => {
+										setMenuOpen(false);
 										navigate("/dashboard/settings");
-									}
-								}}
-							>
-								<UserRoundCog size={24} /> Account Settings
+									}}
+								>
+									<UserRoundCog size={24} /> Account Settings
+								</button>
 							</li>
-							<li
-								className="px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer flex items-center gap-2"
-								onClick={handleLogout}
-								onKeyDown={(e) => {
-									if (e.key === "Enter" || e.key === " ") {
-										e.preventDefault();
-										mutation.mutate();
-									}
-								}}
-							>
-								<LogOut /> Log out
+							<li>
+								<button
+									type="button"
+									className="w-full px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer flex items-center gap-2"
+									onClick={handleLogout}
+								>
+									<LogOut /> Log out
+								</button>
 							</li>
 						</ul>
 					</div>
