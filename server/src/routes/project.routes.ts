@@ -4,6 +4,7 @@ import {
 	addAProject,
 	deleteAProject,
 	editAProject,
+	getFeaturedProjectsController,
 	getProjectById,
 	getProjects,
 	recentlyAddedProjects,
@@ -23,11 +24,19 @@ router.get(
 );
 
 router.get(
-  "/recent",
-  customRateLimiter(60),
-  requireRole("admin", "super_admin"),
-  cacheMiddleware(60, { listNamespace: "projects" }),
-  recentlyAddedProjects,
+	"/recent",
+	customRateLimiter(60),
+	requireRole("admin", "super_admin"),
+	cacheMiddleware(60, { listNamespace: "projects" }),
+	recentlyAddedProjects,
+);
+
+// Featured must precede /:projectId or "featured" reads as an id.
+router.get(
+	"/featured",
+	customRateLimiter(60),
+	cacheMiddleware(300, { listNamespace: "projects" }),
+	getFeaturedProjectsController,
 );
 
 router.get(
