@@ -5,6 +5,7 @@ import express, {
 	type Response,
 } from "express";
 import helmet from "helmet";
+import path from "node:path";
 import { connectToDB, gracefulShutdown } from "./config/database.js";
 import { env } from "./config/keys.js";
 import logger, { logError } from "./config/logger.js";
@@ -119,6 +120,31 @@ app.use("/health", (req: Request, res: Response) => {
 app.use("/v1/auth", authRoutes);
 app.use("/v1/upload", uploadRoutes);
 app.use("/v1/projects", projectRoutes);
+
+// Single-origin production: serve the SPA from this service so session
+// cookies never cross a proxy hop (static-site rewrites drop Set-Cookie,
+// which breaks login). Dev is unaffected — Vite serves the client there.
+if (env.NODE_ENV === "production") {
+	const clientDist = path.resolve(
+		import.meta.dirname,
+		"..",
+		"..",
+		"client",
+		"dist",
+	);
+	app.use(express.static(clientDist));
+	app.get("/{*splat}", (req: Request, res: Response, next: NextFunction) => {
+		// Unknown API paths still fall through to the JSON 404 handler.
+		if (
+			req.path.startsWith("/v1") ||
+			req.path.startsWith("/health") ||
+			req.path.startsWith("/cron-email")
+		) {
+			return next();
+		}
+		res.sendFile(path.join(clientDist, "index.html"));
+	});
+}
 
 // Handle 404
 app.use(notFoundRoutes);
