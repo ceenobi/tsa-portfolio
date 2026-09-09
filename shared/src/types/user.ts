@@ -1,8 +1,10 @@
+import type { UserRole } from '../schemas/auth.js'
+
 export interface UserProfile {
   _id: string
   email: string
   emailVerified: boolean
-  role: 'admin' | 'super_admin'
+  role: UserRole
   isSuspended?: boolean
   lastLoginAt?: string
   createdAt?: string

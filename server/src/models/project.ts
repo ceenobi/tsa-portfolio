@@ -132,6 +132,8 @@ const ProjectSchema = new Schema<IProject>(
 // and the "Most Recent"/"Oldest" sort (uses createdAt from timestamps).
 ProjectSchema.index({ department: 1, createdAt: -1 });
 ProjectSchema.index({ cohort: 1 });
+// Hottest read path: every listing filters status + sorts by createdAt.
+ProjectSchema.index({ status: 1, createdAt: -1 });
 // Enforces a unique project per cohort + academic year at the DB level.
 ProjectSchema.index({ title: 1, cohort: 1, academicYear: 1 }, { unique: true });
 

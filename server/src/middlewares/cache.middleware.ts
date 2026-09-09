@@ -1,15 +1,20 @@
 import type { NextFunction, Request, Response } from 'express'
-import { deleteCache, generateCacheKey, getCache, setCache } from '../libs/cache.js'
+import { generateCacheKey, generateVersionedKey, getCache, setCache } from '../libs/cache.js'
 
 /**
  * Cache middleware — caches GET responses for the given duration.
  *
  * Usage:
  *   router.get('/events', cacheMiddleware(60), controller)
+ *   router.get('/lists', cacheMiddleware(300, { listNamespace: 'events' }), controller)
+ *
+ * With `listNamespace`, the key embeds a generation counter, so writers can
+ * invalidate a whole parameterized list family by bumping one counter
+ * (memcached has no prefix scan). Without it, keys are exact and deletable.
  *
  * Cached responses include an `x-cache` header: HIT or MISS.
  */
-export const cacheMiddleware = (durationSeconds: number = 60) => {
+export const cacheMiddleware = (durationSeconds: number = 60, options?: { listNamespace?: string }) => {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     // Only cache GET requests
     if (req.method !== 'GET') {
@@ -17,7 +22,9 @@ export const cacheMiddleware = (durationSeconds: number = 60) => {
       return
     }
 
-    const key = generateCacheKey(req)
+    const key = options?.listNamespace
+      ? await generateVersionedKey(req, options.listNamespace)
+      : generateCacheKey(req)
 
     // Try cache
     const cached = await getCache(key)
@@ -38,24 +45,6 @@ export const cacheMiddleware = (durationSeconds: number = 60) => {
       return originalJson(body)
     }
 
-    next()
-  }
-}
-
-/**
- * Clear cache entries whose key matches the given suffix.
- * Use after mutations to invalidate related cached data.
- *
- * Usage:
- *   router.post('/events', clearCache('events'), controller)
- */
-export const clearCache = (keySuffix: string) => {
-  return async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
-    // We delete by exact key suffix. Since memcached doesn't support
-    // pattern-based deletion, we rely on known key patterns.
-    // This is best-effort — missing a key just means stale data lives until TTL.
-    const key = generateCacheKey(req, keySuffix)
-    await deleteCache(key)
     next()
   }
 }

@@ -9,6 +9,11 @@ import { isValidObjectId, type QueryFilter, Types } from "mongoose";
 import type { z } from "zod";
 import logger from "../config/logger.js";
 import { deleteFromCloudinary } from "../config/upload.js";
+import {
+  buildCacheKey,
+  bumpListGeneration,
+  deleteCache,
+} from "../libs/cache.js";
 import ProjectModel, { type IProject } from "../models/project.js";
 
 type CreateProjectInput = z.infer<typeof createProjectSchema> & {
@@ -90,10 +95,24 @@ const toProjectView = (doc: IProject): Project => ({
 });
 
 export type ProjectsList = {
-	items: Project[];
-	page: number;
-	totalPages: number;
-	total: number;
+  items: Project[];
+  page: number;
+  totalPages: number;
+  total: number;
+};
+
+/**
+ * Targeted invalidation after project writes — rotates the list-namespace
+ * generation (cheap: one counter write) and drops the exact detail key.
+ * Replaces the old whole-cache flush, so unrelated entries stay warm.
+ */
+export const invalidateProjectCaches = async (
+  projectId?: string,
+): Promise<void> => {
+  await bumpListGeneration("projects");
+  if (projectId) {
+    await deleteCache(buildCacheKey(`/v1/projects/${projectId}`));
+  }
 };
 
 export const listProjects = async ({
@@ -143,14 +162,16 @@ export const listProjects = async ({
 
 	const order: 1 | -1 = sort === "Oldest" ? 1 : -1;
 
-	const [items, total] = await Promise.all([
-		ProjectModel.find(filter)
-			.sort({ createdAt: order })
-			.skip((safePage - 1) * safeLimit)
-			.limit(safeLimit)
-			.lean(),
-		ProjectModel.countDocuments(filter),
-	]);
+  const [items, total] = await Promise.all([
+    ProjectModel.find(filter)
+      // List cards never render the (up to 2KB) description — leave it out.
+      .select("-description")
+      .sort({ createdAt: order })
+      .skip((safePage - 1) * safeLimit)
+      .limit(safeLimit)
+      .lean(),
+    ProjectModel.countDocuments(filter),
+  ]);
 
 	return {
 		items: items.map((doc) => toProjectView(doc as unknown as IProject)),
@@ -223,33 +244,34 @@ export const getProject = async (
 		};
 	}
 
-	const doc = await ProjectModel.findOne({
-		_id: projectId,
-		status: "published",
-	}).lean();
-	if (!doc) {
-		return {
-			success: false,
-			status: 404,
-			message: "Project not found.",
-		};
-	}
+  // Detail + recommendations are independent — fetch in parallel.
+  // A failed recommendation must never fail the detail view.
+  const [doc, recommended] = await Promise.all([
+    ProjectModel.findOne({
+      _id: projectId,
+      status: "published",
+    }).lean(),
+    getRecommendedProjects(projectId).catch((error) => {
+      logger.warn(
+        { err: error, projectId },
+        "Failed to load recommended projects",
+      );
+      return [] as Project[];
+    }),
+  ]);
+  if (!doc) {
+    return {
+      success: false,
+      status: 404,
+      message: "Project not found.",
+    };
+  }
 
-	let recommended: Project[] = [];
-	try {
-		recommended = await getRecommendedProjects(projectId);
-	} catch (error) {
-		logger.warn(
-			{ err: error, projectId },
-			"Failed to load recommended projects",
-		);
-	}
-
-	return {
-		success: true,
-		project: toProjectView(doc as unknown as IProject),
-		recommended,
-	};
+  return {
+    success: true,
+    project: toProjectView(doc as unknown as IProject),
+    recommended,
+  };
 };
 
 export const editProject = async (
@@ -304,17 +326,20 @@ export const editProject = async (
 };
 
 export const deleteProject = async (
-	projectId: string,
-): Promise<{ success: boolean; message: string }> => {
-	if (!isValidObjectId(projectId)) {
-		return { success: false, message: "Project not found." };
-	}
+  projectId: string,
+): Promise<
+  | { success: true; message: string }
+  | { success: false; status: number; message: string }
+> => {
+  if (!isValidObjectId(projectId)) {
+    return { success: false, status: 404, message: "Project not found." };
+  }
 
-	const project = await ProjectModel.findById(projectId).lean();
+  const project = await ProjectModel.findById(projectId).lean();
 
-	if (!project) {
-		return { success: false, message: "Project not found." };
-	}
+  if (!project) {
+    return { success: false, status: 404, message: "Project not found." };
+  }
 
 	// Clean up Cloudinary assets (best-effort, don't fail the delete).
 	const publicIds = (project.media ?? [])

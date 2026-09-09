@@ -70,14 +70,14 @@ shared/src/
 - Thin controller + plain named-export service functions returning discriminated results: `{ success: true, ... } | { success: false, status, message }` (see `authService.ts`, `projectService.ts`). Controllers unwrap into `sendTsRestSuccess`/`sendTsRestError` inside `tryCatchWrapper`.
 - Response shapes: success `{ success: true, message, body? }`, error `{ success: false, message, details? }`.
 - Mounted in `src/index.ts`: `/v1/auth`, `/v1/upload`, `/v1/projects`, email cron at `/cron-email`, plus `/health`. In production the same service also serves the SPA from `client/dist` (static + catch-all fallback).
-- Middleware order: logger → CORS → session → helmet → json/urlencoded (25mb limit); `globalLimiter` scoped to `/v1` only (static/health exempt). CORS allowlists `CLIENT_URL`, localhost ports, `RENDER_EXTERNAL_URL`.
+- Middleware order: requestTime → bare `/health` → logger → CORS → helmet → static (prod) → session → `globalLimiter` scoped to `/v1` → 25mb parsers on `/v1/upload` only → 1mb json/urlencoded → routes → SPA fallback → 404. Static/health exempt. CORS allowlists `CLIENT_URL`, localhost ports, `RENDER_EXTERNAL_URL`.
 - `validateFormData(schema)` **replaces `req.body` with the zod-parsed output** — unknown keys are stripped silently. If a field isn't in the shared schema it will vanish; add it there first.
 - Mongoose 9: `FilterQuery` no longer exists — use `import { type QueryFilter } from "mongoose"`.
 - Import Node builtins with the `node:` protocol (lint rule): `node:crypto`, etc.
 
 ### Caching
-- GET routes get `cacheMiddleware(ttl)`; mutations call `flushCache()` after success.
-- Key = `ev:v1:<path>:<sorted-query>`; TTL seconds.
+- GET routes get `cacheMiddleware(ttl[, { listNamespace }])`; project writes call `invalidateProjectCaches(id?)` (bumps the `projects` list generation + drops the exact detail key). `flushCache()` is an escape hatch only.
+- Key = `tsa:v1:<path>:<sorted-query>` (`:<suffix>` for versioned lists); generation keys `tsa:v1:gen:<ns>` (30d TTL, 10s in-process cache). TTL seconds.
 - memjs degrades gracefully: if Memcachier is unreachable/unauthenticated (typical locally), it logs WARN and serves uncached — repeat requests showing `x-cache: MISS` locally is expected, not a bug.
 
 ### Auth (routes on `/v1/auth`)
@@ -100,9 +100,9 @@ shared/src/
 - Stored model ≠ client shape: `projectService.toProjectView` maps `department[0]`→`category`, `thumbnail`→`gallery`, `academicYear`→`year`, `fullName`→`name`, derives `slug`. Client consumes only the showcase `Project` type from `@tsa/shared`.
 
 ### Email
-- Brevo via `config/email.ts`; on Brevo failure the email is queued to `emailQueue`.
+- Queue-first via `EmailService` (register/forgot): persist due-now, fire-and-forget immediate drain, cron backstop. Atomic `findOneAndUpdate` claim prevents double-sends.
 - `jobs/emailCron.ts`: drains queue (batch 10), exponential backoff (5ⁿ min, cap 24h), lifecycle `queued → sending → sent/failed`.
-- Cron endpoint protected by `CRON_SECRET` header; hit `GET /cron-email` on a schedule (external cron).
+- Cron endpoint (`GET /cron-email`) guarded by `verifyCronSecret` (`CRON_SECRET` header); hit on a schedule (external cron).
 
 ## Env vars
 

@@ -1,5 +1,7 @@
 import path from "node:path";
+import compression from "compression";
 import cors from "cors";
+import type { UserRole } from "@tsa/shared";
 import express, {
 	type NextFunction,
 	type Request,
@@ -10,7 +12,7 @@ import { connectToDB, gracefulShutdown } from "./config/database.js";
 import { env } from "./config/keys.js";
 import logger, { logError } from "./config/logger.js";
 import { createSessionMiddleware } from "./config/session.js";
-import { helmetOptions } from "./libs/options.js";
+import { compressionOptions, helmetOptions } from "./libs/options.js";
 import {
 	appErrorHandler,
 	createExpressLogger,
@@ -37,7 +39,7 @@ declare global {
 declare module "express-session" {
 	interface SessionData {
 		userId?: string;
-		role?: "admin" | "super_admin";
+		role?: UserRole;
 	}
 }
 
@@ -91,19 +93,12 @@ const corsOptions: cors.CorsOptions = {
 	],
 };
 
-app.use(createExpressLogger()); //Pino HTTP middleware for request logging
-app.use(cors(corsOptions));
-app.use(createSessionMiddleware());
-app.use(helmet(helmetOptions));
-app.use(express.json({ limit: "25mb" }));
-app.use(express.urlencoded({ extended: true, limit: "25mb" }));
-app.disable("x-powered-by");
-
 app.use((req: Request, res: Response, next: NextFunction) => {
 	req.requestTime = new Date().toISOString();
 	next();
 });
 
+// Bare health check first — no logger, session, limiter, or parsers.
 app.use("/health", (req: Request, res: Response) => {
 	res.status(200).json({
 		status: "success",
@@ -114,21 +109,17 @@ app.use("/health", (req: Request, res: Response) => {
 	});
 });
 
-// Rate-limit API traffic only. Static assets, the SPA fallback and health
-// checks are exempt — a single page load pulls dozens of assets, and
-// counting those trips the limiter and takes the whole site down.
-app.use("/v1", globalLimiter);
-
-//api routes
-app.use("/v1/auth", authRoutes);
-app.use("/v1/upload", uploadRoutes);
-app.use("/v1/projects", projectRoutes);
+app.use(createExpressLogger()); //Pino HTTP middleware for request logging
+app.use(cors(corsOptions));
+app.use(helmet(helmetOptions));
 
 // Single-origin production: serve the SPA from this service so session
 // cookies never cross a proxy hop (static-site rewrites drop Set-Cookie,
 // which breaks login). Dev is unaffected — Vite serves the client there.
+// Static sits before session/limiter/parsers: assets need none of them.
+let clientDist = "";
 if (env.NODE_ENV === "production") {
-	const clientDist = path.resolve(
+	clientDist = path.resolve(
 		import.meta.dirname,
 		"..",
 		"..",
@@ -136,6 +127,35 @@ if (env.NODE_ENV === "production") {
 		"dist",
 	);
 	app.use(express.static(clientDist));
+}
+
+app.use(createSessionMiddleware());
+
+// Rate-limit API traffic only. Static assets, the SPA fallback and health
+// checks are exempt — a single page load pulls dozens of assets, and
+// counting those trips the limiter and takes the whole site down.
+app.use("/v1", globalLimiter);
+
+// Uploads carry multi-MB base64 payloads — parse them before the small
+// global limit below (body-parser skips already-parsed requests).
+app.use(
+	"/v1/upload",
+	express.json({ limit: "25mb" }),
+	express.urlencoded({ extended: true, limit: "25mb" }),
+);
+app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: true, limit: "1mb" }));
+// Compress API JSON + SPA HTML (static assets are compressed at the edge).
+app.use(compression(compressionOptions));
+app.disable("x-powered-by");
+
+//api routes
+app.use("/v1/auth", authRoutes);
+app.use("/v1/upload", uploadRoutes);
+app.use("/v1/projects", projectRoutes);
+
+// SPA fallback (production only — clientDist is "" otherwise).
+if (env.NODE_ENV === "production") {
 	app.get("/{*splat}", (req: Request, res: Response, next: NextFunction) => {
 		// Unknown API paths still fall through to the JSON 404 handler.
 		if (

@@ -100,6 +100,9 @@ export const updatePasswordSchema = z.object({
     .regex(/\d/, { message: 'Password must contain at least one number' }),
 })
 
+export const USER_ROLES = ['admin', 'super_admin'] as const
+export type UserRole = (typeof USER_ROLES)[number]
+
 export const updateUserRoleSchema = z.object({
-  role: z.enum(['admin', 'super_admin'], { message: 'Role must be admin or super_admin' }),
+  role: z.enum(USER_ROLES, { message: 'Role must be admin or super_admin' }),
 })

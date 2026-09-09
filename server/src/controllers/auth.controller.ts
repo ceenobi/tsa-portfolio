@@ -167,10 +167,8 @@ export const logoutUser = tryCatchWrapper(
 //update user email or password
 export const updateUserController = tryCatchWrapper(
 	async (req: Request, res: Response) => {
-		const userId = req.session?.userId;
-		if (!userId) {
-			return sendTsRestError(res, 401, "Access denied. Please log in.");
-		}
+		// Session is guaranteed by verifySession on the route.
+		const userId = req.session.userId as string;
 
 		const result = await updateUser(userId, req.body);
 		if (!result.success) {
@@ -212,10 +210,8 @@ export const listUsersController = tryCatchWrapper(
 
 export const updateUserRoleController = tryCatchWrapper(
 	async (req: Request, res: Response) => {
-		const requesterId = req.session?.userId;
-		if (!requesterId) {
-			return sendTsRestError(res, 401, "Access denied. Please log in.");
-		}
+		// Session is guaranteed by verifySession on the route.
+		const requesterId = req.session.userId as string;
 
 		const userId = req.params.userId as string;
 		const { role } = req.body;
