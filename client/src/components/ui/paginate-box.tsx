@@ -9,8 +9,8 @@ import {
 } from "./pagination";
 
 type PaginateBoxProps = {
-	page: number;
-	totalPages: number;
+	page: number | undefined;
+	totalPages: number | undefined;
 	onPageChange: (page: number) => void;
 };
 

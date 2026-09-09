@@ -41,6 +41,19 @@ const routes = [
             },
           },
           {
+            path: "explore",
+            handle: {
+              seo: {
+                title: "Explore projects",
+                description: "See what our students are building.",
+              },
+            },
+            lazy: async () => {
+              const { default: Component } = await import("@/routes/main/explore");
+              return { Component };
+            },
+          },
+          {
             path: "projects/:slug/:projectId",
             handle: {
               seo: {

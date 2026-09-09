@@ -1,9 +1,5 @@
-import {
-	Outlet,
-	ScrollRestoration,
-	useMatches,
-	useNavigation,
-} from "react-router";
+import { Outlet, ScrollRestoration, useMatches } from "react-router";
+import { ProgressBar } from "@/components/provider/progress-bar";
 import { Seo, type SeoHandle } from "@/components/provider/seo";
 
 const DEFAULT_SEO = {
@@ -16,18 +12,10 @@ export default function Root() {
 	const lastMatch = matches.at(-1);
 	const seo = (lastMatch?.handle as SeoHandle | undefined)?.seo ?? DEFAULT_SEO;
 
-	const navigation = useNavigation();
-	const isNavigating = navigation.state !== "idle";
-
 	return (
 		<>
 			<Seo {...seo} />
-
-			{isNavigating && (
-				<div className="fixed top-0 left-0 right-0 z-50 h-1 bg-mainBlue">
-					<div className="h-full bg-primary animate-pulse transition-all duration-300" />
-				</div>
-			)}
+			<ProgressBar />
 			<ScrollRestoration />
 			<Outlet />
 		</>
