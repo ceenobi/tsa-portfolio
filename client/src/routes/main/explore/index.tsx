@@ -1,9 +1,11 @@
 import type { Project } from "@tsa/shared";
+import { useEffect, useRef } from "react";
 import { useSearchParams } from "react-router";
 import ProjectCard from "@/components/features/project-card";
 import { Button } from "@/components/ui/button";
 import NotFound from "@/components/ui/not-found";
 import PaginateBox from "@/components/ui/paginate-box";
+import QueryError from "@/components/ui/query-error";
 import {
 	Select,
 	SelectContent,
@@ -31,7 +33,7 @@ export default function Explore() {
 	const sortParam = searchParams.get("sort");
 	const sort: SortOrder = sortParam === "Oldest" ? "Oldest" : "Most Recent";
 
-	const { data, isLoading, isError } = useProjects(
+	const { data, isLoading, isError, isFetching, refetch } = useProjects(
 		{
 			page,
 			category,
@@ -42,7 +44,18 @@ export default function Explore() {
 	);
 
 	const projects = data?.items ?? [];
-  const { page: currentPage, totalPages } = data ?? {};
+	const { page: currentPage, totalPages } = data ?? {};
+
+	// When the page changes, move focus to the results heading so
+	// keyboard/screen-reader users land on the new content.
+	const resultsRef = useRef<HTMLDivElement>(null);
+	const prevPage = useRef(page);
+	useEffect(() => {
+		if (prevPage.current !== page) {
+			prevPage.current = page;
+			resultsRef.current?.focus({ preventScroll: false });
+		}
+	}, [page]);
 	
 	const handlePageChange = (next: number) => {
 		const params = new URLSearchParams(searchParams);
@@ -118,15 +131,30 @@ export default function Explore() {
 			</div>
 			{isLoading ? (
 				<ProjectShowcaseSkeleton />
-			) : isError || projects.length === 0 ? (
+			) : isError ? (
+				<QueryError
+					message="Couldn't load projects. Please try again."
+					onRetry={() => refetch()}
+				/>
+			) : projects.length === 0 ? (
 				<NotFound />
 			) : (
-				<div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+				<div
+					ref={resultsRef}
+					tabIndex={-1}
+					className={cn(
+						"mt-8 grid gap-5 outline-none transition-opacity duration-150 motion-reduce:transition-none sm:grid-cols-2 lg:grid-cols-3",
+						isFetching && !isLoading && "opacity-70",
+					)}
+				>
 					{projects.map((project: Project) => (
 						<ProjectCard project={project} key={project._id} />
 					))}
 				</div>
 			)}
+			<p className="sr-only" aria-live="polite">
+				{!isLoading && !isError && `${projects.length} projects shown`}
+			</p>
 			<div className="mt-8 flex flex-wrap items-center justify-between gap-4">
 				<p className="text-sm text-muted-foreground">
 					{PAGE_SIZE} Entries per page

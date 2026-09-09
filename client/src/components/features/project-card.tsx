@@ -15,14 +15,17 @@ function ProjectCard({ project }: { project: Project }) {
   );
 
   return (
-    <Link to={`/projects/${project.slug}/${project._id}`} className="group">
+    <Link
+      to={`/projects/${project.slug}/${project._id}`}
+      className="group block transition-transform duration-200 hover:-translate-y-0.5 motion-reduce:transform-none motion-reduce:transition-none"
+    >
         <article key={project.title}>
           <BlurImage
             src={cover}
             alt={project.title}
             blurSrc={blurSrc}
             className="aspect-[8/5] w-full rounded-[30px] border-4 border-transparent transition-all duration-300 group-hover:border-mainBlue"
-            imgClassName="group-hover:scale-105"
+            imgClassName="group-hover:scale-105 motion-reduce:group-hover:scale-100"
           />
 
           <div className="p-4">

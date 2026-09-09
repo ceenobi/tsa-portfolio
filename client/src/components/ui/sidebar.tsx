@@ -33,7 +33,7 @@ export default function Sidebar({
               key={tab.key}
               to={`/dashboard/${tab.key === "dashboard" ? "" : tab.key}`}
               aria-current={isActive ? "page" : undefined}
-              className={`flex flex-col items-center justify-center gap-2 w-13 h-2.5 min-h-18.75 rounded-xl px-2 text-center ${
+              className={`flex flex-col items-center justify-center gap-2 h-2.5 min-h-18.75 rounded-xl px-2 text-center ${
                 isActive
                   ? "bg-white/10 text-white"
                   : "text-[#8F92B3]"

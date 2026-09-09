@@ -4,10 +4,11 @@ import { Link } from "react-router";
 import ProjectCard from "@/components/features/project-card";
 import { Button } from "@/components/ui/button";
 import NotFound from "@/components/ui/not-found";
+import QueryError from "@/components/ui/query-error";
 import { useProjects } from "@/hooks/use-project";
 
 export default function ProjectShowcase() {
-	const { data, isLoading, isError } = useProjects(
+	const { data, isLoading, isError, refetch } = useProjects(
 		{ limit: 6 },
 		{ refetchOnWindowFocus: false },
 	);
@@ -30,7 +31,12 @@ export default function ProjectShowcase() {
 				</div>
 				{isLoading ? (
 					<ProjectShowcaseSkeleton />
-				) : isError || projects.length === 0 ? (
+				) : isError ? (
+					<QueryError
+						message="Couldn't load projects. Please try again."
+						onRetry={() => refetch()}
+					/>
+				) : projects.length === 0 ? (
 					<NotFound />
 				) : (
 					<div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -47,22 +53,24 @@ export default function ProjectShowcase() {
 /** Loading placeholder that mirrors the showcase layout and card grid. */
 export function ProjectShowcaseSkeleton() {
 	return (
-		<section className="bg-[#D0D0D0]/10">
-			<div className="mx-auto max-w-7xl px-4 pt-25 sm:px-6 lg:px-25">
-				<div className="h-9 w-56 animate-pulse rounded bg-muted sm:h-10" />
+		<div
+			role="status"
+			aria-label="Loading projects"
+			className="mx-auto max-w-7xl px-4 pt-25 sm:px-6 lg:px-25"
+		>
+			<div className="h-9 w-56 animate-pulse rounded bg-muted sm:h-10" />
 
-				<div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-					{Array.from({ length: 6 }).map((_, i) => (
-						<div key={i} className="animate-pulse">
-							<div className="aspect-[8/5] w-full rounded-[30px] bg-muted" />
-							<div className="space-y-2 p-4">
-								<div className="h-4 w-1/3 rounded bg-muted" />
-								<div className="h-4 w-1/2 rounded bg-muted" />
-							</div>
+			<div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+				{Array.from({ length: 6 }).map((_, i) => (
+					<div key={i} className="animate-pulse">
+						<div className="aspect-[8/5] w-full rounded-[30px] bg-muted" />
+						<div className="space-y-2 p-4">
+							<div className="h-4 w-1/3 rounded bg-muted" />
+							<div className="h-4 w-1/2 rounded bg-muted" />
 						</div>
-					))}
-				</div>
+					</div>
+				))}
 			</div>
-		</section>
+		</div>
 	);
 }

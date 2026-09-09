@@ -132,10 +132,11 @@ export default function DashboardNav({ user }: { user: UserProfile | null }) {
 							<li>
 								<button
 									type="button"
-									className="w-full px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer flex items-center gap-2"
+									disabled={mutation.isPending}
+									className="w-full px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer flex items-center gap-2 disabled:opacity-60"
 									onClick={handleLogout}
 								>
-									<LogOut /> Log out
+									<LogOut /> {mutation.isPending ? "Logging out…" : "Log out"}
 								</button>
 							</li>
 						</ul>
