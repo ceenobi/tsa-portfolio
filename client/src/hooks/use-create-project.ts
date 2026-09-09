@@ -29,7 +29,7 @@ export function useCreateProject() {
 		},
 		onSuccess: () => {
 			// Refresh the portfolio list + dashboard stats after a create.
-			queryClient.invalidateQueries();
+			queryClient.invalidateQueries({ queryKey: ["projects"] });
 		},
 	});
 }

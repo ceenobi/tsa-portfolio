@@ -30,4 +30,22 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        // Long-lived vendor chunk: React/router/query change rarely, so
+        // repeat visits reuse it from cache while route chunks update.
+        // (Rolldown syntax — manualChunks object form isn't supported.)
+        advancedChunks: {
+          groups: [
+            {
+              name: "vendor",
+              test: /node_modules[\\/](react|react-dom|react-router|@tanstack[\\/]react-query)[\\/]/,
+            },
+          ],
+        },
+      },
+    },
+  },
 })

@@ -31,12 +31,15 @@ export default function Explore() {
 	const sortParam = searchParams.get("sort");
 	const sort: SortOrder = sortParam === "Oldest" ? "Oldest" : "Most Recent";
 
-	const { data, isLoading, isError } = useProjects({
-		page,
-		category,
-		sort,
-		limit: 10,
-	});
+	const { data, isLoading, isError } = useProjects(
+		{
+			page,
+			category,
+			sort,
+			limit: 10,
+		},
+		{ refetchOnWindowFocus: false },
+	);
 
 	const projects = data?.items ?? [];
   const { page: currentPage, totalPages } = data ?? {};
