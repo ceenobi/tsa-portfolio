@@ -35,7 +35,7 @@ services:
     routes:
       - type: rewrite
         source: /api/*
-        destination: https://tsa-api-4yew.onrender.com/api/*
+        destination: https://tsa-api-4yew.onrender.com/*
       - type: rewrite
         source: /cron-email
         destination: https://tsa-api-4yew.onrender.com/cron-email
