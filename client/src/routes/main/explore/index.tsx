@@ -73,14 +73,15 @@ export default function Explore() {
 				Explore Projects
 			</h2>
 			<div className="mt-4 flex flex-wrap items-center justify-between gap-2">
-				<div className="flex flex-wrap items-center gap-2">
-					<span className="text-[14px] font-medium text-muted-foreground">
-						Courses:
-					</span>
-					{CATEGORIES.map((item) => (
-						<Button
-							key={item}
-							type="button"
+				<div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter by course">
+						<span className="text-[14px] font-medium text-muted-foreground">
+							Courses:
+						</span>
+						{CATEGORIES.map((item) => (
+							<Button
+								key={item}
+								type="button"
+								aria-pressed={category === item}
 							variant={category === item ? "default" : "outline"}
 							onClick={() => handleCategoryChange(item)}
 							className={cn(

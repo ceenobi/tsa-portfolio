@@ -357,7 +357,11 @@ export default function CreateProject() {
 							{fields.map((f, i) => (
 								<li key={f.id} className="flex items-start gap-3">
 									<div className="flex-1 space-y-1.5">
+										<Label htmlFor={`member-name-${i}`}>
+											Member {i + 1} full name
+										</Label>
 										<Input
+											id={`member-name-${i}`}
 											placeholder="Full name"
 											className="h-10"
 											{...register(`teamMembers.${i}.fullName` as const)}
@@ -367,11 +371,17 @@ export default function CreateProject() {
 												{errors.teamMembers[i]?.fullName?.message}
 											</p>
 										)}
-										<div className="my-2 text-xs text-mainBlue">
-											Image URL:
+										<div className="my-2 space-y-1.5">
+											<Label
+												htmlFor={`member-image-${i}`}
+												className="text-xs text-mainBlue"
+											>
+												Image URL (optional)
+											</Label>
 											<Input
+												id={`member-image-${i}`}
 												placeholder="https://..."
-												className="h-6 rounded-md"
+												className="h-10 rounded-md"
 												{...register(`teamMembers.${i}.image` as const)}
 											/>
 										</div>

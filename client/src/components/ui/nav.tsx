@@ -27,36 +27,47 @@ export default function Nav() {
 							About Us
 						</a>
 
-						<div
-							className="group relative"
-							onMouseEnter={() => setCoursesOpen(true)}
-							onMouseLeave={() => setCoursesOpen(false)}
-						>
+					<div
+						className="group relative"
+						onMouseEnter={() => setCoursesOpen(true)}
+						onMouseLeave={() => setCoursesOpen(false)}
+						onBlur={(e) => {
+							if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+								setCoursesOpen(false);
+							}
+						}}
+						onKeyDown={(e) => {
+							if (e.key === "Escape") {
+								setCoursesOpen(false);
+							}
+						}}
+					>
 							<button
 								type="button"
 								className="flex items-center gap-1 hover:text-blue-300"
 								onClick={() => setCoursesOpen((open) => !open)}
 								aria-expanded={coursesOpen}
+								aria-haspopup="true"
+								aria-controls="courses-menu"
 							>
 								Courses
 								<ChevronDown className="size-3.5" />
 							</button>
 
 							{coursesOpen && (
-								<div className="absolute left-0 top-full w-64 rounded-md border border-border bg-popover p-1 shadow-lg">
+								<div
+									id="courses-menu"
+									className="absolute left-0 top-full w-64 rounded-md border border-border bg-popover p-1 shadow-lg"
+								>
 									{COURSES.map((course) => (
 										<a
 											key={course.name}
 											href={course.href}
 											target="_blank"
 											rel="noopener noreferrer"
+											className="block rounded-sm px-3 py-2 text-left text-sm text-foreground hover:bg-muted"
 										>
-											<button
-												type="button"
-												className="block w-full rounded-sm px-3 py-2 text-left text-sm text-foreground hover:bg-muted"
-											>
-												{course.name}
-											</button>
+											{course.name}
 										</a>
 									))}
 								</div>
@@ -86,14 +97,18 @@ export default function Nav() {
 					</nav>
 
 					<div className="hidden lg:block">
-						<a
-							href="https://www.techstudioacademy.com/register"
-							rel="noopener noreferrer"
+						<Button
+							nativeButton={false}
+							className="h-9 rounded-md bg-mainBlue py-3 px-6.5 text-sm text-white hover:bg-blue-500"
+							render={
+								<a
+									href="https://www.techstudioacademy.com/register"
+									rel="noopener noreferrer"
+								/>
+							}
 						>
-							<Button className="h-9 rounded-md bg-mainBlue py-3 px-6.5 text-sm text-white hover:bg-blue-500">
-								Register
-							</Button>
-						</a>
+							Register
+						</Button>
 					</div>
 
 					<button
@@ -101,6 +116,8 @@ export default function Nav() {
 						className="text-white lg:hidden"
 						onClick={() => setMobileOpen((open) => !open)}
 						aria-label="Toggle menu"
+						aria-expanded={mobileOpen}
+						aria-controls="mobile-nav"
 					>
 						{mobileOpen ? (
 							<X className="size-6" />
@@ -111,19 +128,24 @@ export default function Nav() {
 				</div>
 
 				<div
+					id="mobile-nav"
 					className={cn(
 						"grid gap-1 overflow-hidden px-4 text-white transition-[grid-template-rows] duration-200 lg:hidden",
 						mobileOpen ? "grid-rows-[1fr] pb-4" : "grid-rows-[0fr]",
 					)}
+					onKeyDown={(e) => {
+						if (e.key === "Escape") {
+							setMobileOpen(false);
+						}
+					}}
 				>
 					<div className="flex min-h-0 flex-col gap-1 text-sm font-medium">
-						<a href="https://www.techstudioacademy.com/about">
-							<button
-								type="button"
-								className="rounded-md px-2 py-2 text-left hover:bg-white/10"
-							>
-								About Us
-							</button>
+						<a
+							href="https://www.techstudioacademy.com/about"
+							className="rounded-md px-2 py-2 text-left hover:bg-white/10"
+							onClick={() => setMobileOpen(false)}
+						>
+							About Us
 						</a>
 						{COURSES.map((course) => (
 							<a
@@ -131,57 +153,49 @@ export default function Nav() {
 								href={course.href}
 								target="_blank"
 								rel="noopener noreferrer"
+								className="rounded-md px-2 py-2 text-left hover:bg-white/10"
+								onClick={() => setMobileOpen(false)}
 							>
-								<button
-									type="button"
-									className="rounded-md px-2 py-2 text-left hover:bg-white/10"
-								>
-									{course.name}
-								</button>
+								{course.name}
 							</a>
 						))}
 						<a
 							href="https://www.techstudioacademy.com/faq"
 							rel="noopener noreferrer"
+							className="rounded-md px-2 py-2 text-left hover:bg-white/10"
+							onClick={() => setMobileOpen(false)}
 						>
-							<button
-								type="button"
-								className="rounded-md px-2 py-2 text-left hover:bg-white/10"
-							>
-								FAQ
-							</button>
+							FAQ
 						</a>
 						<a
 							href="https://www.techstudioacademy.com/contact"
 							rel="noopener noreferrer"
+							className="rounded-md px-2 py-2 text-left hover:bg-white/10"
+							onClick={() => setMobileOpen(false)}
 						>
-							<button
-								type="button"
-								className="rounded-md px-2 py-2 text-left hover:bg-white/10"
-							>
-								Contact Us
-							</button>
+							Contact Us
 						</a>
 						<a
 							href="https://www.techstudioacademy.com/portfolio"
 							rel="noopener noreferrer"
+							className="rounded-md px-2 py-2 text-left hover:bg-white/10"
+							onClick={() => setMobileOpen(false)}
 						>
-							<button
-								type="button"
-								className="rounded-md px-2 py-2 text-left hover:bg-white/10"
-							>
-								Portfolio
-							</button>
+							Portfolio
 						</a>
 
-						<a
-							href="https://www.techstudioacademy.com/register"
-							rel="noopener noreferrer"
+						<Button
+							nativeButton={false}
+							className="mt-2 h-9 w-full rounded-md bg-blue-600 text-sm text-white hover:bg-blue-500"
+							render={
+								<a
+									href="https://www.techstudioacademy.com/register"
+									rel="noopener noreferrer"
+								/>
+							}
 						>
-							<Button className="mt-2 h-9 w-full rounded-md bg-blue-600 text-sm text-white hover:bg-blue-500">
-								Register
-							</Button>
-						</a>
+							Register
+						</Button>
 					</div>
 				</div>
 			</header>

@@ -20,13 +20,18 @@ export default function CtaSection() {
             Start your journey in tech and build projects that shape the
             future.
           </h2>
-          <a href="https://www.techstudioacademy.com/register" rel="noopener noreferrer">
           <Button
+            nativeButton={false}
             className="h-10 rounded-md bg-blue-600 px-6 text-sm text-white hover:bg-blue-500"
+            render={
+              <a
+                href="https://www.techstudioacademy.com/register"
+                rel="noopener noreferrer"
+              />
+            }
           >
             Join Us Now
-            </Button>
-          </a>
+          </Button>
         </div>
       </div>
     </section>
