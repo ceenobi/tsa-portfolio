@@ -92,7 +92,7 @@ export default function VerifyAccount() {
 					text="Verify"
 					type="submit"
 					loading={mutation.isPending}
-					classname="w-full h-12 text-base bg-mainBlue hover:bg-mainBlue/90"
+					className="w-full h-12 text-base bg-mainBlue hover:bg-mainBlue/90"
 				/>
 			</form>
 			<div className="w-full inline-flex gap-2 justify-center items-center">

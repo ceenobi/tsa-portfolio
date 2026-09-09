@@ -5,7 +5,7 @@ interface ActionButtonProps {
   type?: 'button' | 'submit' | 'reset' | undefined
   loading?: boolean
   text?: React.ReactNode
-  classname?: string
+  className?: string
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
   disabled?: boolean
   variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost'
@@ -17,7 +17,7 @@ export default function ActionBtn({
   type,
   loading,
   text,
-  classname,
+  className,
   onClick,
   disabled,
   variant,
@@ -29,7 +29,7 @@ export default function ActionBtn({
       type={type}
       disabled={loading || disabled}
       onClick={onClick}
-      className={`transition-transform ease-in-out duration-300 ${classname}`}
+      className={`transition-transform ease-in-out duration-300 ${className}`}
       variant={variant}
       form={form}
       size={size}

@@ -67,7 +67,7 @@ export default function ForgotPassword() {
 					text="Send reset link"
 					type="submit"
 					loading={mutation.isPending}
-					classname="w-full h-12 text-base bg-mainBlue hover:bg-mainBlue/90"
+					className="w-full h-12 text-base bg-mainBlue hover:bg-mainBlue/90"
 				/>
 			</form>
 			<p className="text-xs text-center mt-2">

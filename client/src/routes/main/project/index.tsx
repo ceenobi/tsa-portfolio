@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { Link, useParams } from "react-router";
 import ProjectCard from "@/components/features/project-card";
+import CtaCard from "@/components/features/cta-card";
 import { Seo } from "@/components/provider/seo";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BlurImage } from "@/components/ui/blur-image";
@@ -31,7 +32,7 @@ export default function ProjectDetail() {
 
 	if (isError) {
 		return (
-			<div className="mx-auto max-w-7xl px-4 py-25 sm:px-6 lg:px-25">
+			<div className="mx-auto max-w-7xl px-4 py-25 sm:px-6 lg:px-8">
 				<QueryError
 					message="Couldn't load this project. Please try again."
 					onRetry={() => refetch()}
@@ -58,10 +59,10 @@ export default function ProjectDetail() {
 				image={project.coverImageUrl}
 			/>
 
-			<article className="mx-auto max-w-7xl px-4 py-25 sm:px-6 lg:px-25">
+			<article className="mx-auto max-w-7xl px-4 py-25 sm:px-6 lg:px-8">
 				<Link
 					to="/"
-					className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+					className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:underline focus-visible:outline-none"
 				>
 					<ArrowLeft className="size-4" /> Back to home
 				</Link>
@@ -224,36 +225,8 @@ export default function ProjectDetail() {
 						</div>
 					</section>
 				)}
-				<div className="mt-20 relative mx-auto min-h-103.25 max-w-7xl overflow-hidden rounded-2xl bg-[hsla(215,98%,48%,0.1)]">
-					<img
-						className="absolute top-0 left-0 w-24 sm:w-32 lg:w-48"
-						src="/images/leftStar.svg"
-						alt=""
-					/>
-					<img
-						className="absolute right-0 bottom-0 w-24 sm:w-32 lg:w-48"
-						src="/images/rightStar.svg"
-						alt=""
-					/>
-
-					<div className="relative z-10 flex h-full min-h-103.25 flex-col items-center justify-center gap-6 px-6 py-16 text-center">
-						<h2 className="max-w-2xl text-3xl font-extrabold tracking-tight text-blue-950 sm:text-4xl lg:text-5xl">
-							Start your journey in tech and build projects that shape the
-							future.
-						</h2>
-						<Button
-							nativeButton={false}
-							className="h-10 rounded-md bg-blue-600 px-6 text-sm text-white hover:bg-blue-500"
-							render={
-								<a
-									href="https://www.techstudioacademy.com/register"
-									rel="noopener noreferrer"
-								/>
-							}
-						>
-							Join Us Now
-						</Button>
-					</div>
+				<div className="mt-20">
+					<CtaCard />
 				</div>
 			</article>
 		</>
@@ -263,7 +236,7 @@ export default function ProjectDetail() {
 /** Lightweight loading placeholder that mirrors the page layout. */
 function ProjectSkeleton() {
 	return (
-		<div className="mx-auto max-w-7xl animate-pulse px-4 pt-25 sm:px-6 lg:px-25">
+		<div className="mx-auto max-w-7xl animate-pulse px-4 pt-25 sm:px-6 lg:px-8">
 			<div className="h-4 w-24 rounded bg-muted" />
 			<div className="mt-6 h-9 w-2/3 rounded bg-muted" />
 			<div className="mt-3 h-4 w-1/2 rounded bg-muted" />

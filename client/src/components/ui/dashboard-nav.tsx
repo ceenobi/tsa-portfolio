@@ -52,7 +52,7 @@ export default function DashboardNav({ user }: { user: UserProfile | null }) {
 	};
 
 	return (
-		<header className="sticky top-0 z-50 bg-white flex items-center justify-between gap-4 px-4 border-b h-18.5 border-[#E7E4E4]">
+		<header className="sticky top-0 z-50 bg-white flex items-center justify-between gap-4 px-4 border-b h-18.5 border-border">
 			<img
 				src={LogoIcon}
 				alt="Tech Studio Academy Logo"
@@ -78,7 +78,7 @@ export default function DashboardNav({ user }: { user: UserProfile | null }) {
 				</div>
 				<button
 					onClick={() => setMenuOpen(!menuOpen)}
-					className="cursor-pointer"
+					className="cursor-pointer p-2"
 					type="button"
 					aria-label="Account menu"
 					aria-expanded={menuOpen}

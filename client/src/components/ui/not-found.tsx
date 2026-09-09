@@ -6,7 +6,7 @@ export default function NotFound() {
 	const location = useLocation();
 	const isHome = location.pathname === "/";
 	return (
-		<section className="mx-auto max-w-7xl px-4 py-25 sm:px-6 lg:px-25">
+		<section className="mx-auto max-w-7xl px-4 py-25 sm:px-6 lg:px-8">
 			<div className="mx-auto max-w-xl rounded-[30px] border border-border bg-card px-6 py-16 text-center shadow-sm sm:px-12">
 				<div className="mx-auto flex size-16 items-center justify-center rounded-full bg-mainBlue/10">
 					<SearchX className="size-7 text-mainBlue" />

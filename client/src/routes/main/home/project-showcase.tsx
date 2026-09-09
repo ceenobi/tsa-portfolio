@@ -16,8 +16,8 @@ export default function ProjectShowcase() {
 	const projects = data?.items ?? [];
 
 	return (
-		<section className="bg-[#D0D0D0]/10">
-			<div className="mx-auto max-w-7xl px-4 pt-25 sm:px-6 lg:px-25">
+		<section className="bg-muted/50">
+			<div className="mx-auto max-w-7xl px-4 pt-25 sm:px-6 lg:px-8">
 				<div className="flex items-center justify-between">
 					<h2 className="text-3xl font-bold tracking-[-5%] uppercase sm:text-4xl">
 						Project Showcase
@@ -56,7 +56,7 @@ export function ProjectShowcaseSkeleton() {
 		<div
 			role="status"
 			aria-label="Loading projects"
-			className="mx-auto max-w-7xl px-4 pt-25 sm:px-6 lg:px-25"
+			className="mx-auto max-w-7xl px-4 pt-25 sm:px-6 lg:px-8"
 		>
 			<div className="h-9 w-56 animate-pulse rounded bg-muted sm:h-10" />
 

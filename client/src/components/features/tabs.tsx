@@ -9,17 +9,17 @@ export const Tabs = [
 	{
 		key: "dashboard",
 		label: "Dashboard",
-		icon: <img src={DashboardIcon} alt="Portfolio Icon" className="w-6 h-6" />,
+		icon: <img src={DashboardIcon} alt="" aria-hidden="true" className="w-6 h-6" />,
 		iconActive: (
-			<img src={DashboardIconActive} alt="Portfolio Icon" className="w-6 h-6" />
+			<img src={DashboardIconActive} alt="" aria-hidden="true" className="w-6 h-6" />
 		),
 	},
 	{
 		key: "portfolio",
 		label: "Portfolio",
-		icon: <img src={PortfolioIcon} alt="Portfolio Icon" className="w-6 h-6" />,
+		icon: <img src={PortfolioIcon} alt="" aria-hidden="true" className="w-6 h-6" />,
 		iconActive: (
-			<img src={PortfolioIconActive} alt="Portfolio Icon" className="w-6 h-6" />
+			<img src={PortfolioIconActive} alt="" aria-hidden="true" className="w-6 h-6" />
 		),
 	},
 	{

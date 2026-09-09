@@ -24,7 +24,7 @@ function ProjectCard({ project }: { project: Project }) {
             src={cover}
             alt={project.title}
             blurSrc={blurSrc}
-            className="aspect-[8/5] w-full rounded-[30px] border-4 border-transparent transition-all duration-300 group-hover:border-mainBlue"
+            className="aspect-[8/5] w-full rounded-[30px] border-4 border-transparent transition-all duration-300 group-hover:border-mainBlue group-focus-visible:border-mainBlue motion-reduce:transition-none"
             imgClassName="group-hover:scale-105 motion-reduce:group-hover:scale-100"
           />
 

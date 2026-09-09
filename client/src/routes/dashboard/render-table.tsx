@@ -1,4 +1,5 @@
 import type { Project } from "@tsa/shared";
+import StatusBadge from "@/components/ui/status-badge";
 
 interface RenderTableProps {
 	data: Project[];
@@ -20,6 +21,7 @@ export default function RenderTable({ data, STATUS_STYLE }: RenderTableProps) {
 			{/* Table — tablet/desktop */}
 			<div className="hidden overflow-x-auto rounded-xl border border-border md:block">
 				<table className="w-full text-left text-sm">
+					<caption className="sr-only">Recently added projects</caption>
 					<thead>
 						<tr className="border-b border-border bg-muted/50">
 							{[
@@ -33,6 +35,7 @@ export default function RenderTable({ data, STATUS_STYLE }: RenderTableProps) {
 							].map((header) => (
 								<th
 									key={header}
+									scope="col"
 									className="px-5 py-3 font-medium whitespace-nowrap text-mainGray"
 								>
 									{header}
@@ -100,18 +103,6 @@ export default function RenderTable({ data, STATUS_STYLE }: RenderTableProps) {
 				))}
 			</ul>
 		</div>
-	);
-}
-
-function StatusBadge({ status, styles }: { status: string; styles?: string }) {
-	return (
-		<span
-			className={`w-fit rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${
-				styles ?? "bg-muted text-mainGray"
-			}`}
-		>
-			{status}
-		</span>
 	);
 }
 
