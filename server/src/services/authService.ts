@@ -1,4 +1,4 @@
-import type { UserProfile } from "@tsa/shared";
+import type { UserProfile, UserRole } from "@tsa/shared";
 import bcrypt from "bcrypt";
 import { env } from "../config/keys.js";
 import logger from "../config/logger.js";
@@ -16,7 +16,7 @@ type ServiceError = { success: false; status: number; message: string };
 
 type SessionUser = {
 	id: string;
-	role: "admin" | "super_admin";
+	role: UserRole;
 	email: string;
 	emailVerified: boolean;
 };

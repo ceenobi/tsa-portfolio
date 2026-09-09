@@ -1,3 +1,4 @@
+import { USER_ROLES, type UserRole } from '@tsa/shared'
 import mongoose, { Document, Schema } from 'mongoose'
 
 export interface IUser extends Document {
@@ -5,7 +6,7 @@ export interface IUser extends Document {
   email: string
   password: string
   emailVerified: boolean
-  role: 'admin' | 'super_admin'
+  role: UserRole
   isSuspended?: boolean
   lastLoginAt?: Date
   failedLoginAttempts: number
@@ -51,7 +52,7 @@ const UserSchema = new Schema<IUser>(
     resetPasswordExpiresAt: { type: Date },
     role: {
       type: String,
-      enum: ['admin', 'super_admin'],
+      enum: [...USER_ROLES],
       default: 'admin',
     },
     isSuspended: { type: Boolean, default: false },

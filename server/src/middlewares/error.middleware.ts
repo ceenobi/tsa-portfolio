@@ -44,7 +44,12 @@ export const createExpressLogger = () => {
       }),
     },
     // Only log in development or when explicitly enabled
-    autoLogging: !isDev ? { ignore: (req: any) => req.url === '/health' } : true,
+    autoLogging: !isDev
+      ? {
+          ignore: (req: any) =>
+            req.url === "/health" || req.url?.startsWith("/assets/"),
+        }
+      : true,
   })
 }
 

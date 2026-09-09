@@ -1,6 +1,25 @@
-import sendEmail from '../config/email.js'
 import { resetPasswordTemplate, verifyAccountTemplate } from '../libs/emailTemplates.js'
+import { triggerImmediateDelivery } from '../jobs/emailCron.js'
 import EmailQueue from '../models/emailQueue.js'
+
+/**
+ * Auth emails are queue-first: persist immediately (due now), then attempt
+ * delivery in the background without blocking the API response. The
+ * scheduled cron is the backstop; the atomic claim prevents double-sends
+ * when both paths overlap.
+ */
+const queueEmail = async (to: string, subject: string, html: string): Promise<void> => {
+  await EmailQueue.create({
+    to,
+    subject,
+    html,
+    priority: 'high',
+    status: 'queued',
+    retryCount: 0,
+    nextRetryAt: new Date(),
+  })
+  triggerImmediateDelivery()
+}
 
 export class EmailService {
   static async sendVerifyAccountEmail({
@@ -14,25 +33,8 @@ export class EmailService {
   }): Promise<{ success: boolean; queued: boolean }> {
     const greeting = user.email.split('@')[0]
     const htmlBody = verifyAccountTemplate(otp, link, greeting)
-    const result = await sendEmail({
-      email: user.email,
-      subject: 'Verify your account - Techstudio Academy',
-      message: htmlBody,
-    })
-    if (result.success) {
-      return { success: true, queued: false }
-    }
-
-    await EmailQueue.create({
-      to: user.email,
-      subject: 'Verify your account - Techstudio Academy',
-      html: htmlBody,
-      priority: 'high',
-      status: 'queued',
-      retryCount: 0,
-      nextRetryAt: new Date(Date.now() + 5 * 60 * 1000),
-    })
-    return { success: false, queued: true }
+    await queueEmail(user.email, 'Verify your account - Techstudio Academy', htmlBody)
+    return { success: true, queued: true }
   }
 
   static async sendPasswordResetEmail({
@@ -44,25 +46,8 @@ export class EmailService {
   }): Promise<{ success: boolean; queued: boolean }> {
     const greeting = user.email.split('@')[0]
     const htmlBody = resetPasswordTemplate(resetLink, greeting)
-    const result = await sendEmail({
-      email: user.email,
-      subject: 'Reset your password - Techstudio Academy',
-      message: htmlBody,
-    })
-    if (result.success) {
-      return { success: true, queued: false }
-    }
-
-    await EmailQueue.create({
-      to: user.email,
-      subject: 'Reset your password - Techstudio Academy',
-      html: htmlBody,
-      priority: 'high',
-      status: 'queued',
-      retryCount: 0,
-      nextRetryAt: new Date(Date.now() + 5 * 60 * 1000),
-    })
-    return { success: false, queued: true }
+    await queueEmail(user.email, 'Reset your password - Techstudio Academy', htmlBody)
+    return { success: true, queued: true }
   }
 }
 

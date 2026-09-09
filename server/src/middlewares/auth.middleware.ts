@@ -1,4 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
+import type { UserRole } from '@tsa/shared'
+import { env } from '../config/keys.js'
 import { sendTsRestError } from '../libs/responseHandler.js'
 
 // User data attached to request after session verification
@@ -7,7 +9,7 @@ declare global {
     interface Request {
       user?: {
         _id: string
-        role: 'admin' | 'super_admin'
+        role: UserRole
         fullname: string
         email: string
         emailVerified?: boolean
@@ -25,7 +27,7 @@ export const verifySession = (req: Request, res: Response, next: NextFunction) =
 }
 
 // Verify user has specific role(s)
-export const requireRole = (...roles: ('admin' | 'super_admin')[]) => {
+export const requireRole = (...roles: UserRole[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
     // First check session exists
     if (!req.session?.userId) {
@@ -33,19 +35,18 @@ export const requireRole = (...roles: ('admin' | 'super_admin')[]) => {
     }
 
     // Check role if roles specified
-    if (roles.length > 0 && !roles.includes(req.session.role as 'admin' | 'super_admin')) {
+    if (roles.length > 0 && !roles.includes(req.session.role as UserRole)) {
       return sendTsRestError(res, 403, 'Access denied. Insufficient permissions.')
     }
     next()
   }
 }
 
-// Verify user is admin
-export const requireAdmin = requireRole('admin')
-
-// Combine session + role verification
-export const verifyUser = (req: Request, res: Response, next: NextFunction) => {
-  verifySession(req, res, () => {
-    requireRole('admin', 'super_admin')(req, res, next)
-  })
+// Verify the scheduled-job secret (cron endpoints)
+export const verifyCronSecret = (req: Request, res: Response, next: NextFunction) => {
+  const cronSecret = req.headers['x-cron-secret']
+  if (!cronSecret || cronSecret !== env.CRON_SECRET) {
+    return sendTsRestError(res, 401, 'Unauthorized: invalid or missing CRON_SECRET')
+  }
+  next()
 }

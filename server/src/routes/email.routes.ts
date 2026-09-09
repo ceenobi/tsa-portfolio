@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { checkEmailCron } from '../controllers/email.controller.js'
+import { verifyCronSecret } from '../middlewares/auth.middleware.js'
 
 const router = Router()
 /**
@@ -8,6 +9,6 @@ const router = Router()
  * Protected by CRON_SECRET header check.
  * (Mounted at /cron-email in server/src/index.ts, so the path here is "/".)
  */
-router.get('/', checkEmailCron)
+router.get('/', verifyCronSecret, checkEmailCron)
 
 export default router
