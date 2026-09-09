@@ -1,7 +1,6 @@
 import path from "node:path";
 import compression from "compression";
 import cors from "cors";
-import type { UserRole } from "@tsa/shared";
 import express, {
 	type NextFunction,
 	type Request,
@@ -32,14 +31,6 @@ declare global {
 			requestTime?: string;
 			rawBody?: Buffer;
 		}
-	}
-}
-
-// Extend express-session SessionData interface
-declare module "express-session" {
-	interface SessionData {
-		userId?: string;
-		role?: UserRole;
 	}
 }
 
