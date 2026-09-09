@@ -1,8 +1,8 @@
 # Auth Controller — Feature Implementation Guide
 
-> Scope: This guide covers the **auth module only**. The server also contains an email module (`src/controllers/email.controller.ts`, `src/routes/email.routes.ts`) that exposes `GET /api/cron-email` for the Vercel cron job that drains the email queue (`src/jobs/emailCron.ts`).
+> Scope: This guide covers the **auth module only**. The server also contains an email module (`src/controllers/email.controller.ts`, `src/routes/email.routes.ts`) that exposes `GET /cron-email` for the scheduled cron job that drains the email queue (`src/jobs/emailCron.ts`).
 
-**Mount point:** auth routes are mounted at `/api/v1/auth` in `src/index.ts` (`app.use('/api/v1/auth', authRoutes)`).
+**Mount point:** auth routes are mounted at `/v1/auth` in `src/index.ts` (`app.use('/v1/auth', authRoutes)`).
 
 All controllers are wrapped in `tryCatchWrapper` from `src/libs/tryCatchWrapper.ts` and use `sendTsRestSuccess` / `sendTsRestError` from `src/libs/responseHandler.ts`.
 

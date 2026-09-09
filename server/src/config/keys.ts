@@ -1,10 +1,8 @@
 import { config } from 'dotenv'
 
-//load env file
-if (!process.env.VERCEL) {
-  if (process.env.NODE_ENV !== 'production') {
-    config()
-  }
+// Load .env file in non-production (Render injects real env vars in production).
+if (process.env.NODE_ENV !== 'production') {
+  config()
 }
 
 interface EnvSpec {

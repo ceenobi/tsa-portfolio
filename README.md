@@ -8,7 +8,7 @@ Full-stack portfolio platform for Techstudio Academy.
 
 - **Client** — React Router 7 (framework mode) SPA, Vite, Tailwind CSS v4, shadcn/ui
 - **Server** — Express 5 API, MongoDB (Mongoose), session auth, Brevo email, Memcachier cache
-- **Deployment** — Single Vercel project serving both client and API same-origin (`/api/v1/*`)
+- **Deployment** — Single Render web service serving both client and API same-origin (`/v1/*`)
 
 > The repo is an npm workspace monorepo: `client/`, `server/` and `shared/` are separate workspaces with one lockfile at the root.
 
@@ -18,7 +18,6 @@ Full-stack portfolio platform for Techstudio Academy.
 
 ```
 tsa-portfolio/
-├── api/                  # Vercel serverless entry (re-exports the Express app)
 ├── client/               # React Router 7 SPA (workspace: client)
 │   └── src/
 │       ├── routes/       # Route modules (+route.tsx conventions, lazy-loaded)
@@ -38,7 +37,7 @@ tsa-portfolio/
 ├── shared/               # Shared schemas + types (workspace: @tsa/shared)
 │   ├── src/schemas/      # auth + media validation consumed by client & server
 │   └── src/types/        # API response types (ApiSuccessResponse, auth responses, UserProfile)
-├── vercel.json           # build/output/cron/rewrite config
+├── render.yaml          # Render service, build, env + route config
 ├── .env.example          # reference for all environment variables
 └── package.json          # workspace root (scripts, engines, allowScripts)
 ```
@@ -82,32 +81,28 @@ Useful scripts (run from root):
 | `npm run typecheck` | Type-check the server (`tsc --noEmit`)        |
 | `npm run lint`      | ESLint the client                             |
 
-**CORS:** the server allow-lists `CLIENT_URL` from env plus local `localhost:5178` / `127.0.0.1:5178` (and a `5199` fallback) and Vercel preview origins (`*.vercel.app`) automatically.
+**CORS:** the server allow-lists `CLIENT_URL` from env plus local `localhost:5178` / `127.0.0.1:5178` (and a `5199` fallback) and its own `RENDER_EXTERNAL_URL` origin automatically.
 
 ---
 
 ## Environment variables
 
-All variables live in one place — see **`.env.example`** at the repo root for the full annotated list. The server loads `server/.env` in development (dotenv); on Vercel, add every key in Project Settings → Environment Variables.
+All variables live in one place — see **`.env.example`** at the repo root for the full annotated list. The server loads `server/.env` in development (dotenv); on Render, add every key in Dashboard → Environment.
 
 Minimum required for the app to boot: `MONGO_URI`, `SESSION_SECRET`, `NODE_ENV`, `DATABASE_NAME`, `CLIENT_URL`.
 
 ---
 
-## Deployment (Vercel — single project)
+## Deployment (Render — single service)
 
-The client and API are deployed **as one Vercel project** so they share an origin (cookies, no CORS in production). The Express app is served by a single serverless function at `/api/*`; the SPA is served as static files from `client/dist` with a catch-all rewrite.
+The client and API are deployed **as one Render web service** so they share an origin (cookies, no CORS in production). In production the Express app serves the SPA from `client/dist` (static + catch-all fallback); the API lives at `/v1/*`, plus `/health` and `/cron-email`.
 
-1. Import the repo root as **one** project in Vercel.
-2. Framework preset: **Vite**; Node version **22.x** (matches `engines` in root `package.json`).
-   - Vercel reads `vercel.json`: `npm install` → `npm run build` → output `client/dist`, serverless function `api/index.ts`.
-3. Add **all** environment variables from `.env.example` (Production + Preview + Development). `SESSION_SECRET` is required — generate with `openssl rand -hex 32`.
-4. **MongoDB/Atlas:** allow Vercel egress — add Atlas Network Access rules for Vercel's IP ranges (or `0.0.0.0/0` for prototyping).
-5. Deploy. The API responds on `/api/v1/*` and `/health`; the SPA on every other route.
+1. The service builds from the repo root: shared → server → client (`render.yaml` holds the build/start commands).
+2. Add **all** environment variables from `.env.example` in Dashboard → Environment. `SESSION_SECRET` is required — generate with `openssl rand -hex 32`. `VITE_API_URL=/v1` is baked into the client at build time.
+3. **MongoDB/Atlas:** allow egress — Atlas Network Access `0.0.0.0/0` (or restricted ranges) for prototyping.
+4. Deploy. The API responds on `/v1/*` and `/health`; the SPA on every other route.
 
-**Cron** — the email queue job hits `GET /api/cron-email` every 10 minutes (defined in `vercel.json`). Cron requires a **paid (Pro) Vercel plan**; on Hobby, run it manually via `CRON_SECRET` (see `server/src/jobs/emailCron.ts`).
-
-**Preview deployments** automatically receive a `*.vercel.app` URL, which the server adds to its CORS allowlist.
+**Cron** — the email queue job hits `GET /cron-email` every 10 minutes (protected by the `CRON_SECRET` header — schedule it with an external cron hitting the endpoint; see `server/src/jobs/emailCron.ts`).
 
 ---
 

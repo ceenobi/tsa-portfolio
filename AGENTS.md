@@ -9,7 +9,7 @@ future sessions. Companion docs: `README.md` (overview + deploy), `rules.md`
 
 - **Client** — React Router 7 (data mode via `createBrowserRouter`), React 19, Vite 8 (rolldown), Tailwind CSS v4, shadcn/ui on **Base UI** (`@base-ui/react`), TanStack Query, react-helmet-async.
 - **Server** — Express 5 API, MongoDB (Mongoose 9), express-session + connect-mongo, Brevo email, Cloudinary uploads, Memcachier (memjs) response cache, Pino logging.
-- **Deployment** — Single Vercel project (client + API same-origin). API lives at `/api/v1/*`; SPA served from `client/dist`.
+- **Deployment** — Single Render web service (client + API same-origin). API lives at `/v1/*`; SPA served from `client/dist` by Express in production.
 
 ## Monorepo (npm workspaces)
 
@@ -20,7 +20,7 @@ future sessions. Companion docs: `README.md` (overview + deploy), `rules.md`
 ## Layout (key files)
 
 ```
-api/index.ts              # Vercel entry → server/src/index.js
+render.yaml              # Render service, build/start commands, env + route config
 client/src/
   routes/index.tsx        # ALL routes; pages lazy-imported; layouts static
   middleware/auth.ts      # guestMiddleware / sessionMiddleware (requireAuth defined, NOT wired)
@@ -69,8 +69,8 @@ shared/src/
 
 - Thin controller + plain named-export service functions returning discriminated results: `{ success: true, ... } | { success: false, status, message }` (see `authService.ts`, `projectService.ts`). Controllers unwrap into `sendTsRestSuccess`/`sendTsRestError` inside `tryCatchWrapper`.
 - Response shapes: success `{ success: true, message, body? }`, error `{ success: false, message, details? }`.
-- Mounted in `src/index.ts`: `/api/v1/auth`, `/api/v1/upload`, `/api/v1/projects`, email cron at `/api` (→ `GET /api/cron-email`), plus `/health`.
-- Middleware order: logger → CORS → globalLimiter → session → helmet → json/urlencoded (25mb limit). CORS allowlists `CLIENT_URL`, localhost ports, `VERCEL_URL`.
+- Mounted in `src/index.ts`: `/v1/auth`, `/v1/upload`, `/v1/projects`, email cron at `/cron-email`, plus `/health`. In production the same service also serves the SPA from `client/dist` (static + catch-all fallback).
+- Middleware order: logger → CORS → session → helmet → json/urlencoded (25mb limit); `globalLimiter` scoped to `/v1` only (static/health exempt). CORS allowlists `CLIENT_URL`, localhost ports, `RENDER_EXTERNAL_URL`.
 - `validateFormData(schema)` **replaces `req.body` with the zod-parsed output** — unknown keys are stripped silently. If a field isn't in the shared schema it will vanish; add it there first.
 - Mongoose 9: `FilterQuery` no longer exists — use `import { type QueryFilter } from "mongoose"`.
 - Import Node builtins with the `node:` protocol (lint rule): `node:crypto`, etc.
@@ -80,18 +80,18 @@ shared/src/
 - Key = `ev:v1:<path>:<sorted-query>`; TTL seconds.
 - memjs degrades gracefully: if Memcachier is unreachable/unauthenticated (typical locally), it logs WARN and serves uncached — repeat requests showing `x-cache: MISS` locally is expected, not a bug.
 
-### Auth (routes on `/api/v1/auth`)
+### Auth (routes on `/v1/auth`)
 - `POST /register`, `/login`, `/verify-account?email=`, `/resend-otp`, `/forgot-password`, `/reset-password?token=`, `GET /me`, `POST /logout`.
 - Register: bcrypt(10), 6-digit OTP (15 min), role `'admin'`, sets session, sends verification email.
 - Login does **not** block unverified emails (open decision). Lockout: 30 min after 5 failed attempts.
 - OTP/reset tokens: raw token in email link (query param), SHA-256 hashed in DB, 15-min expiry; OTP capped at 5 attempts.
-- Sessions in MongoDB (`sessions` collection), cookie `_tsaPortfolio`, `sameSite: 'lax'`, httpOnly, 24h rolling.
+- Sessions in MongoDB (`sessions` collection), cookie `_tsaPortfolio`, `sameSite: 'lax'`, httpOnly, rolling.
 - Route guards: `verifySession` then `requireRole('admin', 'super_admin')` for admin-only endpoints.
 
-### Uploads (`/api/v1/upload`)
+### Uploads (`/v1/upload`)
 - `POST /` (admin/super_admin, `validateFormData(UploadSchema)`) and `DELETE` — Cloudinary-backed via `config/upload.ts`.
 
-### Projects (`/api/v1/projects`)
+### Projects (`/v1/projects`)
 - `GET /` — public, paginated (`?page&limit&category&sort=Newest|Oldest`), **published only**; `category` validated against `PROJECT_DEPARTMENTS`.
 - `GET /:projectId` — published only (draft/invalid id → 404).
 - `POST /add` — admin/super_admin, `createProjectSchema`; duplicate title+cohort+academicYear → 409.
@@ -102,7 +102,7 @@ shared/src/
 ### Email
 - Brevo via `config/email.ts`; on Brevo failure the email is queued to `emailQueue`.
 - `jobs/emailCron.ts`: drains queue (batch 10), exponential backoff (5ⁿ min, cap 24h), lifecycle `queued → sending → sent/failed`.
-- Cron endpoint protected by `CRON_SECRET` header; Vercel cron `*/10 * * * *`.
+- Cron endpoint protected by `CRON_SECRET` header; hit `GET /cron-email` on a schedule (external cron).
 
 ## Env vars
 
@@ -116,6 +116,5 @@ Required to boot: `MONGO_URI`, `SESSION_SECRET`, `NODE_ENV`, `LOG_LEVEL`, `DATAB
 
 ## Gotchas
 
-- Two `api/index.ts` exist: root `api/` is the real Vercel entry; `server/api/index.ts` is legacy/redundant.
-- Root `tsconfig.json` only covers `api/**/*.ts`; client/server have their own tsconfigs — run each workspace's check separately.
+- Client and server have their own tsconfigs (plus shared) — run each workspace's check separately.
 - Dev DB is `Tsa-portfolioDev` (collections: `sessions`, `email_queue`, `user`, `project`).

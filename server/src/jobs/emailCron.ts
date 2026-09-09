@@ -14,7 +14,7 @@ const getBackoffDelay = (retryCount: number): number => {
 
 /**
  * Process queued and failed emails that are due for retry.
- * Called by Vercel Cron Job every 10 minutes.
+ * Called by the scheduled cron job (GET /cron-email) every 10 minutes.
  */
 export const startEmailCron = async (): Promise<{ processed: number; sent: number; failed: number }> => {
   let sent = 0
