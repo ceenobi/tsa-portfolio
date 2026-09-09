@@ -40,7 +40,7 @@ export function BlurImage({
 					onLoad={() => setLoaded(true)}
 					onError={() => setLoaded(true)}
 					className={cn(
-						"relative size-full object-cover transition-all duration-300",
+						"relative size-full object-cover transition-all duration-300 motion-reduce:transition-none",
 						loaded ? "opacity-100" : "opacity-0",
 						imgClassName,
 					)}

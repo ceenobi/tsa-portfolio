@@ -7,6 +7,7 @@ import { Link, useNavigate, useParams } from "react-router";
 import { toast } from "react-toastify";
 import { z } from "zod";
 import { Seo } from "@/components/provider/seo";
+import QueryError from "@/components/ui/query-error";
 import ActionBtn from "@/components/ui/action-btn";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -67,7 +68,12 @@ function readAsDataUrl(file: File): Promise<string> {
 export default function EditProject() {
 	const { portfolioId } = useParams<{ portfolioId: string }>();
 	const navigate = useNavigate();
-	const { data: project, isLoading: projectLoading } = useProject(portfolioId);
+	const {
+		data: project,
+		isLoading: projectLoading,
+		isError: projectError,
+		refetch: refetchProject,
+	} = useProject(portfolioId);
 	const uploadFiles = useUploadFiles();
 	const editProject = useEditProject(portfolioId!);
 
@@ -81,11 +87,15 @@ export default function EditProject() {
 		control,
 		handleSubmit,
 		reset,
+		watch,
 		formState: { errors },
 	} = useForm<FormValues>({
 		resolver: zodResolver(formSchema),
-		mode: "onChange",
+		// Validate on blur first (no scolding mid-keystroke), then on change.
+		mode: "onTouched",
 	});
+
+	const descriptionLength = watch("description")?.length ?? 0;
 
 	// Pre-populate form once project data loads.
 	useEffect(() => {
@@ -138,7 +148,6 @@ export default function EditProject() {
 
 		if (!hasExisting && !hasNew) {
 			setImageError("Please upload at least a thumbnail or cover image.");
-			toast.error("Please upload at least a thumbnail or cover image.");
 			return;
 		}
 
@@ -205,8 +214,27 @@ export default function EditProject() {
 
 	if (projectLoading) {
 		return (
-			<div className="container mx-auto mt-10 text-center text-mainGray">
+			<div
+				role="status"
+				className="container mx-auto mt-10 text-center text-mainGray"
+			>
 				Loading project…
+			</div>
+		);
+	}
+
+	if (projectError) {
+		return (
+			<div className="container mx-auto mt-10 max-w-xl">
+				<QueryError
+					message="Couldn't load this project. Please try again."
+					onRetry={() => refetchProject()}
+				/>
+				<div className="mt-4 text-center">
+					<Link to="/dashboard/portfolio" className="text-sm text-mainBlue hover:underline">
+						Back to portfolio
+					</Link>
+				</div>
 			</div>
 		);
 	}
@@ -224,15 +252,15 @@ export default function EditProject() {
 			<Seo title="Edit Project - Techstudio Academy Portfolio" />
 
 			<div className="mt-6 flex flex-col items-start gap-6">
-				<nav className="flex items-center gap-1 text-base">
+				<nav aria-label="Breadcrumb" className="flex items-center gap-1 text-base">
 					<Link
 						to="/dashboard/portfolio"
 						className="hover:text-mainBlue text-[#6E6D6D]"
 					>
 						Portfolio
 					</Link>
-					<ChevronRight className="size-4" />
-					<span className="text-[#000000]">Edit Project</span>
+					<ChevronRight className="size-4" aria-hidden="true" />
+					<span aria-current="page" className="text-[#000000]">Edit Project</span>
 				</nav>
 				<h1 className="text-xl font-semibold text-[#1D1D1D]">
 					Edit Portfolio Project
@@ -344,15 +372,24 @@ export default function EditProject() {
 					</div>
 
 					<div className="space-y-2.5">
-						<Label
-							htmlFor="description"
-							className="text-base text-mainBlack font-semibold"
-						>
-							Project Description
-						</Label>
+						<div className="flex items-baseline justify-between">
+							<Label
+								htmlFor="description"
+								className="text-base text-mainBlack font-semibold"
+							>
+								Project Description
+							</Label>
+							<span
+								className="text-xs text-muted-foreground"
+								aria-live="polite"
+							>
+								{descriptionLength}/2000
+							</span>
+						</div>
 						<textarea
 							id="description"
 							rows={9}
+							maxLength={2000}
 							placeholder="What's this project about?"
 							className="w-full rounded-md border border-input bg-input/20 px-3 py-2 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
 							{...register("description")}
@@ -375,6 +412,7 @@ export default function EditProject() {
 							preview={thumbnail?.preview ?? null}
 							existing={project?.project?.media?.[0]?.mediaUrl}
 							onSelect={pick(setThumbnail)}
+							disabled={busy}
 						/>
 						<UploadBox
 							label="Cover Image"
@@ -382,6 +420,7 @@ export default function EditProject() {
 							preview={cover?.preview ?? null}
 							existing={project?.project?.coverImageUrl}
 							onSelect={pick(setCover)}
+							disabled={busy}
 						/>
 					</div>
 					{imageError && (
@@ -399,6 +438,7 @@ export default function EditProject() {
 							type="button"
 							variant="outline"
 							size="lg"
+							disabled={busy}
 							onClick={() => fields.length < 20 && append({ fullName: "" })}
 							className="border-[1.13px] h-10 border-mainBlue text-mainBlue px-4.5 py-2.5 rounded-[7px] flex items-center gap-1.5 text-base font-semibold"
 						>
@@ -449,6 +489,7 @@ export default function EditProject() {
 										variant="ghost"
 										size="icon-lg"
 										aria-label="Remove member"
+										disabled={busy}
 										onClick={() => remove(i)}
 									>
 										<X />
@@ -462,6 +503,9 @@ export default function EditProject() {
 				{/* Project Links */}
 				<section className="space-y-6">
 					<h2 className="font-semibold text-deepBlue text-xl">Project Links</h2>
+					<p className="-mt-3 text-sm text-muted-foreground">
+						All links are optional — add whichever apply.
+					</p>
 					<div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
 						<div className="space-y-2.5">
 							<Label
@@ -566,23 +610,50 @@ function UploadBox({
 	preview,
 	existing,
 	onSelect,
+	disabled = false,
 }: {
 	label: string;
 	hint: string;
 	preview: string | null;
 	existing?: string;
 	onSelect: (file: File | null) => void;
+	disabled?: boolean;
 }) {
 	return (
 		<div className="space-y-2.5">
-			<p className="text-base text-mainBlack font-semibold">{label}</p>
-			<label className="flex h-[250PX] w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed border-input bg-input/20 transition-colors hover:border-mainBlue">
+			<p className="text-base text-mainBlack font-semibold">
+				{label}
+				<span aria-hidden="true" className="text-destructive">
+					{" "}
+					*
+				</span>
+				<span className="sr-only">(required)</span>
+			</p>
+			<label
+				className={`relative flex h-[250PX] w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed border-input bg-input/20 transition-colors hover:border-mainBlue focus-within:border-mainBlue focus-within:ring-2 focus-within:ring-ring/30 ${
+					disabled ? "pointer-events-none opacity-60" : ""
+				}`}
+			>
 				{preview ? (
-					<img
-						src={preview}
-						alt={label}
-						className="h-full w-full object-cover"
-					/>
+					<>
+						<img
+							src={preview}
+							alt={label}
+							className="h-full w-full object-cover"
+						/>
+						<button
+							type="button"
+							aria-label={`Remove ${label}`}
+							disabled={disabled}
+							onClick={(e) => {
+								e.preventDefault();
+								onSelect(null);
+							}}
+							className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white transition-colors hover:bg-black/80 focus-visible:ring-2 focus-visible:ring-ring"
+						>
+							<X className="size-4" />
+						</button>
+					</>
 				) : existing ? (
 					<img
 						src={existing}
@@ -603,6 +674,9 @@ function UploadBox({
 				<input
 					type="file"
 					accept="image/*"
+					aria-label={label}
+					aria-required="true"
+					disabled={disabled}
 					className="hidden"
 					onChange={(e) => onSelect(e.target.files?.[0] ?? null)}
 				/>
