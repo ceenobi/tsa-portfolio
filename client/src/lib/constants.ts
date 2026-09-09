@@ -1,5 +1,28 @@
 import type { GetProjectsResponse, Project } from "@tsa/shared";
 
+export const COURSES = [
+  {
+    name: "Front End Development",
+    href: "https://www.techstudioacademy.com/courses/fullstack-development",
+  },
+  {
+    name: "Cyber Security",
+    href: "https://www.techstudioacademy.com/courses/cyber-security",
+  },
+  {
+    name: "Data Analysis",
+    href: "https://www.techstudioacademy.com/courses/data-analysis-with-machine-learning",
+  },
+  {
+    name: "Product Design UI-UX",
+    href: "https://www.techstudioacademy.com/courses/product-design-ui-ux",
+  },
+  {
+    name: "Ethical Hacking and Penetration Testing",
+    href: "https://www.techstudioacademy.com/courses/ethical-hacking-and-penetration-testing",
+  },
+];
+
 export const CATEGORIES = [
 	"All",
 	"Product Design",

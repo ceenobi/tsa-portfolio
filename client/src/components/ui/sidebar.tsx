@@ -23,8 +23,10 @@ export default function Sidebar({
       <img src={LogoIcon} alt="Tech Studio Academy Logo" className="mx-auto w-fit mb-1 h-10.75" />
       </Link>
         {tabs.map((tab) => {
-          const isActive = (tab.key === "dashboard" && (location.pathname === "/dashboard" ||
-            location.pathname === "/dashboard/")) || location.pathname === `/dashboard/${tab.key}`;
+          const tabPath = `/dashboard/${tab.key === "dashboard" ? "" : tab.key}`;
+          const isActive = tab.key === "dashboard"
+            ? location.pathname === "/dashboard" || location.pathname === "/dashboard/"
+            : location.pathname === tabPath || location.pathname.startsWith(`${tabPath}/`);
 
           return (
             <Link

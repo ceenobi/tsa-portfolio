@@ -114,11 +114,13 @@ export default function ProjectShowcase() {
 					</Select>
 				</div>
 
-				<div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-					{projects.map((project: Project) => (
-						<ProjectCard project={project} key={project._id} />
-					))}
-				</div>
+			
+					<div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+						{projects.map((project: Project) => (
+							<ProjectCard project={project} key={project._id} />
+						))}
+					</div>
+				
 
 				<div className="mt-8 flex flex-wrap items-center justify-between gap-4">
 					<p className="text-sm text-muted-foreground">
