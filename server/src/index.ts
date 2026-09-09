@@ -46,7 +46,7 @@ app.set("trust-proxy", 1);
 //global error handler
 setupGlobalErrorHandlers();
 
-app.use("/api", emailRoutes);
+app.use("/cron-email", emailRoutes);
 
 // CORS configuration
 const allowedOrigins: string[] = [env.CLIENT_URL].filter(Boolean) as string[];
@@ -59,6 +59,11 @@ allowedOrigins.push("http://localhost:5199", "http://127.0.0.1:5199");
 // Vercel preview deployments — each preview gets its own *.vercel.app origin
 if (process.env.VERCEL_URL) {
 	allowedOrigins.push(`https://${process.env.VERCEL_URL}`);
+}
+
+// Render deployments — each service gets its own *.onrender.com origin
+if (process.env.RENDER_EXTERNAL_URL) {
+	allowedOrigins.push(process.env.RENDER_EXTERNAL_URL);
 }
 
 const corsOptions: cors.CorsOptions = {
@@ -111,9 +116,9 @@ app.use("/health", (req: Request, res: Response) => {
 });
 
 //api routes
-app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/upload", uploadRoutes);
-app.use("/api/v1/projects", projectRoutes);
+app.use("/v1/auth", authRoutes);
+app.use("/v1/upload", uploadRoutes);
+app.use("/v1/projects", projectRoutes);
 
 // Handle 404
 app.use(notFoundRoutes);
