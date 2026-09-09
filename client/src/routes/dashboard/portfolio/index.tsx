@@ -9,6 +9,7 @@ import DeleteConfirmDialog from "@/components/ui/delete-confirm-dialog";
 import PaginateBox from "@/components/ui/paginate-box";
 import { useDeleteProject, useProjects } from "@/hooks/use-project";
 import { CATEGORIES, STATUS_STYLES } from "@/lib/constants";
+import QueryError from "@/components/ui/query-error";
 
 type Category = (typeof CATEGORIES)[number];
 
@@ -27,7 +28,7 @@ export default function Portfolio() {
 	const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
 	const deleteProject = useDeleteProject();
 
-	const { data, isLoading, isError } = useProjects({
+	const { data, isLoading, isError, refetch } = useProjects({
 		page,
 		limit,
 		category,
@@ -58,14 +59,27 @@ export default function Portfolio() {
 			</div>
 			<Filter cohorts={cohorts} years={years} />
 			{isLoading && (
-				<p className="mt-6 text-sm text-mainGray">Loading projects…</p>
-			)}
-			{isError && (
-				<p className="mt-6 text-sm text-mainGray">
-					Couldn't load projects. Please try again later.
+				<p role="status" className="mt-6 text-sm text-mainGray">
+					Loading projects…
 				</p>
 			)}
-			{data && !isLoading && !isError && (
+			{isError && (
+				<QueryError
+					message="Couldn't load projects. Please try again."
+					onRetry={() => refetch()}
+				/>
+			)}
+			{data && !isLoading && !isError && data.items.length === 0 && (
+				<div className="mt-6 flex flex-col items-center gap-3 rounded-2xl border border-dashed border-input px-6 py-12 text-center">
+					<p className="text-base font-semibold text-mainBlack">
+						No projects found
+					</p>
+					<p className="text-sm text-mainGray">
+						Try a different search or filter — or add a new project.
+					</p>
+				</div>
+			)}
+			{data && !isLoading && !isError && data.items.length > 0 && (
 				<>
 					<RenderData
 						data={data}

@@ -1,11 +1,12 @@
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router";
+import QueryError from "@/components/ui/query-error";
 import { useRecentProjects } from "@/hooks/use-project";
 import { STATUS_STYLES } from "@/lib/constants";
 import RenderTable from "./render-table";
 
 export default function Dashboard() {
-	const { data, isLoading, isError } = useRecentProjects();
+	const { data, isLoading, isError, refetch } = useRecentProjects();
 	const stats = data?.stats;
 	const items = data?.items ?? [];
 
@@ -29,9 +30,10 @@ export default function Dashboard() {
 			{isLoading && <DashboardSkeleton />}
 
 			{isError && (
-				<p className="mt-8 text-mainGray">
-					Couldn't load your dashboard. Please try again later.
-				</p>
+				<QueryError
+					message="Couldn't load your dashboard. Please try again."
+					onRetry={() => refetch()}
+				/>
 			)}
 
 			{stats && (
@@ -70,13 +72,30 @@ export default function Dashboard() {
 					<RenderTable data={items} STATUS_STYLE={STATUS_STYLES} />
 				</section>
 			)}
+
+			{!isLoading && !isError && items.length === 0 && (
+				<section className="mt-10 flex flex-col items-center gap-4 rounded-2xl border border-dashed border-input px-6 py-12 text-center">
+					<p className="text-base font-semibold text-mainBlack">
+						No projects yet
+					</p>
+					<p className="text-sm text-mainGray">
+						Add your first portfolio project to see it here.
+					</p>
+					<Link
+						to="/dashboard/portfolio/new"
+						className="inline-flex h-10 items-center rounded-md bg-mainBlue px-6 text-sm font-medium text-white hover:bg-mainBlue/90"
+					>
+						Add project
+					</Link>
+				</section>
+			)}
 		</div>
 	);
 }
 
 function DashboardSkeleton() {
 	return (
-		<div className="mt-8 animate-pulse space-y-4">
+		<div role="status" aria-label="Loading dashboard" className="mt-8 animate-pulse space-y-4">
 			<div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
 				{[1, 2, 3].map((i) => (
 					<div key={i} className="h-24 rounded-xl bg-muted" />

@@ -187,3 +187,16 @@
     margin-left: 15%;
   }
 }
+
+/* Freeze decorative animations for users who prefer reduced motion.
+   (Interactive transitions are guarded per-component instead.) */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse,
+  .animate-spin,
+  .loader {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}

@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BlurImage } from "@/components/ui/blur-image";
 import { Button } from "@/components/ui/button";
 import NotFound from "@/components/ui/not-found";
+import QueryError from "@/components/ui/query-error";
 import { useProject } from "@/hooks/use-project";
 import {
 	getBlurPlaceholderUrl,
@@ -22,13 +23,24 @@ import {
 
 export default function ProjectDetail() {
 	const { projectId } = useParams<{ slug: string; projectId: string }>();
-	const { data, isLoading, isError } = useProject(projectId);
+	const { data, isLoading, isError, refetch } = useProject(projectId);
 	const project = data?.project;
 	const recommended = data?.recommended || [];
 
 	if (isLoading) return <ProjectSkeleton />;
 
-	if (isError || !project) {
+	if (isError) {
+		return (
+			<div className="mx-auto max-w-7xl px-4 py-25 sm:px-6 lg:px-25">
+				<QueryError
+					message="Couldn't load this project. Please try again."
+					onRetry={() => refetch()}
+				/>
+			</div>
+		);
+	}
+
+	if (!project) {
 		return <NotFound />;
 	}
 

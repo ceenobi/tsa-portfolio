@@ -80,10 +80,12 @@ export default function CreateProject() {
 		register,
 		control,
 		handleSubmit,
+		watch,
 		formState: { errors },
 	} = useForm<FormValues>({
 		resolver: zodResolver(formSchema),
-		mode: "onChange",
+		// Validate on blur first (no scolding mid-keystroke), then on change.
+		mode: "onTouched",
 		defaultValues: {
 			title: "",
 			cohort: "",
@@ -95,6 +97,8 @@ export default function CreateProject() {
 			teamMembers: [],
 		},
 	});
+
+	const descriptionLength = watch("description")?.length ?? 0;
 
 	const { fields, append, remove } = useFieldArray({
 		control,
@@ -111,7 +115,6 @@ export default function CreateProject() {
 	async function submit(data: FormValues, status: "draft" | "published") {
 		if (!thumbnail || !cover) {
 			setImageError("Please upload both a thumbnail and a cover image.");
-			toast.error("Please upload both a thumbnail and a cover image.");
 			return;
 		}
 
@@ -168,15 +171,15 @@ export default function CreateProject() {
 
 			<div className="mt-6 flex flex-col items-start gap-6">
 				{/* Breadcrumb + heading */}
-				<nav className="flex items-center gap-1 text-base">
+				<nav aria-label="Breadcrumb" className="flex items-center gap-1 text-base">
 					<Link
 						to="/dashboard/portfolio"
 						className="hover:text-mainBlue text-[#6E6D6D]"
 					>
 						Portfolio
 					</Link>
-					<ChevronRight className="size-4" />
-					<span className="text-[#000000]">Add New Project</span>
+					<ChevronRight className="size-4" aria-hidden="true" />
+					<span aria-current="page" className="text-[#000000]">Add New Project</span>
 				</nav>
 				<h1 className="text-xl font-semibold text-[#1D1D1D]">
 					Create Portfolio Project
@@ -288,15 +291,24 @@ export default function CreateProject() {
 					</div>
 
 					<div className="space-y-2.5">
-						<Label
-							htmlFor="description"
-							className="text-base text-mainBlack font-semibold"
-						>
-							Project Description
-						</Label>
+						<div className="flex items-baseline justify-between">
+							<Label
+								htmlFor="description"
+								className="text-base text-mainBlack font-semibold"
+							>
+								Project Description
+							</Label>
+							<span
+								className="text-xs text-muted-foreground"
+								aria-live="polite"
+							>
+								{descriptionLength}/2000
+							</span>
+						</div>
 						<textarea
 							id="description"
 							rows={9}
+							maxLength={2000}
 							placeholder="What's this project about?"
 							className="w-full rounded-md border border-input bg-input/20 px-3 py-2 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
 							{...register("description")}
@@ -318,12 +330,14 @@ export default function CreateProject() {
 							hint="Square, min 800 x 800px"
 							preview={thumbnail?.preview ?? null}
 							onSelect={pick(setThumbnail)}
+							disabled={busy}
 						/>
 						<UploadBox
 							label="Cover Image"
 							hint="Landscape, min 1600 x 900px"
 							preview={cover?.preview ?? null}
 							onSelect={pick(setCover)}
+							disabled={busy}
 						/>
 					</div>
 					{imageError && (
@@ -341,6 +355,7 @@ export default function CreateProject() {
 							type="button"
 							variant="outline"
 							size="lg"
+							disabled={busy}
 							onClick={() => fields.length < 20 && append({ fullName: "" })}
 							className="border-[1.13px] h-10 border-mainBlue text-mainBlue px-4.5 py-2.5 rounded-[7px] flex items-center gap-1.5 text-base font-semibold"
 						>
@@ -391,6 +406,7 @@ export default function CreateProject() {
 										variant="ghost"
 										size="icon-lg"
 										aria-label="Remove member"
+										disabled={busy}
 										onClick={() => remove(i)}
 									>
 										<X />
@@ -404,6 +420,9 @@ export default function CreateProject() {
 				{/* Project Links */}
 				<section className="space-y-6">
 					<h2 className="font-semibold text-deepBlue text-xl">Project Links</h2>
+					<p className="-mt-3 text-sm text-muted-foreground">
+						All links are optional — add whichever apply.
+					</p>
 					<div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
 						<div className="space-y-2.5">
 							<Label
@@ -507,22 +526,49 @@ function UploadBox({
 	hint,
 	preview,
 	onSelect,
+	disabled = false,
 }: {
 	label: string;
 	hint: string;
 	preview: string | null;
 	onSelect: (file: File | null) => void;
+	disabled?: boolean;
 }) {
 	return (
 		<div className="space-y-2.5">
-			<p className="text-base text-mainBlack font-semibold">{label}</p>
-			<label className="flex h-[250PX] w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed border-input bg-input/20 transition-colors hover:border-mainBlue">
+			<p className="text-base text-mainBlack font-semibold">
+				{label}
+				<span aria-hidden="true" className="text-destructive">
+					{" "}
+					*
+				</span>
+				<span className="sr-only">(required)</span>
+			</p>
+			<label
+				className={`relative flex h-[250PX] w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed border-input bg-input/20 transition-colors hover:border-mainBlue focus-within:border-mainBlue focus-within:ring-2 focus-within:ring-ring/30 ${
+					disabled ? "pointer-events-none opacity-60" : ""
+				}`}
+			>
 				{preview ? (
-					<img
-						src={preview}
-						alt={label}
-						className="h-full w-full object-cover"
-					/>
+					<>
+						<img
+							src={preview}
+							alt={label}
+							className="h-full w-full object-cover"
+						/>
+						<button
+							type="button"
+							aria-label={`Remove ${label}`}
+							disabled={disabled}
+							onClick={(e) => {
+								e.preventDefault();
+								onSelect(null);
+							}}
+							className="absolute top-2 right-2 rounded-full bg-black/60 p-1.5 text-white transition-colors hover:bg-black/80 focus-visible:ring-2 focus-visible:ring-ring"
+						>
+							<X className="size-4" />
+						</button>
+					</>
 				) : (
 					<div className="flex flex-col items-center gap-4.5 px-4 text-center text-mainGray">
 						<Upload className="size-10" />
@@ -537,6 +583,9 @@ function UploadBox({
 				<input
 					type="file"
 					accept="image/*"
+					aria-label={label}
+					aria-required="true"
+					disabled={disabled}
 					className="hidden"
 					onChange={(e) => onSelect(e.target.files?.[0] ?? null)}
 				/>
