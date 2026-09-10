@@ -32,6 +32,17 @@ jobs:
       - run: npm run build --workspace @tsa/shared
       - run: npm run build --workspace client
 
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: "npm"
+      - run: npm ci
+      - run: npm run test
+
   lint:
     runs-on: ubuntu-latest
     steps:
