@@ -68,6 +68,20 @@ const routes = [
               return { Component };
             },
           },
+          {
+            path: "*",
+            handle: {
+              seo: {
+                title: "Page Not Found",
+                description: "The page you're looking for doesn't exist.",
+              },
+            },
+            lazy: async () => {
+              const { default: Component } =
+                await import("@/routes/not-found");
+              return { Component };
+            },
+          },
         ],
       },
       {
